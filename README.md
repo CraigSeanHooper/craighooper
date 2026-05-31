@@ -1,4 +1,4 @@
-# Craig Hooper — alternate design (v2)
+# Craig Hooper
 
 A static one-page site rebuilt from my Figma design.
 
