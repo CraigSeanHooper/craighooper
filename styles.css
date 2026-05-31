@@ -1,18 +1,24 @@
 /* ============================================================
-   Craig Hooper — one page site
-   Rebuilt from Figma (home/desktop + home/mobile)
+   Craig Hooper — alternate design (v2)
+   Rebuilt from Figma (home/desktop-2 + home/mobile-2)
    ============================================================ */
 
 /* ---- Fonts -------------------------------------------------
-   These are the licensed fonts from your Figma file. Drop the
-   web font files (.woff2) into assets/fonts/ with the names
-   below and they'll load automatically. Until then, the
-   fallback stack keeps the site readable.
+   Licensed font from the design. Drop the web (.woff2) files into
+   assets/fonts/ with the names below and they load automatically.
+   Until then, the fallback grotesk keeps it readable.
 ------------------------------------------------------------- */
 @font-face {
-  font-family: "Marlin Soft SQ";
-  src: url("assets/fonts/MarlinSoftSQ-ExtraBlack.woff2") format("woff2");
-  font-weight: 950;
+  font-family: "KMR Melange Grotesk";
+  src: url("assets/fonts/KMRMelangeGrotesk-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "KMR Melange Grotesk";
+  src: url("assets/fonts/KMRMelangeGrotesk-Medium.woff2") format("woff2");
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
@@ -24,26 +30,24 @@
   font-display: swap;
 }
 
-/* ---- Design tokens ---------------------------------------- */
+/* ---- Tokens (from Figma) ---------------------------------- */
 :root {
-  --bg: #f9f7f1;
-  --ink: #1a1a1a;
-  --yellow: #fffbc6;
-  --yellow-deep: #f6efa3;
-  --radius: 16px;
+  --bg: #ffffff;
+  --ink: #1a1a1a;       /* black/90  */
+  --ink-soft: #4d4d4d;  /* black/70  */
 
-  --font-display: "Marlin Soft SQ", "Arial Black", "Helvetica Neue", sans-serif;
-  --font-body: "Parabole", "Helvetica Neue", Arial, sans-serif;
+  --font: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --font-links: "Parabole", "Helvetica Neue", Arial, sans-serif;
 
   /* desktop type */
   --h1-size: 48px;
-  --h1-line: 46px;
-  --h1-track: -0.96px;
-  --btn-size: 24px;
-  --btn-line: 30px;
+  --h1-line: 48px;
+  --h1-track: -0.48px;
+  --link-size: 24px;
+  --link-line: 30px;
+  --link-gap: 20px;
 }
 
-/* ---- Reset / base ----------------------------------------- */
 *,
 *::before,
 *::after { box-sizing: border-box; }
@@ -59,131 +63,108 @@ body {
   padding: 96px 24px;
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-body);
+  font-family: var(--font);
+  font-feature-settings: "salt" 1, "ss08" 1;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
-  position: relative;
 }
 
-/* ---- Blurred portrait background -------------------------- */
-.background {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  /* warm fallback tint if the image hasn't been added yet */
-  background:
-    radial-gradient(120% 80% at 50% 100%, rgba(214, 196, 140, 0.45), transparent 70%),
-    var(--bg);
-}
-.background img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  user-select: none;
-}
-
-/* ---- Card / content --------------------------------------- */
+/* ---- Card ------------------------------------------------- */
 .card {
-  position: relative;
-  z-index: 1;
-  width: 580px;
+  width: 570px;
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+
+/* ---- Avatar ----------------------------------------------- */
+.avatar {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  display: block;
+}
+/* graceful state if the GIF hasn't been added yet */
+.avatar--missing {
+  visibility: hidden;
+}
+
+/* ---- Copy + links ----------------------------------------- */
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 24px;
+  width: 100%;
 }
 
 .headline {
   margin: 0;
   width: 100%;
-  font-family: var(--font-display);
-  font-weight: 950;
+  font-weight: 700;
   font-size: var(--h1-size);
   line-height: var(--h1-line);
   letter-spacing: var(--h1-track);
-  text-transform: uppercase;
-  text-align: center;
-  /* matches Figma: a uniform 2px blur on the heading (same on desktop + mobile) */
-  filter: blur(2px);
+  color: var(--ink);
+  font-feature-settings: "salt" 1, "ss08" 1;
+  word-break: break-word;
 }
 
-/* ---- Buttons ---------------------------------------------- */
-.btns {
+.links {
   display: flex;
   flex-direction: row;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 16px 32px;
-  border-radius: var(--radius);
-  background: var(--yellow);
-  color: var(--ink);
-  font-family: var(--font-body);
-  font-size: var(--btn-size);
-  line-height: var(--btn-line);
-  text-decoration: none;
+  gap: var(--link-gap);
+  font-family: var(--font-links);
+  font-weight: 400;
+  font-size: var(--link-size);
+  line-height: var(--link-line);
+  font-feature-settings: "salt" 1;
   white-space: nowrap;
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.btn:hover {
-  transform: translateY(-4px);
+.links a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 0.18s ease, transform 0.18s ease;
 }
-.btn:active { transform: translateY(-1px); }
-.btn .icon {
-  flex: 0 0 auto;
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+.links a:hover {
+  color: var(--ink);
 }
-/* all three icons move identically on hover */
-.btn:hover .icon {
-  transform: translate(2px, -2px);
+/* desktop only: subtle lift on hover (matches v1's button feel) */
+@media (min-width: 601px) {
+  .links a:hover {
+    transform: translateY(-2px);
+  }
 }
 
 /* ---- Mobile ----------------------------------------------- */
 @media (max-width: 600px) {
-  body { padding: 96px 16px; }
+  body { padding: 24px 20px; }
   :root {
     --h1-size: 32px;
-    --h1-line: 32px;
-    --h1-track: -0.64px;
-    --btn-size: 16px;
-    --btn-line: 22px;
+    --h1-line: 34px;
+    --h1-track: -0.32px;
+    --link-size: 16px;
+    --link-line: 22px;
+    --link-gap: 16px;
   }
-  .card { width: 100%; max-width: 380px; }
-  .headline { filter: blur(0.75px); text-align: left; }
-  .btns {
-    flex-direction: column;
-    width: 100%;
-  }
-  .btn { width: 100%; }
+  .card { width: 100%; }
 }
 
-/* ---- Tasteful page-load entrance (remove if unwanted) -----
-   Entrance animates the independent `translate` property (not `transform`),
-   so the hover `transform` lift is never overridden by the animation fill. */
+/* ---- Tasteful page-load entrance (remove if unwanted) ----- */
 @media (prefers-reduced-motion: no-preference) {
+  .avatar,
   .headline,
-  .btn {
+  .links {
     opacity: 0;
-    translate: 0 12px;
-    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+    translate: 0 10px;
+    animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
-  .headline { animation-delay: 0.05s; }
-  .btn:nth-of-type(1) { animation-delay: 0.18s; }
-  .btn:nth-of-type(2) { animation-delay: 0.26s; }
-  .btn:nth-of-type(3) { animation-delay: 0.34s; }
+  .avatar { animation-delay: 0.04s; }
+  .headline { animation-delay: 0.12s; }
+  .links { animation-delay: 0.22s; }
 
   @keyframes rise {
     to { opacity: 1; translate: 0 0; }
