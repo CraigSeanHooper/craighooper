@@ -1,7 +1,5 @@
-# Craig Hooper — alternate design (v2)
-
-Standalone preview of the alternate Figma design (`home/desktop-2` + `home/mobile-2`).
-This is SEPARATE from your live site — nothing here touches craighooper.xyz.
+# Craig Hooper
+craighooper.xyz
 
 ## Two assets needed to make it match exactly
 The layout, copy, and links are all real. To finish the look, add:
