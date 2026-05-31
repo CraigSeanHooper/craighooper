@@ -1,4 +1,4 @@
-# Craig Hooper
+# Craighooper.xyz
 
 A static one-page site rebuilt from my Figma design.
 
