@@ -153,6 +153,7 @@ body {
 
 /* ---- Mobile ----------------------------------------------- */
 @media (max-width: 600px) {
+  body { padding: 96px 16px; }
   :root {
     --h1-size: 32px;
     --h1-line: 32px;
@@ -160,8 +161,8 @@ body {
     --btn-size: 16px;
     --btn-line: 22px;
   }
-  .card { width: 350px; }
-  .headline { filter: blur(0.75px); }
+  .card { width: 100%; max-width: 380px; }
+  .headline { filter: blur(0.75px); text-align: left; }
   .btns {
     flex-direction: column;
     width: 100%;
