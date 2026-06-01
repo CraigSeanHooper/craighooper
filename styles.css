@@ -121,7 +121,7 @@ body {
   font-feature-settings: "salt" 1;
   word-break: break-word;
   /* uniform layer blur (CSS blur reads stronger than Figma's, so kept light) */
-  filter: blur(1px);
+  filter: blur(0.5px);
 }
 
 .links {
@@ -161,7 +161,8 @@ body {
     --link-gap: 16px;
   }
   .card { width: 100%; }
-  .headline { filter: blur(1px); }
+  .copy { gap: 16px; }
+  .headline { filter: blur(0.5px); }
 }
 
 /* ---- Tasteful page-load entrance (remove if unwanted) ----- */
