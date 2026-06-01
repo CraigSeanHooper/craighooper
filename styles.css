@@ -200,7 +200,7 @@ body {
   }
   .card { width: 100%; }
   .copy { gap: 16px; }
-  .headline { filter: blur(0.3px); }
+  .headline { filter: blur(0.15px); }
 }
 
 /* ---- Tasteful page-load entrance (remove if unwanted) ----- */
