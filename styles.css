@@ -53,6 +53,14 @@
   --link-size: 24px;
   --link-line: 30px;
   --link-gap: 20px;
+
+  /* button components (btn/action + btn/link) — desktop "Large" */
+  --icon-size: 20px;            /* → 16px mobile */
+  --btn-gap: 8px;               /* text ↔ icon, both breakpoints */
+  --action-pad-x: 32px;         /* → 24px mobile */
+  --action-pad-y: 16px;         /* → 12px mobile */
+  --action-radius: 16px;        /* radius/lg → radius/md (12px) mobile */
+  --yellow: #fffbc6;
 }
 
 *,
@@ -127,6 +135,7 @@ body {
 .links {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: var(--link-gap);
   font-family: var(--font-links);
   font-weight: 400;
@@ -136,13 +145,36 @@ body {
   white-space: nowrap;
 }
 .links a {
-  color: var(--ink-soft);
   text-decoration: none;
-  transition: color 0.18s ease, transform 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--btn-gap);
+  transition: color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
 }
-.links a:hover {
+.links .icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  flex: none;
+  display: block;
+}
+
+/* btn/action — primary, yellow pill (Mail) */
+.btn-action {
+  color: var(--ink);
+  background: var(--yellow);
+  padding: var(--action-pad-y) var(--action-pad-x);
+  border-radius: var(--action-radius);
+  justify-content: center;
+}
+
+/* btn/link — text + arrow, no background (Twitter, Cosmos) */
+.btn-link {
+  color: var(--ink-soft);
+}
+.btn-link:hover {
   color: var(--ink);
 }
+
 /* desktop only: subtle lift on hover (matches v1's button feel) */
 @media (min-width: 601px) {
   .links a:hover {
@@ -159,6 +191,12 @@ body {
     --link-size: 16px;
     --link-line: 22px;
     --link-gap: 16px;
+
+    /* button components — "Small" variant */
+    --icon-size: 16px;
+    --action-pad-x: 24px;
+    --action-pad-y: 12px;
+    --action-radius: 12px;
   }
   .card { width: 100%; }
   .copy { gap: 16px; }
