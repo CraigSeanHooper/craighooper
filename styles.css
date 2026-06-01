@@ -161,7 +161,10 @@ body {
     --link-gap: 16px;
   }
   .card { width: 100%; }
-  .headline { filter: blur(1px); }
+  .headline {
+    filter: blur(1px);
+    text-wrap: balance; /* distribute words evenly across lines, no orphan */
+  }
 }
 
 /* ---- Tasteful page-load entrance (remove if unwanted) ----- */
