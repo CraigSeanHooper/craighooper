@@ -23,6 +23,13 @@
   font-display: swap;
 }
 @font-face {
+  font-family: "KMR Melange Grotesk";
+  src: url("assets/fonts/KMRMelangeGrotesk-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: "Marlin Soft SQ";
   src: url("assets/fonts/MarlinSoftSQ-ExtraBlack.woff2") format("woff2");
   font-weight: 950;
@@ -48,8 +55,8 @@
 
   /* desktop type */
   --h1-size: 48px;
-  --h1-line: 46px;
-  --h1-track: -0.02em;
+  --h1-line: 48px;
+  --h1-track: -0.01em;
   --link-size: 24px;
   --link-line: 30px;
   --link-gap: 20px;
@@ -119,14 +126,14 @@ body {
 .headline {
   margin: 0;
   width: 100%;
-  font-family: "Marlin Soft SQ", "Arial Black", "Helvetica Neue", sans-serif;
-  font-weight: 950;
+  font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 800;
   font-size: var(--h1-size);
   line-height: var(--h1-line);
   letter-spacing: var(--h1-track);
-  text-transform: uppercase;
   color: var(--ink);
-  font-feature-settings: "salt" 1;
+  text-transform: none;
+  font-feature-settings: "salt" 1, "ss08" 1;  /* stylistic alternates + alternate R */
   word-break: break-word;
   /* uniform layer blur (CSS blur reads stronger than Figma's, so kept light) */
   filter: blur(0.5px);
@@ -187,7 +194,7 @@ body {
   body { padding: 24px 20px; }
   :root {
     --h1-size: 32px;
-    --h1-line: 32px;
+    --h1-line: 34px;
     --link-size: 16px;
     --link-line: 22px;
     --link-gap: 16px;
