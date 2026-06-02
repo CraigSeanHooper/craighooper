@@ -7,9 +7,9 @@
   <title>Home — Craig Hooper</title>
   <style>
     @font-face {
-      font-family: "Marlin Soft SQ";
-      src: url("/assets/fonts/MarlinSoftSQ-ExtraBlack.woff2") format("woff2");
-      font-weight: 950;
+      font-family: "KMR Melange Grotesk";
+      src: url("/assets/fonts/KMRMelangeGrotesk-ExtraBold.woff2") format("woff2");
+      font-weight: 800;
       font-style: normal;
       font-display: swap;
     }
@@ -33,25 +33,25 @@
 
     .lost {
       margin: 0;
-      font-family: "Marlin Soft SQ", "Arial Black", "Helvetica Neue", sans-serif;
-      font-weight: 950;
+      font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 800;
       font-size: 48px;
-      line-height: 46px;
-      letter-spacing: -0.02em;
-      text-transform: uppercase;
+      line-height: 48px;
+      letter-spacing: -0.01em;
       text-align: center;
       color: #ffffff;
       text-decoration: none;
-      font-feature-settings: "salt" 1;
+      font-feature-settings: "salt" 1, "ss08" 1;
       filter: blur(0.5px); /* matches the homepage h1 blur */
     }
 
     @media (max-width: 600px) {
       body { background-image: url("/assets/404-bg-mobile.jpg"); }
+      .lost { filter: none; } /* mobile: no blur, matches homepage */
     }
   </style>
 </head>
 <body>
-  <a class="lost" href="/">Home</a>
+  <a class="lost" href="/">Go home</a>
 </body>
 </html>
