@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
   <title>Craig Hooper. Product Designer. Ottawa, Canada.</title>
   <meta name="description" content="Working on design systems and digital modernization for Canadian Blood Services." />
   <meta name="robots" content="index, follow" />
@@ -29,8 +31,10 @@
 </head>
 <body>
   <main class="card">
-    <!-- Avatar (static JPG). Drop your export at assets/avatar.jpg -->
-    <img class="avatar" src="assets/avatar.jpg" alt="Craig Hooper" width="48" height="48"
+    <!-- Avatar swaps with colour scheme: light line-art on white (default), inverted on dark -->
+    <img class="avatar avatar--light" src="assets/avatar.jpg" alt="Craig Hooper" width="48" height="48"
+         onerror="this.classList.add('avatar--missing')" />
+    <img class="avatar avatar--dark" src="assets/avatar-dark.png" alt="Craig Hooper" width="48" height="48"
          onerror="this.classList.add('avatar--missing')" />
 
     <div class="copy">
@@ -58,5 +62,6 @@
       </nav>
     </div>
   </main>
+  <script src="assets/squircle.js" defer></script>
 </body>
 </html>

@@ -70,6 +70,18 @@
   --yellow: #fffbc6;
 }
 
+/* ---- Dark mode (auto, follows OS) ------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111111;
+    --ink: #f5f5f5;       /* near-white */
+    --ink-soft: #b0b0b0;  /* muted grey for link text */
+    --yellow: #e8e0a0;    /* deeper yellow so the pill doesn't glow on black */
+  }
+  .avatar--light { display: none; }
+  .avatar--dark { display: block; }
+}
+
 *,
 *::before,
 *::after { box-sizing: border-box; }
@@ -108,8 +120,11 @@ body {
   height: 48px;
   object-fit: cover;
   display: block;
+  border-radius: 50%;   /* Figma: cornerRadius 64 on 48px = full circle */
 }
-/* graceful state if the GIF hasn't been added yet */
+/* show light avatar by default, hide dark */
+.avatar--dark { display: none; }
+/* graceful state if an image hasn't been added yet */
 .avatar--missing {
   visibility: hidden;
 }
@@ -167,7 +182,7 @@ body {
 
 /* btn/action — primary, yellow pill (Mail) */
 .btn-action {
-  color: var(--ink);
+  color: #1a1a1a;            /* black/90 — fixed, pill stays light in both modes */
   background: var(--yellow);
   padding: var(--action-pad-y) var(--action-pad-x);
   border-radius: var(--action-radius);
@@ -208,6 +223,7 @@ body {
   .card { width: 100%; }
   .copy { gap: 16px; }
   .headline { filter: none; }
+  .avatar { width: 64px; height: 64px; }
 }
 
 /* ---- Tasteful page-load entrance (remove if unwanted) ----- */
