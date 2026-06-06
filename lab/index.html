@@ -41,6 +41,11 @@
     }
     .controls button#fit { font-size: 12px; letter-spacing: 0.03em; }
     .controls button:hover { background: #fafafa; }
+    .controls .zoompct {
+      width: 40px; text-align: center; padding: 6px 0; font-size: 11px;
+      color: var(--ink); background: #fff; border: 1px solid rgba(0,0,0,0.14);
+      border-radius: 10px; font-variant-numeric: tabular-nums;
+    }
 
     .hint {
       position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
@@ -63,6 +68,7 @@
   </div>
 
   <div class="controls">
+    <div class="zoompct" id="zoompct">100%</div>
     <button id="zin" aria-label="Zoom in">+</button>
     <button id="zout" aria-label="Zoom out">&minus;</button>
     <button id="fit" aria-label="Fit to screen">FIT</button>
@@ -76,7 +82,7 @@
       var hint = document.getElementById('hint');
       var clusters = [].slice.call(document.querySelectorAll('.cluster'));
       var STAGE_W = 5000, STAGE_H = 3200, PAD = 40;
-      var MAX = 2;
+      var MAX = 1;   // 100% = native design size; never upscale past it
 
       var s = 1, x = 0, y = 0, topZ = 1, hinted = false;
       function vw(){ return window.innerWidth; }
@@ -93,6 +99,8 @@
       function apply() {
         clamp();
         stage.style.transform = 'translate3d('+x+'px,'+y+'px,0) scale('+s+')';
+        var pct = document.getElementById('zoompct');
+        if (pct) pct.textContent = Math.round(s*100) + '%';
       }
       function fit() { s = fitScale(); x = (vw()-STAGE_W*s)/2; y = (vh()-STAGE_H*s)/2; apply(); }
       function zoomAround(px, py, ns) {
