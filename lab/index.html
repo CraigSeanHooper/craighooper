@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Lab — Craig Hooper</title>
+  <style>
+    :root { --bg: #f4f4f2; --ink: #1a1a1a; --stage-w: 5000px; --stage-h: 3200px; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: var(--bg); color: var(--ink);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    #viewport {
+      position: fixed; inset: 0; overflow: hidden;
+      cursor: grab; touch-action: none;
+    }
+    #viewport.panning { cursor: grabbing; }
+
+    #stage {
+      position: absolute; top: 0; left: 0;
+      width: var(--stage-w); height: var(--stage-h);
+      will-change: transform; transform: translate3d(0,0,0);
+    }
+
+    .cluster {
+      position: absolute;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+    .cluster.moving { cursor: grabbing; }
+    .cluster img {
+      display: block; width: 100%; height: 100%;
+      pointer-events: none; -webkit-user-drag: none; user-select: none;
+    }
+
+    .hint {
+      position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+      padding: 10px 16px; font-size: 13px; letter-spacing: 0.02em;
+      color: #fff; background: rgba(26,26,26,0.82); border-radius: 999px;
+      pointer-events: none; transition: opacity 0.4s ease; z-index: 10;
+    }
+    .hint.hide { opacity: 0; }
+    .recenter {
+      position: fixed; top: 20px; right: 20px;
+      padding: 9px 14px; font-size: 13px; color: var(--ink);
+      background: #fff; border: 1px solid rgba(0,0,0,0.14);
+      border-radius: 10px; cursor: pointer; z-index: 10;
+    }
+    .recenter:hover { background: #fafafa; }
+  </style>
+</head>
+<body>
+  <div id="viewport">
+    <div id="stage">
+      <!-- each cluster placed at its Figma x/y, sized to Figma w/h -->
+      <div class="cluster" style="left:376px;  top:352px;  width:1040px; height:1040px;"><img src="assets/skulls.png" alt="" /></div>
+      <div class="cluster" style="left:3084px; top:328px;  width:699px;  height:256px;"><img src="assets/lm.png" alt="" /></div>
+      <div class="cluster" style="left:1498px; top:2096px; width:772px;  height:400px;"><img src="assets/cock.png" alt="" /></div>
+      <div class="cluster" style="left:3578px; top:2380px; width:1221px; height:740px;"><img src="assets/text.png" alt="" /></div>
+      <div class="cluster" style="left:2468px; top:1568px; width:64px;   height:64px;"><img src="assets/avatar.png" alt="" /></div>
+    </div>
+  </div>
+
+  <button class="recenter" id="recenter">Recenter</button>
+  <div class="hint" id="hint">Drag a piece to move it · drag the background to pan</div>
+
+  <script>
+    (function () {
+      var viewport = document.getElementById('viewport');
+      var stage = document.getElementById('stage');
+      var hint = document.getElementById('hint');
+      var clusters = Array.prototype.slice.call(document.querySelectorAll('.cluster'));
+      var STAGE_W = 5000, STAGE_H = 3200;
+
+      var x = 0, y = 0;                 // canvas pan offset
+      var panning = false, panSX = 0, panSY = 0, panOX = 0, panOY = 0;
+      var topZ = 1, hinted = false;
+
+      function clampPan() {
+        var minX = window.innerWidth - STAGE_W, minY = window.innerHeight - STAGE_H;
+        if (x > 0) x = 0; if (y > 0) y = 0;
+        if (x < minX) x = minX; if (y < minY) y = minY;
+      }
+      function applyPan() {
+        clampPan();
+        stage.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+      }
+      function center() {
+        x = (window.innerWidth - STAGE_W) / 2;
+        y = (window.innerHeight - STAGE_H) / 2;
+        applyPan();
+      }
+      function dismissHint() { if (!hinted) { hinted = true; hint.classList.add('hide'); } }
+
+      // --- panning the canvas (drag background) ---
+      viewport.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.cluster')) return;   // clusters handle themselves
+        panning = true;
+        viewport.classList.add('panning');
+        viewport.setPointerCapture(e.pointerId);
+        panSX = e.clientX; panSY = e.clientY; panOX = x; panOY = y;
+      });
+      viewport.addEventListener('pointermove', function (e) {
+        if (!panning) return;
+        x = panOX + (e.clientX - panSX);
+        y = panOY + (e.clientY - panSY);
+        applyPan(); dismissHint();
+      });
+      function endPan(e) {
+        if (!panning) return;
+        panning = false; viewport.classList.remove('panning');
+        try { viewport.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+      viewport.addEventListener('pointerup', endPan);
+      viewport.addEventListener('pointercancel', endPan);
+
+      // --- trackpad / wheel pan ---
+      viewport.addEventListener('wheel', function (e) {
+        e.preventDefault(); x -= e.deltaX; y -= e.deltaY; applyPan(); dismissHint();
+      }, { passive: false });
+
+      // --- dragging an individual cluster ---
+      clusters.forEach(function (el) {
+        var sx = 0, sy = 0, ox = 0, oy = 0, dragging = false;
+        el.addEventListener('pointerdown', function (e) {
+          e.stopPropagation();                 // don't pan the canvas
+          dragging = true;
+          el.classList.add('moving');
+          el.setPointerCapture(e.pointerId);
+          el.style.zIndex = ++topZ;            // bring to front
+          sx = e.clientX; sy = e.clientY;
+          ox = parseFloat(el.style.left); oy = parseFloat(el.style.top);
+        });
+        el.addEventListener('pointermove', function (e) {
+          if (!dragging) return;
+          el.style.left = (ox + (e.clientX - sx)) + 'px';
+          el.style.top  = (oy + (e.clientY - sy)) + 'px';
+          dismissHint();
+        });
+        function done(e) {
+          if (!dragging) return;
+          dragging = false; el.classList.remove('moving');
+          try { el.releasePointerCapture(e.pointerId); } catch (err) {}
+        }
+        el.addEventListener('pointerup', done);
+        el.addEventListener('pointercancel', done);
+      });
+
+      document.getElementById('recenter').addEventListener('click', center);
+      window.addEventListener('resize', applyPan);
+      center();
+    })();
+  </script>
+</body>
+</html>
