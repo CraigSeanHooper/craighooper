@@ -150,8 +150,6 @@ body {
   text-transform: none;
   font-feature-settings: "salt" 1, "ss08" 1;  /* stylistic alternates + alternate R */
   word-break: break-word;
-  /* uniform layer blur (CSS blur reads stronger than Figma's, so kept light) */
-  filter: blur(0.5px);
 }
 
 .links {
@@ -222,8 +220,6 @@ body {
   }
   .card { width: 100%; }
   .copy { gap: 16px; }
-  .headline { filter: none; }
-  .avatar { width: 64px; height: 64px; }
 }
 
 /* ---- Tasteful page-load entrance (remove if unwanted) ----- */
