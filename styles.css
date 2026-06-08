@@ -79,7 +79,7 @@
     --yellow: #e8e0a0;    /* deeper yellow so the pill doesn't glow on black */
   }
   .avatar--light { display: none; }
-  .avatar--dark { display: block; }
+  .avatar--dark { display: block; filter: invert(1); }
 }
 
 *,
