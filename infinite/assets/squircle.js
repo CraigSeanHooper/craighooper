@@ -1,37 +1,37 @@
-(()=>{function x({topLeftCornerRadius:t,topRightCornerRadius:n,bottomRightCornerRadius:$,bottomLeftCornerRadius:e,width:o,height:f}){let c={topLeft:-1,topRight:-1,bottomLeft:-1,bottomRight:-1},i={topLeft:t,topRight:n,bottomLeft:e,bottomRight:$};return Object.entries(i).sort(([,m],[,s])=>s-m).forEach(([m,s])=>{let r=m,h=T[r],u=Math.min(...h.map(a=>{let g=i[a.corner];if(s===0&&g===0)return 0;let l=c[a.corner],P=a.side==="top"||a.side==="bottom"?o:f;return l>=0?P-c[a.corner]:s/(s+g)*P}));c[r]=u,i[r]=Math.min(s,u)}),{topLeft:{radius:i.topLeft,roundingAndSmoothingBudget:c.topLeft},topRight:{radius:i.topRight,roundingAndSmoothingBudget:c.topRight},bottomLeft:{radius:i.bottomLeft,roundingAndSmoothingBudget:c.bottomLeft},bottomRight:{radius:i.bottomRight,roundingAndSmoothingBudget:c.bottomRight}}}var T={topLeft:[{corner:"topRight",side:"top"},{corner:"bottomLeft",side:"left"}],topRight:[{corner:"topLeft",side:"top"},{corner:"bottomRight",side:"right"}],bottomLeft:[{corner:"bottomRight",side:"bottom"},{corner:"topLeft",side:"left"}],bottomRight:[{corner:"bottomLeft",side:"bottom"},{corner:"topRight",side:"right"}]};function d({cornerRadius:t,cornerSmoothing:n,preserveSmoothing:$,roundingAndSmoothingBudget:e}){let o=(1+n)*t;if(!$){let g=e/t-1;n=Math.min(n,g),o=Math.min(o,e)}let f=90*(1-n),c=Math.sin(M(f/2))*t*Math.sqrt(2),i=(90-f)/2,m=t*Math.tan(M(i/2)),s=45*n,r=m*Math.cos(M(s)),h=r*Math.tan(M(s)),u=(o-c-r-h)/3,a=2*u;if($&&o>e){let g=e-h-c-r,l=g/6,P=g-l;u=Math.min(u,P),a=g-u,o=Math.min(o,e)}return{a,b:u,c:r,d:h,p:o,arcSectionLength:c,cornerRadius:t}}function A({width:t,height:n,topLeftPathParams:$,topRightPathParams:e,bottomLeftPathParams:o,bottomRightPathParams:f}){return`
-    M ${t-e.p} 0
-    ${F(e)}
-    L ${t} ${n-f.p}
-    ${S(f)}
-    L ${o.p} ${n}
-    ${b(o)}
-    L 0 ${$.p}
-    ${q($)}
+(()=>{function x({topLeftCornerRadius:e,topRightCornerRadius:t,bottomRightCornerRadius:n,bottomLeftCornerRadius:o,width:$,height:f}){let c={topLeft:-1,topRight:-1,bottomLeft:-1,bottomRight:-1},s={topLeft:e,topRight:t,bottomLeft:o,bottomRight:n};return Object.entries(s).sort(([,i],[,r])=>r-i).forEach(([i,r])=>{let m=i,h=T[m],a=Math.min(...h.map(g=>{let u=s[g.corner];if(r===0&&u===0)return 0;let l=c[g.corner],P=g.side==="top"||g.side==="bottom"?$:f;return l>=0?P-c[g.corner]:r/(r+u)*P}));c[m]=a,s[m]=Math.min(r,a)}),{topLeft:{radius:s.topLeft,roundingAndSmoothingBudget:c.topLeft},topRight:{radius:s.topRight,roundingAndSmoothingBudget:c.topRight},bottomLeft:{radius:s.bottomLeft,roundingAndSmoothingBudget:c.bottomLeft},bottomRight:{radius:s.bottomRight,roundingAndSmoothingBudget:c.bottomRight}}}var T={topLeft:[{corner:"topRight",side:"top"},{corner:"bottomLeft",side:"left"}],topRight:[{corner:"topLeft",side:"top"},{corner:"bottomRight",side:"right"}],bottomLeft:[{corner:"bottomRight",side:"bottom"},{corner:"topLeft",side:"left"}],bottomRight:[{corner:"bottomLeft",side:"bottom"},{corner:"topRight",side:"right"}]};function d({cornerRadius:e,cornerSmoothing:t,preserveSmoothing:n,roundingAndSmoothingBudget:o}){let $=(1+t)*e;if(!n){let u=o/e-1;t=Math.min(t,u),$=Math.min($,o)}let f=90*(1-t),c=Math.sin(M(f/2))*e*Math.sqrt(2),s=(90-f)/2,i=e*Math.tan(M(s/2)),r=45*t,m=i*Math.cos(M(r)),h=m*Math.tan(M(r)),a=($-c-m-h)/3,g=2*a;if(n&&$>o){let u=o-h-c-m,l=u/6,P=u-l;a=Math.min(a,P),g=u-a,$=Math.min($,o)}return{a:g,b:a,c:m,d:h,p:$,arcSectionLength:c,cornerRadius:e}}function A({width:e,height:t,topLeftPathParams:n,topRightPathParams:o,bottomLeftPathParams:$,bottomRightPathParams:f}){return`
+    M ${e-o.p} 0
+    ${E(o)}
+    L ${e} ${t-f.p}
+    ${F(f)}
+    L ${$.p} ${t}
+    ${S($)}
+    L 0 ${n.p}
+    ${b(n)}
     Z
-  `.replace(/[\t\s\n]+/g," ").trim()}function F({cornerRadius:t,a:n,b:$,c:e,d:o,p:f,arcSectionLength:c}){return t?p`
-    c ${n} 0 ${n+$} 0 ${n+$+e} ${o}
-    a ${t} ${t} 0 0 1 ${c} ${c}
-    c ${o} ${e}
-        ${o} ${$+e}
-        ${o} ${n+$+e}`:p`l ${f} 0`}function S({cornerRadius:t,a:n,b:$,c:e,d:o,p:f,arcSectionLength:c}){return t?p`
-    c 0 ${n}
-      0 ${n+$}
-      ${-o} ${n+$+e}
-    a ${t} ${t} 0 0 1 -${c} ${c}
-    c ${-e} ${o}
-      ${-($+e)} ${o}
-      ${-(n+$+e)} ${o}`:p`l 0 ${f}`}function b({cornerRadius:t,a:n,b:$,c:e,d:o,p:f,arcSectionLength:c}){return t?p`
-    c ${-n} 0
-      ${-(n+$)} 0
-      ${-(n+$+e)} ${-o}
-    a ${t} ${t} 0 0 1 -${c} -${c}
-    c ${-o} ${-e}
-      ${-o} ${-($+e)}
-      ${-o} ${-(n+$+e)}`:p`l ${-f} 0`}function q({cornerRadius:t,a:n,b:$,c:e,d:o,p:f,arcSectionLength:c}){return t?p`
-    c 0 ${-n}
-      0 ${-(n+$)}
-      ${o} ${-(n+$+e)}
-    a ${t} ${t} 0 0 1 ${c} -${c}
-    c ${e} ${-o}
-      ${$+e} ${-o}
-      ${n+$+e} ${-o}`:p`l 0 ${-f}`}function M(t){return t*Math.PI/180}function p(t,...n){return t.reduce(($,e,o)=>{let f=n[o];return typeof f=="number"?$+e+f.toFixed(4):$+e+(f!=null?f:"")},"")}function y({cornerRadius:t=0,topLeftCornerRadius:n,topRightCornerRadius:$,bottomRightCornerRadius:e,bottomLeftCornerRadius:o,cornerSmoothing:f,width:c,height:i,preserveSmoothing:m=!1}){if(n=n!=null?n:t,$=$!=null?$:t,o=o!=null?o:t,e=e!=null?e:t,n===$&&$===e&&e===o&&o===n){let a=Math.min(c,i)/2,g=Math.min(n,a),l=d({cornerRadius:g,cornerSmoothing:f,preserveSmoothing:m,roundingAndSmoothingBudget:a});return A({width:c,height:i,topLeftPathParams:l,topRightPathParams:l,bottomLeftPathParams:l,bottomRightPathParams:l})}let{topLeft:s,topRight:r,bottomLeft:h,bottomRight:u}=x({topLeftCornerRadius:n,topRightCornerRadius:$,bottomRightCornerRadius:e,bottomLeftCornerRadius:o,width:c,height:i});return A({width:c,height:i,topLeftPathParams:d({cornerSmoothing:f,preserveSmoothing:m,cornerRadius:s.radius,roundingAndSmoothingBudget:s.roundingAndSmoothingBudget}),topRightPathParams:d({cornerSmoothing:f,preserveSmoothing:m,cornerRadius:r.radius,roundingAndSmoothingBudget:r.roundingAndSmoothingBudget}),bottomRightPathParams:d({cornerSmoothing:f,preserveSmoothing:m,cornerRadius:u.radius,roundingAndSmoothingBudget:u.roundingAndSmoothingBudget}),bottomLeftPathParams:d({cornerSmoothing:f,preserveSmoothing:m,cornerRadius:h.radius,roundingAndSmoothingBudget:h.roundingAndSmoothingBudget})})}function B(t){let n=t.offsetWidth,$=t.offsetHeight;if(!n||!$)return;let e=parseFloat(getComputedStyle(t).borderTopLeftRadius)||12,o=y({width:n,height:$,cornerRadius:e,cornerSmoothing:1,preserveSmoothing:!0});t.style.clipPath=`path('${o}')`}function L(){let t=document.querySelector(".controls");if(!t)return;let n=new ResizeObserver(()=>B(t));B(t),n.observe(t),document.fonts&&document.fonts.ready&&document.fonts.ready.then(()=>B(t))}document.readyState!=="loading"?L():document.addEventListener("DOMContentLoaded",L);})();
+  `.replace(/[\t\s\n]+/g," ").trim()}function E({cornerRadius:e,a:t,b:n,c:o,d:$,p:f,arcSectionLength:c}){return e?p`
+    c ${t} 0 ${t+n} 0 ${t+n+o} ${$}
+    a ${e} ${e} 0 0 1 ${c} ${c}
+    c ${$} ${o}
+        ${$} ${n+o}
+        ${$} ${t+n+o}`:p`l ${f} 0`}function F({cornerRadius:e,a:t,b:n,c:o,d:$,p:f,arcSectionLength:c}){return e?p`
+    c 0 ${t}
+      0 ${t+n}
+      ${-$} ${t+n+o}
+    a ${e} ${e} 0 0 1 -${c} ${c}
+    c ${-o} ${$}
+      ${-(n+o)} ${$}
+      ${-(t+n+o)} ${$}`:p`l 0 ${f}`}function S({cornerRadius:e,a:t,b:n,c:o,d:$,p:f,arcSectionLength:c}){return e?p`
+    c ${-t} 0
+      ${-(t+n)} 0
+      ${-(t+n+o)} ${-$}
+    a ${e} ${e} 0 0 1 -${c} -${c}
+    c ${-$} ${-o}
+      ${-$} ${-(n+o)}
+      ${-$} ${-(t+n+o)}`:p`l ${-f} 0`}function b({cornerRadius:e,a:t,b:n,c:o,d:$,p:f,arcSectionLength:c}){return e?p`
+    c 0 ${-t}
+      0 ${-(t+n)}
+      ${$} ${-(t+n+o)}
+    a ${e} ${e} 0 0 1 ${c} -${c}
+    c ${o} ${-$}
+      ${n+o} ${-$}
+      ${t+n+o} ${-$}`:p`l 0 ${-f}`}function M(e){return e*Math.PI/180}function p(e,...t){return e.reduce((n,o,$)=>{let f=t[$];return typeof f=="number"?n+o+f.toFixed(4):n+o+(f!=null?f:"")},"")}function y({cornerRadius:e=0,topLeftCornerRadius:t,topRightCornerRadius:n,bottomRightCornerRadius:o,bottomLeftCornerRadius:$,cornerSmoothing:f,width:c,height:s,preserveSmoothing:i=!1}){if(t=t!=null?t:e,n=n!=null?n:e,$=$!=null?$:e,o=o!=null?o:e,t===n&&n===o&&o===$&&$===t){let g=Math.min(c,s)/2,u=Math.min(t,g),l=d({cornerRadius:u,cornerSmoothing:f,preserveSmoothing:i,roundingAndSmoothingBudget:g});return A({width:c,height:s,topLeftPathParams:l,topRightPathParams:l,bottomLeftPathParams:l,bottomRightPathParams:l})}let{topLeft:r,topRight:m,bottomLeft:h,bottomRight:a}=x({topLeftCornerRadius:t,topRightCornerRadius:n,bottomRightCornerRadius:o,bottomLeftCornerRadius:$,width:c,height:s});return A({width:c,height:s,topLeftPathParams:d({cornerSmoothing:f,preserveSmoothing:i,cornerRadius:r.radius,roundingAndSmoothingBudget:r.roundingAndSmoothingBudget}),topRightPathParams:d({cornerSmoothing:f,preserveSmoothing:i,cornerRadius:m.radius,roundingAndSmoothingBudget:m.roundingAndSmoothingBudget}),bottomRightPathParams:d({cornerSmoothing:f,preserveSmoothing:i,cornerRadius:a.radius,roundingAndSmoothingBudget:a.roundingAndSmoothingBudget}),bottomLeftPathParams:d({cornerSmoothing:f,preserveSmoothing:i,cornerRadius:h.radius,roundingAndSmoothingBudget:h.roundingAndSmoothingBudget})})}function B(e){let t=e.offsetWidth,n=e.offsetHeight;if(!t||!n)return;let o=parseFloat(getComputedStyle(e).borderTopLeftRadius)||12;e.style.clipPath=`path('${y({width:t,height:n,cornerRadius:o,cornerSmoothing:1,preserveSmoothing:!0})}')`}function L(){let e=document.querySelectorAll(".controls, .controls .pct");if(!e.length)return;let t=new ResizeObserver(n=>{for(let o of n)B(o.target)});e.forEach(n=>{B(n),t.observe(n)}),document.fonts&&document.fonts.ready&&document.fonts.ready.then(()=>e.forEach(B))}document.readyState!=="loading"?L():document.addEventListener("DOMContentLoaded",L);})();
