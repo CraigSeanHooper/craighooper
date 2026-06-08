@@ -8,6 +8,8 @@
   <link rel="icon" href="/assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#f4f4f2" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
   <style>
     @font-face {
       font-family: "KMR Melange Grotesk";
@@ -96,6 +98,18 @@
       .controls { gap: 12px; padding: 8px 18px; }
       .controls .pct { font-size: 14px; line-height: 20px; height: 34px; min-width: 56px; }
       .controls .fit { font-size: 14px; line-height: 20px; }
+    }
+
+    /* dark mode (auto, follows OS) — artwork stays, chrome + text flip */
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #111111; }
+      .tcol { color: #b0b0b0; }
+      .vcol p { color: #f5f5f5; }
+      .controls { background: #1c1c1c; }
+      .controls .pct { background: #1c1c1c; border-color: #3a3a3a; color: #f5f5f5; }
+      .controls .fit { color: #f5f5f5; }
+      .controls .iconbtn img { filter: invert(1); }
+      .cluster img[src$="avatar.png"] { filter: invert(1); }
     }
   </style>
 </head>
