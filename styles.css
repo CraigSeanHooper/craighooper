@@ -115,6 +115,7 @@ body {
 }
 
 /* ---- Avatar ----------------------------------------------- */
+.avatar-link { display: block; line-height: 0; width: 48px; }
 .avatar {
   width: 48px;
   height: 48px;
