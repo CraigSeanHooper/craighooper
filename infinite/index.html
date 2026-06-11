@@ -269,6 +269,13 @@
       if (home) home.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
 
       document.getElementById('zin').addEventListener('click', function(){ zoomAround(vw()/2, vh()/2, s*1.25); });
+
+      // keyboard zoom: + / - (and = for unshifted plus)
+      window.addEventListener('keydown', function(e){
+        if (e.metaKey || e.ctrlKey || e.altKey) return;   // leave browser shortcuts alone
+        if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomAround(vw()/2, vh()/2, s*1.25); }
+        else if (e.key === '-') { e.preventDefault(); zoomAround(vw()/2, vh()/2, s*0.8); }
+      });
       document.getElementById('zout').addEventListener('click', function(){ zoomAround(vw()/2, vh()/2, s*0.8); });
       document.getElementById('fit').addEventListener('click', fit);
       window.addEventListener('resize', apply);
