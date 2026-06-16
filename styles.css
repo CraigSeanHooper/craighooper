@@ -10,6 +10,13 @@
 ------------------------------------------------------------- */
 @font-face {
   font-family: "KMR Melange Grotesk";
+  src: url("assets/fonts/KMRMelangeGrotesk-Book.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "KMR Melange Grotesk";
   src: url("assets/fonts/KMRMelangeGrotesk-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
@@ -80,6 +87,7 @@
   }
   .avatar.avatar--light { display: none; }
   .avatar.avatar--dark { display: block; filter: invert(1); }
+  .bio p { color: #b0b0b0; }
 }
 
 *,
@@ -153,6 +161,22 @@ body {
   font-feature-settings: "salt" 1, "ss08" 1;  /* stylistic alternates + alternate R */
   word-break: break-word;
 }
+/* bio paragraphs — KMR Melange Grotesk Book (falls back to nearest weight until Book is bundled) */
+.bio {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin: 0;
+}
+.bio p {
+  margin: 0;
+  font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  color: #4d4d4d;
+}
+.bio-lead { font-size: 20px; line-height: 26px; }
+.bio-body { font-size: 16px; line-height: 22px; }
 
 .links {
   display: flex;
@@ -222,6 +246,8 @@ body {
   }
   .card { width: 100%; }
   .copy { gap: 16px; }
+  .bio-lead { font-size: 16px; line-height: 22px; }
+  .bio-body { font-size: 14px; line-height: 20px; }
 }
 
 /* ---- Tasteful page-load entrance (remove if unwanted) ----- */
