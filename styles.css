@@ -51,6 +51,13 @@
   font-display: swap;
 }
 @font-face {
+  font-family: "FT System";
+  src: url("assets/fonts/FTSystem-BlankBold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: "Parabole";
   src: url("assets/fonts/Parabole-Regular.woff2") format("woff2");
   font-weight: 400;
@@ -69,7 +76,7 @@
 
   /* desktop type */
   --h1-size: 48px;
-  --h1-line: 46px;
+  --h1-line: 48px;
   --h1-track: -0.02em;
   --link-size: 24px;
   --link-line: 30px;
@@ -147,19 +154,26 @@ body {
 }
 
 /* ---- Copy + links ----------------------------------------- */
-.copy {
+.content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
+  gap: 16px;
+  width: 100%;
+}
+.copylinks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
   width: 100%;
 }
 
 .headline {
   margin: 0;
   width: 100%;
-  font-family: "Marlin Soft SQ", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 950;
+  font-family: "FT System", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
   font-size: var(--h1-size);
   line-height: var(--h1-line);
   letter-spacing: var(--h1-track);
@@ -172,7 +186,7 @@ body {
 .bio {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   width: 100%;
   margin: 0;
 }
@@ -242,7 +256,7 @@ body {
   body { padding: 24px 20px; }
   :root {
     --h1-size: 32px;
-    --h1-line: 32px;
+    --h1-line: 34px;
     --link-size: 16px;
     --link-line: 22px;
     --link-gap: 16px;
@@ -254,7 +268,7 @@ body {
     --action-radius: 12px;
   }
   .card { width: 100%; }
-  .copy { gap: 16px; }
+  .bio { gap: 12px; }
   .bio-lead { font-size: 16px; line-height: 22px; }
   .bio-body { font-size: 14px; line-height: 20px; }
 }
