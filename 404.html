@@ -7,9 +7,9 @@
   <title>Home — Craig Hooper</title>
   <style>
     @font-face {
-      font-family: "KMR Melange Grotesk";
-      src: url("/assets/fonts/KMRMelangeGrotesk-ExtraBold.woff2") format("woff2");
-      font-weight: 800;
+      font-family: "Marlin Soft SQ";
+      src: url("/assets/fonts/MarlinSoftSQ-ExtraBlack.woff2") format("woff2");
+      font-weight: 950;
       font-style: normal;
       font-display: swap;
     }
@@ -24,7 +24,6 @@
       align-items: center;
       justify-content: center;
       gap: 28px;
-      /* dark fallback if the image is missing */
       background: #14130f center / cover no-repeat;
       background-image: url("/assets/404-bg.jpg");
       -webkit-font-smoothing: antialiased;
@@ -34,20 +33,21 @@
 
     .lost {
       margin: 0;
-      font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
-      font-weight: 800;
+      font-family: "Marlin Soft SQ", "Helvetica Neue", Arial, sans-serif;
+      font-weight: 950;
       font-size: 48px;
-      line-height: 48px;
-      letter-spacing: -0.01em;
+      line-height: 46px;
+      letter-spacing: -0.02em;
       text-align: center;
       color: #ffffff;
       text-decoration: none;
-      font-feature-settings: "salt" 1, "ss08" 1;
+      text-transform: uppercase;
+      font-feature-settings: "salt" 1;
     }
 
     @media (max-width: 600px) {
       body { background-image: url("/assets/404-bg-mobile.jpg"); }
-      .lost { font-size: 32px; line-height: 34px; }
+      .lost { font-size: 32px; line-height: 32px; }
     }
   </style>
 </head>
