@@ -254,6 +254,7 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   .avatar,
   .headline,
+  .bio,
   .links {
     opacity: 0;
     translate: 0 10px;
@@ -261,7 +262,8 @@ body {
   }
   .avatar { animation-delay: 0.04s; }
   .headline { animation-delay: 0.12s; }
-  .links { animation-delay: 0.22s; }
+  .bio { animation-delay: 0.18s; }
+  .links { animation-delay: 0.26s; }
 
   @keyframes rise {
     to { opacity: 1; translate: 0 0; }
