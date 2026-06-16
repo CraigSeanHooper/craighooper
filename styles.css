@@ -77,7 +77,7 @@
   /* desktop type */
   --h1-size: 48px;
   --h1-line: 48px;
-  --h1-track: -0.02em;
+  --h1-track: -0.01em;
   --link-size: 24px;
   --link-line: 30px;
   --link-gap: 20px;
@@ -120,7 +120,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font);
-  font-feature-settings: "salt" 1;
+  font-feature-settings: "salt" 1, "ss08" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -172,17 +172,17 @@ body {
 .headline {
   margin: 0;
   width: 100%;
-  font-family: "FT System", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 700;
+  font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 800;
   font-size: var(--h1-size);
   line-height: var(--h1-line);
   letter-spacing: var(--h1-track);
   color: var(--ink);
   text-transform: none;
-  font-feature-settings: "salt" 1;
+  font-feature-settings: "salt" 1, "ss08" 1;
   word-break: break-word;
 }
-/* bio paragraphs — FT System Blank Regular */
+/* bio paragraphs — KMR Melange Grotesk Book */
 .bio {
   display: flex;
   flex-direction: column;
@@ -192,10 +192,8 @@ body {
 }
 .bio p {
   margin: 0;
-  font-family: "FT System", "Helvetica Neue", Arial, sans-serif;
+  font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
   font-weight: 400;
-  letter-spacing: -0.01em;
-  font-feature-settings: "salt" 1;
   color: #4d4d4d;
 }
 .bio-lead { font-size: 20px; line-height: 26px; }
