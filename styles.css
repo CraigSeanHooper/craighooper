@@ -101,7 +101,6 @@
   }
   .avatar.avatar--light { display: none; }
   .avatar.avatar--dark { display: block; filter: invert(1); }
-  .bio p { color: #b0b0b0; }
 }
 
 *,
@@ -194,7 +193,7 @@ body {
   margin: 0;
   font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
   font-weight: 400;
-  color: #4d4d4d;
+  color: var(--ink-soft);
 }
 .bio-lead { font-size: 20px; line-height: 26px; }
 .bio-body { font-size: 16px; line-height: 22px; }
@@ -254,7 +253,7 @@ body {
   body { padding: 24px 20px; }
   :root {
     --h1-size: 32px;
-    --h1-line: 34px;
+    --h1-line: 32px;
     --link-size: 16px;
     --link-line: 22px;
     --link-gap: 16px;
