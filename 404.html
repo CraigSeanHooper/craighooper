@@ -20,19 +20,29 @@
       margin: 0;
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 28px;
-      background: #14130f center / cover no-repeat;
-      background-image: url("/assets/404-bg.jpg");
+      background: #14130f;
+      overflow: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
     }
 
+    .bg-video {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      pointer-events: none;
+    }
+
     .lost {
+      position: relative;
       margin: 0;
+      padding: 0 24px;
       font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
       font-weight: 800;
       font-size: 48px;
@@ -46,12 +56,14 @@
     }
 
     @media (max-width: 600px) {
-      body { background-image: url("/assets/404-bg-mobile.jpg"); }
       .lost { font-size: 32px; line-height: 32px; }
     }
   </style>
 </head>
 <body>
-  <a class="lost" href="/">Go home</a>
+  <video class="bg-video" autoplay muted loop playsinline poster="/assets/404-bg.jpg">
+    <source src="/assets/404.mp4" type="video/mp4" />
+  </video>
+  <a class="lost" href="/">Go home and go to bed</a>
 </body>
 </html>
