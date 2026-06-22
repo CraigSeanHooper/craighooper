@@ -98,13 +98,14 @@
       touch-action: manipulation;
     }
     .controls, .controls * { touch-action: manipulation; }
-    .controls .iconbtn {
+    .controls .iconbtn, .sound-toggle {
       box-sizing: border-box;
       width: 40px; height: 40px; padding: 8px;
       border: 1px solid #e6e6e6; border-radius: 50%; background: #fff;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; color: #1a1a1a;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-    .controls .iconbtn svg, .controls .iconbtn img { display: block; width: 24px; height: 24px; }
+    .controls .iconbtn { color: #1a1a1a; }
+    .controls .iconbtn svg, .controls .iconbtn img, .sound-toggle img { display: block; width: 24px; height: 24px; }
     .controls .pct {
       min-width: 65px; padding: 8px 12px;
       display: flex; align-items: center; justify-content: center;
@@ -120,13 +121,8 @@
 
     .sound-toggle {
       position: fixed; bottom: 18px; right: 24px; z-index: 10;
-      box-sizing: border-box;
-      width: 40px; height: 40px; padding: 8px;
-      border: 1px solid #e6e6e6; border-radius: 50%; background: #fff;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
       touch-action: manipulation;
     }
-    .sound-toggle img { display: block; width: 24px; height: 24px; }
 
     /* phone: smaller control text (p-parabole/xs), keep "Zoom to fit" on one line */
     @media (max-width: 600px) {
