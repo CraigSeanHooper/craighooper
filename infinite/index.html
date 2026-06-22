@@ -100,11 +100,11 @@
     .controls, .controls * { touch-action: manipulation; }
     .controls .iconbtn {
       box-sizing: border-box;
-      width: 36px; height: 36px; padding: 8px;
+      width: 40px; height: 40px; padding: 8px;
       border: 1px solid #e6e6e6; border-radius: 50%; background: #fff;
       cursor: pointer; display: flex; align-items: center; justify-content: center; color: #1a1a1a;
     }
-    .controls .iconbtn svg, .controls .iconbtn img { display: block; width: 20px; height: 20px; }
+    .controls .iconbtn svg, .controls .iconbtn img { display: block; width: 24px; height: 24px; }
     .controls .pct {
       min-width: 65px; padding: 8px 12px;
       display: flex; align-items: center; justify-content: center;
@@ -117,6 +117,16 @@
       font-family: "Parabole", serif; font-weight: 400; font-size: 16px; line-height: 22px; color: #333;
       white-space: nowrap;
     }
+
+    .sound-toggle {
+      position: fixed; bottom: 18px; right: 24px; z-index: 10;
+      box-sizing: border-box;
+      width: 40px; height: 40px; padding: 8px;
+      border: 1px solid #e6e6e6; border-radius: 50%; background: #fff;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      touch-action: manipulation;
+    }
+    .sound-toggle img { display: block; width: 24px; height: 24px; }
 
     /* phone: smaller control text (p-parabole/xs), keep "Zoom to fit" on one line */
     @media (max-width: 600px) {
@@ -136,6 +146,8 @@
       .controls .fit { color: #f5f5f5; }
       .controls .iconbtn img { filter: invert(1); }
       .home-link img { filter: invert(1); }
+      .sound-toggle { background: #1c1c1c; border-color: #3a3a3a; }
+      .sound-toggle img { filter: invert(1); }
     }
   </style>
 </head>
@@ -179,15 +191,23 @@
         <div class="vcol vcol--cw" style="left:12px; top:0px; width:64px; height:470px;"><p style="width:470px;">I have ate out of your garbage cans to stay out of jail. I have wore your second-hand clothes. I have done my best to get along in your world and now you want to kill me, and I look at you, and then I say to myself, You want to kill me? Ha! I’m already dead, have been all my life. I’ve spent twenty-three years in tombs that you built.</p></div>
       </div>
 
+      <!-- hs-3: image, blurred copy baked into the PNG -->
+      <div class="cluster" style="left:982px; top:2474px; width:885px; height:678px;"><img src="assets/hs-3.png" alt="" /></div>
+
     </div>
   </div>
 
   <div class="controls">
-    <button class="iconbtn" id="zin" aria-label="Zoom in"><img src="assets/plus.svg" width="20" height="20" alt="" /></button>
+    <button class="iconbtn" id="zin" aria-label="Zoom in"><img src="assets/plus.svg" width="24" height="24" alt="" /></button>
     <div class="pct" id="zoompct">100%</div>
-    <button class="iconbtn" id="zout" aria-label="Zoom out"><img src="assets/minus.svg" width="20" height="20" alt="" /></button>
+    <button class="iconbtn" id="zout" aria-label="Zoom out"><img src="assets/minus.svg" width="24" height="24" alt="" /></button>
     <button class="fit" id="fit">Zoom to fit</button>
   </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">
+    <img id="sound-icon" src="assets/icon-sound-mute.svg" width="24" height="24" alt="" />
+  </button>
+  <audio id="bg-audio" src="assets/infinite.mp3" loop preload="auto"></audio>
 
   <script src="assets/squircle.js" defer></script>
 
@@ -291,6 +311,24 @@
 
       var home = document.querySelector('.home-link');
       if (home) home.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
+
+      // sound toggle: play/loop on, pause off, swap icon
+      var bgAudio = document.getElementById('bg-audio');
+      var soundBtn = document.getElementById('sound-toggle');
+      var soundIcon = document.getElementById('sound-icon');
+      if (soundBtn && bgAudio) {
+        soundBtn.addEventListener('click', function(){
+          if (bgAudio.paused) {
+            bgAudio.play();
+            soundIcon.src = 'assets/icon-sound-on.svg';
+            soundBtn.setAttribute('aria-label', 'Mute sound');
+          } else {
+            bgAudio.pause();
+            soundIcon.src = 'assets/icon-sound-mute.svg';
+            soundBtn.setAttribute('aria-label', 'Play sound');
+          }
+        });
+      }
 
       document.getElementById('zin').addEventListener('click', function(){ zoomAround(vw()/2, vh()/2, s*1.25); });
 
