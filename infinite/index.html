@@ -286,6 +286,22 @@
         dismissHint();
       }, { passive: false });
 
+      // Trackpad pinch on Safari / iPadOS fires gesture events that would zoom the whole
+      // page (control bar included). Catch them and zoom the canvas instead.
+      var gestureStartScale = 1;
+      window.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
+        gestureStartScale = s;
+      }, { passive: false });
+      window.addEventListener('gesturechange', function (e) {
+        e.preventDefault();
+        var cx = (e.clientX != null) ? e.clientX : vw()/2;
+        var cy = (e.clientY != null) ? e.clientY : vh()/2;
+        zoomAround(cx, cy, gestureStartScale * e.scale);
+        dismissHint();
+      }, { passive: false });
+      window.addEventListener('gestureend', function (e) { e.preventDefault(); }, { passive: false });
+
       clusters.forEach(function (el) {
         var sx, sy, ox, oy, dragging = false;
         el.addEventListener('pointerdown', function (e) {
