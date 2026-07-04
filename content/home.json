@@ -5,17 +5,8 @@
     "I'm a big believer in systems, and in how a well-crafted one keeps design consistent. I'm watching the rapid rise of agentic workflows with a mix of amazement, curiosity, and a little bit of caution."
   ],
   "links": [
-    {
-      "label": "Mail",
-      "url": "mailto:craigseanhooper@gmail.com"
-    },
-    {
-      "label": "Twitter",
-      "url": "https://x.com/craigseanhooper"
-    },
-    {
-      "label": "Cosmos",
-      "url": "https://www.cosmos.so/craighooper"
-    }
+    { "label": "Mail", "url": "mailto:craigseanhooper@gmail.com" },
+    { "label": "Twitter", "url": "https://x.com/craigseanhooper" },
+    { "label": "Cosmos", "url": "https://www.cosmos.so/craighooper" }
   ]
 }
