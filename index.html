@@ -81,11 +81,18 @@
         .then(function (data) {
           if (!data) return;
           var h1 = document.querySelector('.headline');
-          var lead = document.querySelector('.bio-lead');
-          var body = document.querySelector('.bio-body');
+          var bio = document.querySelector('.bio');
           if (data.headline && h1) h1.textContent = data.headline;
-          if (data.bioLead && lead) lead.textContent = data.bioLead;
-          if (data.bioBody && body) body.textContent = data.bioBody;
+          if (Array.isArray(data.bio) && bio) {
+            bio.innerHTML = '';
+            data.bio.forEach(function (para, i) {
+              if (!para) return;
+              var p = document.createElement('p');
+              p.className = i === 0 ? 'bio-lead' : 'bio-body';
+              p.textContent = para;
+              bio.appendChild(p);
+            });
+          }
           if (Array.isArray(data.links)) {
             var anchors = document.querySelectorAll('.links a');
             data.links.forEach(function (link, i) {

@@ -15,8 +15,10 @@ collections:
         file: content/home.json
         fields:
           - { name: headline, label: Headline, widget: string }
-          - { name: bioLead, label: "Bio — first paragraph", widget: text }
-          - { name: bioBody, label: "Bio — second paragraph", widget: text }
+          - name: bio
+            label: Bio paragraphs
+            widget: list
+            field: { name: text, label: Paragraph, widget: text }
           - name: links
             label: Buttons
             widget: list
