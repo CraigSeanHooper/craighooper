@@ -1,10 +1,19 @@
 {
   "headline": "Working on design systems and digital modernization for Canadian Blood Services",
   "bioLead": "I've been building digital interfaces for 25 years. It's not a badge of honour — it's just a lot of experience. I designed when the internet was in its infancy, and I've watched this industry evolve. I still love it. I love to solve problems, and I enjoy distilling the complex into something simpler. We encounter problematic digital experiences every day, and I enjoy playing my part in shaping a better way.",
-  "bioBody": "I'm a big believer in systems, and in how a well-crafted one keeps design consistent. I'm watching the rapid rise of agentic workflows with a mix of amazement, curiosity, and a little bit of caution.",
+  "bioBody": "I'm a big believer in systems, and in how a well-crafted one keeps design consistent. I'm watching the rapid rise of agentic workflows with a mix of amazement, curiosity, and a bit of caution.",
   "links": [
-    { "label": "Mail", "url": "mailto:craigseanhooper@gmail.com" },
-    { "label": "Twitter", "url": "https://x.com/craigseanhooper" },
-    { "label": "Cosmos", "url": "https://www.cosmos.so/craighooper" }
+    {
+      "label": "Mail",
+      "url": "mailto:craigseanhooper@gmail.com"
+    },
+    {
+      "label": "Twitter",
+      "url": "https://x.com/craigseanhooper"
+    },
+    {
+      "label": "Cosmos",
+      "url": "https://www.cosmos.so/craighooper"
+    }
   ]
 }
