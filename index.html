@@ -46,7 +46,7 @@
       <div class="copylinks">
       <div class="bio">
         <p class="bio-lead">I've been building digital interfaces for 25 years. It's not a badge of honour — it's just a lot of experience. I designed when the internet was in its infancy, and I've watched this industry evolve. I still love it. I love to solve problems, and I enjoy distilling the complex into something simpler. We encounter problematic digital experiences every day, and I enjoy playing my part in shaping a better way.</p>
-        <p class="bio-body">I'm a big believer in systems, and in how a well-crafted system informs a consistency in the deployment of design solutions. I'm watching the rise of agentic workflows with a mix of curiosity and caution. These are some truly wild times.</p>
+        <p class="bio-body">I'm a big believer in systems, and in how a well-crafted one keeps design consistent. I'm watching the rapid rise of agentic workflows with a mix of amazement, curiosity, and a little bit of caution.</p>
       </div>
 
       <nav class="links" aria-label="Links">
@@ -72,6 +72,34 @@
       </div>
     </div>
   </main>
+  <script>
+    // Pull editable homepage content from content/home.json (managed via /admin/).
+    // The text baked into the HTML above stays as a fallback if this fails.
+    (function () {
+      fetch('content/home.json', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data) return;
+          var h1 = document.querySelector('.headline');
+          var lead = document.querySelector('.bio-lead');
+          var body = document.querySelector('.bio-body');
+          if (data.headline && h1) h1.textContent = data.headline;
+          if (data.bioLead && lead) lead.textContent = data.bioLead;
+          if (data.bioBody && body) body.textContent = data.bioBody;
+          if (Array.isArray(data.links)) {
+            var anchors = document.querySelectorAll('.links a');
+            data.links.forEach(function (link, i) {
+              var a = anchors[i];
+              if (!a) return;
+              var span = a.querySelector('span');
+              if (link.label && span) span.textContent = link.label;
+              if (link.url) a.setAttribute('href', link.url);
+            });
+          }
+        })
+        .catch(function () { /* keep baked-in fallback */ });
+    })();
+  </script>
   <script src="assets/squircle.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,25 @@
+backend:
+  name: github
+  repo: CraigSeanHooper/craighooper
+  branch: main
+
+media_folder: assets
+public_folder: /assets
+
+collections:
+  - name: pages
+    label: Pages
+    files:
+      - name: home
+        label: Homepage
+        file: content/home.json
+        fields:
+          - { name: headline, label: Headline, widget: string }
+          - { name: bioLead, label: "Bio — first paragraph", widget: text }
+          - { name: bioBody, label: "Bio — second paragraph", widget: text }
+          - name: links
+            label: Buttons
+            widget: list
+            fields:
+              - { name: label, label: Button label, widget: string }
+              - { name: url, label: Links to, widget: string }
