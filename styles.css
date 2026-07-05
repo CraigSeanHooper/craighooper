@@ -225,12 +225,14 @@ body {
   gap: var(--btn-gap);
   transition: color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
 }
-/* visible outline for keyboard users, hidden for mouse clicks */
+/* visible ring for keyboard users, hidden for mouse clicks */
 .links a:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 4px;
-  border-radius: 6px;
+  outline: none;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink);
 }
+/* keep the pill's own rounding so the ring hugs it */
+.btn-action:focus-visible { border-radius: var(--action-radius); }
 .links .icon {
   width: var(--icon-size);
   height: var(--icon-size);
