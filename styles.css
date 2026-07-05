@@ -138,6 +138,14 @@ body {
 
 /* ---- Avatar ----------------------------------------------- */
 .avatar-link { display: block; line-height: 0; width: 48px; }
+.avatar-link:hover { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
+@keyframes avatar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avatar-link:hover { animation: none; }
+}
 .avatar {
   width: 48px;
   height: 48px;
