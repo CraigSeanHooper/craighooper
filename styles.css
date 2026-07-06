@@ -225,6 +225,13 @@ body {
   gap: var(--btn-gap);
   transition: color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
 }
+/* text links use :focus-visible; the pill uses plain :focus because
+   Chrome/Safari withhold :focus-visible (and their native ring) from it */
+.btn-link:focus-visible,
+.btn-action:focus {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
 .links .icon {
   width: var(--icon-size);
   height: var(--icon-size);
