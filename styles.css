@@ -225,13 +225,6 @@ body {
   gap: var(--btn-gap);
   transition: color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
 }
-/* visible ring for keyboard users. The pill is keyed to plain :focus
-   because Chrome withholds :focus-visible from it. */
-.links a:focus-visible,
-.btn-action:focus {
-  outline: 3px solid var(--ink);
-  outline-offset: 3px;
-}
 .links .icon {
   width: var(--icon-size);
   height: var(--icon-size);
