@@ -225,16 +225,21 @@ body {
   gap: var(--btn-gap);
   transition: color 0.18s ease, transform 0.18s ease, background-color 0.18s ease;
 }
-/* visible ring for keyboard users, hidden for mouse clicks */
-.links a:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 3px var(--ink);
-  border-radius: 6px;
+/* visible ring for keyboard users, hidden for mouse clicks.
+   Drawn as a pseudo-element so it paints reliably on the filled pill. */
+.links a { position: relative; }
+.links a:focus-visible { outline: none; }
+.links a:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  pointer-events: none;
 }
-/* pill keeps its own rounding so the ring hugs it */
-.btn-action:focus-visible {
-  border-radius: var(--action-radius);
+.btn-action:focus-visible::after {
+  inset: -5px;
+  border-radius: calc(var(--action-radius) + 5px);
 }
 .links .icon {
   width: var(--icon-size);
