@@ -227,7 +227,8 @@ body {
 }
 /* visible ring for keyboard users, hidden for mouse clicks */
 .links a:focus-visible {
-  outline: none;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
   box-shadow: 0 0 0 3px var(--ink);
   border-radius: 6px;
 }
