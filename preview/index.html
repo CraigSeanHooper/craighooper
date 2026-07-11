@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#efe9dd">
+  <title>Craig Hooper. Product Designer. Ottawa, Canada.</title>
+  <meta name="description" content="Working on design systems and digital modernization for Canadian Blood Services.">
+  <!-- preview build: keep it out of search while we test -->
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <main>
+    <section class="content">
+      <h1 class="headline">Working on design systems and digital modernization for Canadian Blood Services</h1>
+      <div class="bio">
+        <p>I've been building digital interfaces for 25 years. It's not a badge of honour — it's just a lot of experience. I designed when the internet was in its infancy, and I've watched this industry evolve.</p>
+        <p>I still love it. I love to solve problems, and I enjoy distilling the complex into something simpler. We encounter problematic digital experiences every day, and I enjoy playing my part in shaping a better way. I'm a big believer in systems, and in how a well-crafted one keeps design consistent.</p>
+        <p>The rapid rise of agentic workflows fills me with a mix of amazement, curiosity, and a little bit of caution.</p>
+      </div>
+    </section>
+
+    <nav class="links" aria-label="Links">
+      <div class="link-group social">
+        <h2>Social</h2>
+        <a href="mailto:craigseanhooper@gmail.com">Mail</a>
+        <a href="https://x.com/craigseanhooper" target="_blank" rel="noopener">Twitter</a>
+        <a href="https://www.instagram.com/craigseanhooper" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.cosmos.so/craighooper" target="_blank" rel="noopener">Cosmos</a>
+        <a href="https://www.linkedin.com/in/craigseanhooper" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <div class="link-group sites">
+        <h2>Live work</h2>
+        <a href="https://rugpadusa.com" target="_blank" rel="noopener">rugpadusa.com</a>
+        <a href="https://foamgeometrix.ca" target="_blank" rel="noopener">foamgeometrix.ca</a>
+        <a href="https://banfield.agency" target="_blank" rel="noopener">banfield.agency</a>
+      </div>
+    </nav>
+
+    <figure class="photo">
+      <img src="assets/photo.png" alt="Craig Hooper" width="288" height="198">
+    </figure>
+
+    <div class="avatar-wrap">
+      <button class="avatar-btn" type="button" aria-expanded="false" aria-label="A word from Craig">
+        <img src="assets/avatar.png" alt="Craig Hooper" width="48" height="48">
+      </button>
+      <div class="bubble" role="status" aria-live="polite">
+        <img src="assets/bubble.svg" alt="">
+        <span class="bubble-text">No.</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Optional: pull editable content from content/home.json.
+    // The text baked into the HTML above stays as a fallback if this fails.
+    (function () {
+      fetch('content/home.json', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (!data) return;
+          var h1 = document.querySelector('.headline');
+          if (data.headline && h1) h1.textContent = data.headline;
+
+          var bio = document.querySelector('.bio');
+          if (Array.isArray(data.bio) && bio) {
+            bio.innerHTML = '';
+            data.bio.forEach(function (t) {
+              if (!t) return;
+              var p = document.createElement('p');
+              p.textContent = t;
+              bio.appendChild(p);
+            });
+          }
+
+          function fill(sel, list) {
+            var group = document.querySelector(sel);
+            if (!group || !Array.isArray(list)) return;
+            group.querySelectorAll('a').forEach(function (a) { a.remove(); });
+            list.forEach(function (item) {
+              if (!item || !item.label) return;
+              var a = document.createElement('a');
+              a.textContent = item.label;
+              a.href = item.url || '#';
+              if (item.url && item.url.indexOf('mailto:') !== 0) {
+                a.target = '_blank';
+                a.rel = 'noopener';
+              }
+              group.appendChild(a);
+            });
+          }
+          fill('.link-group.social', data.social);
+          fill('.link-group.sites', data.liveWork);
+        })
+        .catch(function () { /* keep baked-in fallback */ });
+    })();
+
+    // Speech bubble: hover shows it on desktop (CSS); tap toggles it on touch.
+    (function () {
+      var wrap = document.querySelector('.avatar-wrap');
+      var btn = document.querySelector('.avatar-btn');
+      if (!wrap || !btn) return;
+
+      function setOpen(open) {
+        wrap.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(!wrap.classList.contains('open'));
+      });
+      document.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') { setOpen(false); btn.blur(); }
+      });
+    })();
+  </script>
+</body>
+</html>

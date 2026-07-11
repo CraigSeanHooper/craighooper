@@ -1,0 +1,290 @@
+/* ============================================================
+   craighooper.xyz — preview redesign
+   Built to match the desktop, tablet, and mobile Figma frames.
+   ============================================================ */
+
+@font-face {
+  font-family: "Parabole";
+  src: url("assets/fonts/Parabole-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --ink: #1a1a1a;          /* black/90  */
+  --ink-soft: #4d4d4d;     /* black/70  */
+  --font: "Parabole", "Helvetica Neue", Arial, sans-serif;
+
+  /* corner insets (desktop) */
+  --pad-left: 48px;
+  --pad-right: 20px;
+  --pad-top: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100dvh;
+}
+
+body {
+  position: relative;
+  min-height: 100dvh;
+  font-family: var(--font);
+  font-feature-settings: "salt" 1;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ---- paper-texture background + soft white wash ---- */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: url("assets/bg-desktop.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================
+   Type helpers
+   ============================================================ */
+.headline {
+  margin: 0;
+  font-size: 24px;
+  line-height: 30px;
+  color: var(--ink);
+}
+.bio {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin: 0;
+}
+.bio p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   Content cluster — top left
+   ============================================================ */
+.content {
+  position: absolute;
+  top: var(--pad-top);
+  left: var(--pad-left);
+  width: 570px;
+  max-width: calc(100% - 2 * var(--pad-left));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ============================================================
+   Links cluster — top right
+   ============================================================ */
+.links {
+  position: absolute;
+  top: 32px;
+  right: var(--pad-right);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: flex-end;
+  text-align: right;
+}
+.link-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+.link-group.social { width: 72px; }
+.link-group h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 30px;
+  font-weight: 400;
+  color: var(--ink);
+}
+.link-group a {
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  white-space: nowrap;
+}
+.link-group a:hover { color: var(--ink); }
+.link-group a:focus-visible,
+.avatar-btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ============================================================
+   Photo cluster — bottom left (taped print)
+   ============================================================ */
+.photo {
+  position: absolute;
+  bottom: 16px;
+  left: 8px;
+  width: 288px;
+  margin: 0;
+}
+.photo img {
+  display: block;
+  width: 288px;
+  height: auto;
+}
+
+/* ============================================================
+   Avatar + speech bubble — bottom right
+   ============================================================ */
+.avatar-wrap {
+  position: fixed;
+  bottom: 8px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  z-index: 3;
+}
+.avatar-btn {
+  display: block;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 64px;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+.avatar-btn img {
+  display: block;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+}
+
+.bubble {
+  position: absolute;
+  right: -2px;
+  bottom: calc(100% + 4px);
+  width: 90px;
+  height: 72px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px) scale(0.96);
+  transform-origin: bottom right;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  pointer-events: none;
+}
+.bubble img {
+  position: absolute;
+  inset: 0;
+  width: 90px;
+  height: 72px;
+}
+.bubble .bubble-text {
+  position: absolute;
+  left: 26px;
+  top: 15px;
+  font-size: 24px;
+  line-height: 30px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* show on hover / focus (pointer devices) */
+@media (hover: hover) {
+  .avatar-wrap:hover .bubble,
+  .avatar-wrap:focus-within .bubble {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+}
+/* show when toggled open (tap on touch devices) */
+.avatar-wrap.open .bubble {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble { transition: opacity 0.12s ease, visibility 0.12s; transform: none; }
+  .avatar-wrap:hover .bubble,
+  .avatar-wrap:focus-within .bubble,
+  .avatar-wrap.open .bubble { transform: none; }
+}
+
+/* ============================================================
+   TABLET  (≤ 1024px, portrait-ish) — same corner layout,
+   tighter side insets. Matches tablet frame.
+   ============================================================ */
+@media (max-width: 1024px) and (min-width: 601px) {
+  :root { --pad-left: 24px; --pad-right: 24px; }
+  .bg { background-image: url("assets/bg-tablet.jpg"); }
+}
+
+/* ============================================================
+   MOBILE  (≤ 600px) — stacked, centred. Matches mobile frame.
+   ============================================================ */
+@media (max-width: 600px) {
+  .bg { background-image: url("assets/bg-mobile.jpg"); }
+
+  body { min-height: 100dvh; }
+
+  /* content flows from the top */
+  .content {
+    position: static;
+    width: auto;
+    max-width: none;
+    margin: 12px 20px 0;
+  }
+  .headline { font-size: 16px; line-height: 22px; }
+  .bio { gap: 20px; }
+  .bio p { font-size: 14px; line-height: 20px; }
+
+  /* two link columns side by side, centred under the content */
+  .links {
+    position: static;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 40px;
+    margin: 40px auto 0;
+    width: max-content;
+    max-width: calc(100% - 40px);
+    text-align: left;
+  }
+  .link-group { align-items: flex-start; }
+  .link-group.social { width: 72px; align-items: flex-end; text-align: right; }
+  .link-group h2 { font-size: 16px; line-height: 22px; }
+  .link-group a { font-size: 14px; line-height: 20px; }
+
+  /* photo centred, sitting above the corner avatar */
+  .photo {
+    position: static;
+    margin: 48px auto 176px;
+    left: auto;
+    bottom: auto;
+  }
+
+  /* avatar stays pinned bottom-right */
+  .avatar-wrap { position: fixed; bottom: 8px; right: 16px; }
+}
