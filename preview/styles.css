@@ -204,8 +204,9 @@ body {
 }
 .bubble .bubble-text {
   position: absolute;
-  left: 26px;
-  top: 15px;
+  left: 45px;
+  top: 33px;
+  transform: translate(-50%, -50%);
   font-size: 24px;
   line-height: 30px;
   color: var(--ink);
@@ -239,15 +240,16 @@ body {
    TABLET  (≤ 1024px, portrait-ish) — same corner layout,
    tighter side insets. Matches tablet frame.
    ============================================================ */
-@media (max-width: 1024px) and (min-width: 601px) {
+@media (max-width: 1024px) and (min-width: 821px) {
   :root { --pad-left: 24px; --pad-right: 24px; }
   .bg { background-image: url("assets/bg-tablet.jpg"); }
 }
 
 /* ============================================================
-   MOBILE  (≤ 600px) — stacked, centred. Matches mobile frame.
+   MOBILE  (≤ 820px) — stacked, centred. Switches before the
+   top-left text and top-right links can overlap.
    ============================================================ */
-@media (max-width: 600px) {
+@media (max-width: 820px) {
   .bg { background-image: url("assets/bg-mobile.jpg"); }
 
   body { min-height: 100dvh; }
@@ -288,6 +290,6 @@ body {
     bottom: auto;
   }
 
-  /* avatar stays pinned bottom-right */
-  .avatar-wrap { position: fixed; bottom: 8px; right: 16px; }
+  /* avatar sits a little further off the corner so the bubble has room */
+  .avatar-wrap { position: fixed; bottom: 24px; right: 20px; }
 }
