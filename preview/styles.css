@@ -265,15 +265,15 @@ body {
   .bio { gap: 20px; }
   .bio p { font-size: 14px; line-height: 20px; }
 
-  /* two link columns side by side, centred under the content */
+  /* two link columns, flush-left with the content */
   .links {
     position: static;
     flex-direction: row;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 40px;
-    margin: 40px auto 0;
-    width: max-content;
+    margin: 40px 20px 0;
+    width: auto;
     max-width: calc(100% - 40px);
     text-align: left;
   }
