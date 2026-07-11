@@ -266,20 +266,20 @@ body {
     align-items: flex-start;
     justify-content: flex-start;
     gap: 40px;
-    margin: 40px 20px 0;
+    margin: 32px 20px 0;
     width: auto;
     max-width: calc(100% - 40px);
     text-align: left;
   }
-  .link-group { align-items: flex-start; text-align: left; }
+  .link-group { align-items: flex-start; text-align: left; gap: 8px; }
   .link-group.social { width: 72px; align-items: flex-start; text-align: left; }
   .link-group h2 { font-size: 16px; line-height: 22px; }
   .link-group a { font-size: 14px; line-height: 20px; }
 
-  /* photo centred */
+  /* photo centred, 64px below the links */
   .photo {
     position: static;
-    margin: 48px auto 0;
+    margin: 64px auto 0;
     left: auto;
     bottom: auto;
   }
