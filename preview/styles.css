@@ -282,14 +282,21 @@ body {
   .link-group h2 { font-size: 16px; line-height: 22px; }
   .link-group a { font-size: 14px; line-height: 20px; }
 
-  /* photo centred, sitting above the avatar */
+  /* photo centred */
   .photo {
     position: static;
-    margin: 48px auto 176px;
+    margin: 48px auto 0;
     left: auto;
     bottom: auto;
   }
 
-  /* avatar sits at the bottom of the page (scrolls with it), not stuck to the viewport */
-  .avatar-wrap { position: absolute; bottom: 24px; right: 20px; }
+  /* avatar sits 88px below the photo, flush to the right */
+  .avatar-wrap {
+    position: relative;
+    margin: 88px 20px 24px auto;
+    bottom: auto;
+    right: auto;
+    width: 48px;
+    height: 48px;
+  }
 }
