@@ -277,12 +277,12 @@ body {
     max-width: calc(100% - 40px);
     text-align: left;
   }
-  .link-group { align-items: flex-start; }
-  .link-group.social { width: 72px; align-items: flex-end; text-align: right; }
+  .link-group { align-items: flex-start; text-align: left; }
+  .link-group.social { width: 72px; align-items: flex-start; text-align: left; }
   .link-group h2 { font-size: 16px; line-height: 22px; }
   .link-group a { font-size: 14px; line-height: 20px; }
 
-  /* photo centred, sitting above the corner avatar */
+  /* photo centred, sitting above the avatar */
   .photo {
     position: static;
     margin: 48px auto 176px;
@@ -290,6 +290,6 @@ body {
     bottom: auto;
   }
 
-  /* avatar sits a little further off the corner so the bubble has room */
-  .avatar-wrap { position: fixed; bottom: 24px; right: 20px; }
+  /* avatar sits at the bottom of the page (scrolls with it), not stuck to the viewport */
+  .avatar-wrap { position: absolute; bottom: 24px; right: 20px; }
 }
