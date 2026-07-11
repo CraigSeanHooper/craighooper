@@ -40,7 +40,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ---- paper-texture background + soft white wash ---- */
+/* ---- paper-texture background ---- */
 .bg {
   position: fixed;
   inset: 0;
@@ -48,12 +48,6 @@ body {
   background-image: url("assets/bg-desktop.jpg");
   background-size: cover;
   background-position: center;
-}
-.bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.4);
 }
 
 /* ============================================================
