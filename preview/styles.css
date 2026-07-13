@@ -14,12 +14,22 @@
 :root {
   --ink: #1a1a1a;          /* black/90  */
   --ink-soft: #4d4d4d;     /* black/70  */
+  --page: #ffffff;         /* plain white page */
   --font: "Parabole", "Helvetica Neue", Arial, sans-serif;
 
   /* corner insets (desktop) */
   --pad-left: 48px;
   --pad-right: 20px;
   --pad-top: 12px;
+}
+
+/* auto dark mode — follows the user's system setting */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f5f5f5;
+    --ink-soft: #b0b0b0;
+    --page: #111111;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -40,14 +50,12 @@ body {
   overflow-x: hidden;
 }
 
-/* ---- paper-texture background ---- */
+/* ---- plain page background (white / dark by system setting) ---- */
 .bg {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-image: url("assets/bg-desktop.jpg");
-  background-size: cover;
-  background-position: center;
+  background: var(--page);
 }
 
 /* ============================================================
@@ -236,7 +244,6 @@ body {
    ============================================================ */
 @media (max-width: 1024px) and (min-width: 821px) {
   :root { --pad-left: 24px; --pad-right: 24px; }
-  .bg { background-image: url("assets/bg-tablet.jpg"); }
 }
 
 /* ============================================================
@@ -244,8 +251,6 @@ body {
    top-left text and top-right links can overlap.
    ============================================================ */
 @media (max-width: 820px) {
-  .bg { background-image: url("assets/bg-mobile.jpg"); }
-
   body { min-height: 100dvh; }
 
   /* content flows from the top */
