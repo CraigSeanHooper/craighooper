@@ -83,7 +83,7 @@
     </nav>
 
     <figure class="photo">
-      <img src="assets/photo.png" alt="Craig Hooper" width="288" height="198">
+      <img src="assets/photo.png" alt="Craig Hooper" width="288" height="198" draggable="false">
     </figure>
 
     <div class="avatar-wrap">
@@ -160,6 +160,76 @@
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') { setOpen(false); btn.blur(); }
       });
+    })();
+
+    // Taped photo: drag it around, kept inside the viewport.
+    // Pointer devices above the mobile breakpoint only.
+    (function () {
+      var photo = document.querySelector('.photo');
+      if (!photo || !window.PointerEvent) return;
+
+      var canDrag = window.matchMedia('(hover: hover) and (min-width: 821px)');
+      var x = 0, y = 0, startX = 0, startY = 0, dragging = false;
+      var baseLeft = 0, baseTop = 0, w = 0, h = 0;
+
+      function apply() {
+        photo.style.transform = (x || y) ? 'translate(' + x + 'px, ' + y + 'px)' : '';
+      }
+      function clamp(v, min, max) {
+        if (max < min) return min;          // element bigger than the viewport
+        return Math.min(Math.max(v, min), max);
+      }
+      // measure where the photo would sit with no drag applied
+      function measure() {
+        var r = photo.getBoundingClientRect();
+        baseLeft = r.left - x;
+        baseTop = r.top - y;
+        w = r.width;
+        h = r.height;
+      }
+
+      photo.addEventListener('pointerdown', function (e) {
+        if (!canDrag.matches || e.button !== 0) return;
+        dragging = true;
+        measure();
+        startX = e.clientX - x;
+        startY = e.clientY - y;
+        photo.classList.add('dragging');
+        try { photo.setPointerCapture(e.pointerId); } catch (err) {}
+        e.preventDefault();
+      });
+
+      photo.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        x = clamp(e.clientX - startX, -baseLeft, window.innerWidth - w - baseLeft);
+        y = clamp(e.clientY - startY, -baseTop, window.innerHeight - h - baseTop);
+        apply();
+      });
+
+      function endDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        photo.classList.remove('dragging');
+        try { photo.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+      photo.addEventListener('pointerup', endDrag);
+      photo.addEventListener('pointercancel', endDrag);
+
+      // a smaller window shouldn't strand the photo off-screen
+      window.addEventListener('resize', function () {
+        if (!canDrag.matches || (!x && !y)) return;
+        measure();
+        x = clamp(x, -baseLeft, window.innerWidth - w - baseLeft);
+        y = clamp(y, -baseTop, window.innerHeight - h - baseTop);
+        apply();
+      });
+
+      // dropping to the mobile layout puts the photo back where it belongs
+      function onChange(e) {
+        if (!e.matches) { dragging = false; x = 0; y = 0; apply(); photo.classList.remove('dragging'); }
+      }
+      if (canDrag.addEventListener) canDrag.addEventListener('change', onChange);
+      else if (canDrag.addListener) canDrag.addListener(onChange);
     })();
   </script>
 </body>

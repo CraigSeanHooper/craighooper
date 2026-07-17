@@ -154,6 +154,21 @@ body {
   display: block;
   width: 288px;
   height: auto;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* draggable on pointer devices above the mobile breakpoint */
+@media (hover: hover) and (min-width: 821px) {
+  .photo {
+    cursor: grab;
+    touch-action: none;
+  }
+  .photo.dragging {
+    cursor: grabbing;
+    z-index: 2;
+  }
 }
 
 /* ============================================================
@@ -183,6 +198,19 @@ body {
   width: 48px;
   height: 48px;
   object-fit: cover;
+}
+
+/* one full turn per hover — identical timing to the homepage.
+   Pointer devices above the mobile breakpoint only. */
+@media (hover: hover) and (min-width: 821px) {
+  .avatar-btn:hover { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
+}
+@keyframes avatar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avatar-btn:hover { animation: none; }
 }
 
 .bubble {
