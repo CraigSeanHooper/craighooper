@@ -68,17 +68,17 @@
     <nav class="links" aria-label="Links">
       <div class="link-group social">
         <h2>Social</h2>
-        <a href="mailto:craigseanhooper@gmail.com">Mail</a>
-        <a href="https://x.com/craigseanhooper" target="_blank" rel="noopener">Twitter</a>
-        <a href="https://www.instagram.com/craighooper" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.cosmos.so/craighooper" target="_blank" rel="noopener">Cosmos</a>
-        <a href="https://www.linkedin.com/in/craigseanhooper" target="_blank" rel="noopener">LinkedIn</a>
+        <a data-cuelume-hover="toggle" href="mailto:craigseanhooper@gmail.com">Mail</a>
+        <a data-cuelume-hover="toggle" href="https://x.com/craigseanhooper" target="_blank" rel="noopener">Twitter</a>
+        <a data-cuelume-hover="toggle" href="https://www.instagram.com/craighooper" target="_blank" rel="noopener">Instagram</a>
+        <a data-cuelume-hover="toggle" href="https://www.cosmos.so/craighooper" target="_blank" rel="noopener">Cosmos</a>
+        <a data-cuelume-hover="toggle" href="https://www.linkedin.com/in/craigseanhooper" target="_blank" rel="noopener">LinkedIn</a>
       </div>
       <div class="link-group sites">
         <h2>Live work</h2>
-        <a href="https://rugpadusa.com" target="_blank" rel="noopener">rugpadusa.com</a>
-        <a href="https://foamgeometrix.ca" target="_blank" rel="noopener">foamgeometrix.ca</a>
-        <a href="https://banfield.agency" target="_blank" rel="noopener">banfield.agency</a>
+        <a data-cuelume-hover="toggle" href="https://rugpadusa.com" target="_blank" rel="noopener">rugpadusa.com</a>
+        <a data-cuelume-hover="toggle" href="https://foamgeometrix.ca" target="_blank" rel="noopener">foamgeometrix.ca</a>
+        <a data-cuelume-hover="toggle" href="https://banfield.agency" target="_blank" rel="noopener">banfield.agency</a>
       </div>
     </nav>
 
@@ -87,7 +87,7 @@
     </figure>
 
     <div class="avatar-wrap">
-      <button class="avatar-btn" type="button" aria-expanded="false" aria-label="A word from Craig">
+      <button class="avatar-btn" type="button" data-cuelume-hover="sparkle" aria-expanded="false" aria-label="A word from Craig">
         <img src="assets/avatar.png" alt="Craig Hooper" width="48" height="48">
       </button>
       <div class="bubble" role="status" aria-live="polite">
@@ -126,6 +126,7 @@
             list.forEach(function (item) {
               if (!item || !item.label) return;
               var a = document.createElement('a');
+              a.setAttribute('data-cuelume-hover', 'toggle');
               a.textContent = item.label;
               a.href = item.url || '#';
               if (item.url && item.url.indexOf('mailto:') !== 0) {
@@ -231,6 +232,14 @@
       if (canDrag.addEventListener) canDrag.addEventListener('change', onChange);
       else if (canDrag.addListener) canDrag.addListener(onChange);
     })();
+  </script>
+
+  <!-- Interaction sounds. Version-pinned; cuelume is pre-1.0.
+       Sounds only fire for a fine pointer, and only after the first click
+       (browsers block audio until then). -->
+  <script type="module">
+    import { bind } from "https://esm.sh/cuelume@0.1.2";
+    bind();
   </script>
 </body>
 </html>
