@@ -280,6 +280,7 @@ body {
     --action-radius: 12px;
   }
   .card { width: 100%; }
+
   .bio { gap: 12px; }
   .bio-lead { font-size: 16px; line-height: 22px; }
   .bio-body { font-size: 14px; line-height: 20px; }
