@@ -59,11 +59,10 @@ body {
   background: var(--page);
 }
 
-/* ---- centre glow: soft radial gradient, colours morph slowly ----
-   Matches the Figma: 2 colours, 3 stops, fading to transparent. */
-@property --glow-a { syntax: "<color>"; inherits: false; initial-value: #e7e4ff; }
-@property --glow-b { syntax: "<color>"; inherits: false; initial-value: #f9f3fe; }
-
+/* ---- centre glow: soft radial gradient with colours that drift ----
+   Two blurred colour blobs orbit on different paths inside a masked
+   circle; at this blur they blend and read as moving colour.
+   Colours + 44px blur match the Figma. */
 .glow {
   position: fixed;
   top: 50%;
@@ -74,23 +73,44 @@ body {
   z-index: -1;                 /* above the page, below the content */
   pointer-events: none;
   border-radius: 50%;
+  overflow: hidden;
   filter: blur(44px);
-  background: radial-gradient(circle at center,
-    var(--glow-a) 0%,
-    var(--glow-b) 64%,
-    transparent 100%);
-  animation: glow-morph 22s ease-in-out infinite;
-  will-change: --glow-a, --glow-b;
+  background: #f1e4fa;         /* lightest stop as the base */
+  -webkit-mask: radial-gradient(circle closest-side at center, #000 38%, transparent 100%);
+  mask: radial-gradient(circle closest-side at center, #000 38%, transparent 100%);
 }
-@keyframes glow-morph {
-  0%   { --glow-a: #e7e4ff; --glow-b: #f9f3fe; }  /* lavender  */
-  25%  { --glow-a: #ffe4f1; --glow-b: #fdf3fb; }  /* soft pink */
-  50%  { --glow-a: #e0edff; --glow-b: #f2f9fe; }  /* soft blue */
-  75%  { --glow-a: #e9e2ff; --glow-b: #fbf3fe; }  /* violet    */
-  100% { --glow-a: #e7e4ff; --glow-b: #f9f3fe; }
+.glow::before,
+.glow::after {
+  content: "";
+  position: absolute;
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  top: 11%;
+  left: 11%;
+}
+.glow::before {
+  background: radial-gradient(circle, #a197ff 0%, rgba(161,151,255,0) 70%);
+  animation: glow-drift-a 19s ease-in-out infinite;
+}
+.glow::after {
+  background: radial-gradient(circle, #c9bdfc 0%, rgba(201,189,252,0) 70%);
+  animation: glow-drift-b 24s ease-in-out infinite;
+}
+@keyframes glow-drift-a {
+  0%   { transform: translate(-12%, -16%); }
+  33%  { transform: translate(22%, 8%); }
+  66%  { transform: translate(-4%, 20%); }
+  100% { transform: translate(-12%, -16%); }
+}
+@keyframes glow-drift-b {
+  0%   { transform: translate(18%, 12%); }
+  33%  { transform: translate(-16%, -8%); }
+  66%  { transform: translate(8%, -20%); }
+  100% { transform: translate(18%, 12%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .glow { animation: none; }
+  .glow::before, .glow::after { animation: none; }
 }
 
 /* ============================================================
