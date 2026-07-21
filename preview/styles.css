@@ -30,6 +30,7 @@
     --ink-soft: #b0b0b0;
     --page: #111111;
   }
+  .glow { display: none; }   /* glow is light-mode only */
 }
 
 * { box-sizing: border-box; }
@@ -56,6 +57,40 @@ body {
   inset: 0;
   z-index: -1;
   background: var(--page);
+}
+
+/* ---- centre glow: soft radial gradient, colours morph slowly ----
+   Matches the Figma: 2 colours, 3 stops, fading to transparent. */
+@property --glow-a { syntax: "<color>"; inherits: false; initial-value: #e7e4ff; }
+@property --glow-b { syntax: "<color>"; inherits: false; initial-value: #f9f3fe; }
+
+.glow {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: min(82vw, 720px);
+  height: min(82vw, 720px);
+  transform: translate(-50%, -50%);
+  z-index: -1;                 /* above the page, below the content */
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(44px);
+  background: radial-gradient(circle at center,
+    var(--glow-a) 0%,
+    var(--glow-b) 64%,
+    transparent 100%);
+  animation: glow-morph 22s ease-in-out infinite;
+  will-change: --glow-a, --glow-b;
+}
+@keyframes glow-morph {
+  0%   { --glow-a: #e7e4ff; --glow-b: #f9f3fe; }  /* lavender  */
+  25%  { --glow-a: #ffe4f1; --glow-b: #fdf3fb; }  /* soft pink */
+  50%  { --glow-a: #e0edff; --glow-b: #f2f9fe; }  /* soft blue */
+  75%  { --glow-a: #e9e2ff; --glow-b: #fbf3fe; }  /* violet    */
+  100% { --glow-a: #e7e4ff; --glow-b: #f9f3fe; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow { animation: none; }
 }
 
 /* ============================================================
@@ -280,6 +315,8 @@ body {
    ============================================================ */
 @media (max-width: 820px) {
   body { min-height: 100dvh; }
+
+  .glow { display: none; }   /* no glow on mobile */
 
   /* content flows from the top */
   .content {
