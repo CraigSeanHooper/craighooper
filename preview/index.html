@@ -58,26 +58,26 @@
 
   <main>
     <section class="content">
-      <h1 class="headline">Working on design systems and digital modernization for Canadian Blood Services</h1>
+      <h1 class="headline h1">Working on design systems and digital modernization for Canadian Blood Services</h1>
       <div class="bio">
-        <p>I've been building digital interfaces for 25 years. It's not a badge of honour — it's just a lot of experience. I designed when the internet was in its infancy, and I've watched this industry evolve.</p>
-        <p>I still love it. I love to solve problems, and I enjoy distilling the complex into something simpler. We encounter problematic digital experiences every day, and I enjoy playing my part in shaping a better way. I'm a big believer in systems, and in how a well-crafted one keeps design consistent.</p>
-        <p>The rapid rise of agentic workflows fills me with a mix of amazement, curiosity, and a little bit of caution.</p>
+        <p class="body-lg">I've been building digital interfaces for 25 years. It's not a badge of honour — it's just a lot of experience. I designed when the internet was in its infancy, and I've watched this industry evolve.</p>
+        <p class="body-md">I still love it. I love to solve problems, and I enjoy distilling the complex into something simpler. We encounter problematic digital experiences every day, and I enjoy playing my part in shaping a better way. I'm a big believer in systems, and in how a well-crafted one keeps design consistent.</p>
+        <p class="body-md">The rapid rise of agentic workflows fills me with a mix of amazement, curiosity, and a little bit of caution.</p>
       </div>
     </section>
 
     <nav class="links" aria-label="Links">
       <div class="link-group social">
-        <h2>Social</h2>
-        <a data-cuelume-hover="toggle" href="https://x.com/craigseanhooper" target="_blank" rel="noopener">Twitter</a>
-        <a data-cuelume-hover="toggle" href="https://www.instagram.com/craighooper" target="_blank" rel="noopener">Instagram</a>
-        <a data-cuelume-hover="toggle" href="https://www.cosmos.so/craighooper" target="_blank" rel="noopener">Cosmos</a>
+        <h2 class="h3">Social</h2>
+        <a data-cuelume-hover="toggle" class="body-md" href="https://x.com/craigseanhooper" target="_blank" rel="noopener">Twitter</a>
+        <a data-cuelume-hover="toggle" class="body-md" href="https://www.instagram.com/craighooper" target="_blank" rel="noopener">Instagram</a>
+        <a data-cuelume-hover="toggle" class="body-md" href="https://www.cosmos.so/craighooper" target="_blank" rel="noopener">Cosmos</a>
       </div>
       <div class="link-group sites">
-        <h2>Live work</h2>
-        <a data-cuelume-hover="toggle" href="https://rugpadusa.com" target="_blank" rel="noopener">rugpadusa.com</a>
-        <a data-cuelume-hover="toggle" href="https://foamgeometrix.ca" target="_blank" rel="noopener">foamgeometrix.ca</a>
-        <a data-cuelume-hover="toggle" href="https://banfield.agency" target="_blank" rel="noopener">banfield.agency</a>
+        <h2 class="h3">Live work</h2>
+        <a data-cuelume-hover="toggle" class="body-md" href="https://rugpadusa.com" target="_blank" rel="noopener">rugpadusa.com</a>
+        <a data-cuelume-hover="toggle" class="body-md" href="https://foamgeometrix.ca" target="_blank" rel="noopener">foamgeometrix.ca</a>
+        <a data-cuelume-hover="toggle" class="body-md" href="https://banfield.agency" target="_blank" rel="noopener">banfield.agency</a>
       </div>
     </nav>
 
@@ -110,9 +110,10 @@
           var bio = document.querySelector('.bio');
           if (Array.isArray(data.bio) && bio) {
             bio.innerHTML = '';
-            data.bio.forEach(function (t) {
+            data.bio.forEach(function (t, i) {
               if (!t) return;
               var p = document.createElement('p');
+              p.className = i === 0 ? 'body-lg' : 'body-md';
               p.textContent = t;
               bio.appendChild(p);
             });
@@ -126,6 +127,7 @@
               if (!item || !item.label) return;
               var a = document.createElement('a');
               a.setAttribute('data-cuelume-hover', 'toggle');
+              a.className = 'body-md';
               a.textContent = item.label;
               a.href = item.url || '#';
               if (item.url && item.url.indexOf('mailto:') !== 0) {
