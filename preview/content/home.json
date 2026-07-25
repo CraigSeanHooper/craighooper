@@ -6,15 +6,31 @@
     "The rapid rise of agentic workflows fills me with a mix of amazement, curiosity, and a little bit of caution."
   ],
   "social": [
-    { "label": "Mail", "url": "mailto:craigseanhooper@gmail.com" },
-    { "label": "Twitter", "url": "https://x.com/craigseanhooper" },
-    { "label": "Instagram", "url": "https://www.instagram.com/craighooper" },
-    { "label": "Cosmos", "url": "https://www.cosmos.so/craighooper" },
-    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/craigseanhooper" }
+    {
+      "label": "Twitter",
+      "url": "https://x.com/craigseanhooper"
+    },
+    {
+      "label": "Instagram",
+      "url": "https://www.instagram.com/craighooper"
+    },
+    {
+      "label": "Cosmos",
+      "url": "https://www.cosmos.so/craighooper"
+    }
   ],
   "liveWork": [
-    { "label": "rugpadusa.com", "url": "https://rugpadusa.com" },
-    { "label": "foamgeometrix.ca", "url": "https://foamgeometrix.ca" },
-    { "label": "banfield.agency", "url": "https://banfield.agency" }
+    {
+      "label": "rugpadusa.com",
+      "url": "https://rugpadusa.com"
+    },
+    {
+      "label": "foamgeometrix.ca",
+      "url": "https://foamgeometrix.ca"
+    },
+    {
+      "label": "banfield.agency",
+      "url": "https://banfield.agency"
+    }
   ]
 }
