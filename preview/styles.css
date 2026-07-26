@@ -124,7 +124,6 @@ html, body { margin: 0; padding: 0; }
 body {
   position: relative;
   display: flow-root;           /* contains the content margins */
-  min-height: 100dvh;
   background: var(--surface-page);
   font-family: var(--font-family-body);
   font-feature-settings: "salt" 1, "ss08" 1;
