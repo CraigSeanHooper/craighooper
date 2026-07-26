@@ -21,6 +21,8 @@
   --colour-neutral-80:  #333333;
   --colour-neutral-90:  #1a1a1a;
   --colour-accent-yellow: #fffbc6;
+  --colour-link-blue: #0000ee;
+  --colour-link-blue-light: #8ab4f8;
 
   --font-family-parabole: "Parabole", "Helvetica Neue", Arial, sans-serif;
   --font-weight-regular: 400;
@@ -46,6 +48,7 @@
   --surface-avatar: var(--colour-neutral-0);
   --surface-accent: var(--colour-accent-yellow);
   --border-hover:   var(--colour-neutral-80);
+  --text-link:      var(--colour-link-blue);
 
   --font-family-heading: var(--font-family-parabole);
   --font-family-body:    var(--font-family-parabole);
@@ -61,6 +64,7 @@
     --text-muted:     var(--colour-neutral-50);
     --surface-page:   var(--colour-neutral-90);
     --border-hover:   var(--colour-neutral-25);
+    --text-link:      var(--colour-link-blue-light);
   }
 }
 
@@ -74,6 +78,14 @@
   color: var(--text-primary);
 }
 .body-md {
+  font-family: var(--font-family-body);
+  font-weight: var(--font-style-body);
+  font-size: var(--font-size-16);
+  line-height: var(--line-height-22);
+  letter-spacing: var(--letter-spacing-body);
+  color: var(--text-secondary);
+}
+.body-lead {
   font-family: var(--font-family-body);
   font-weight: var(--font-style-body);
   font-size: var(--font-size-16);
@@ -95,13 +107,13 @@
   font-size: var(--font-size-16);
   line-height: var(--line-height-22);
   letter-spacing: var(--letter-spacing-body);
-  color: var(--text-secondary);
+  color: var(--text-link);
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-thickness: 8%;
   text-underline-offset: 16%;
 }
-.link-md:hover { color: var(--text-primary); }
+.link-md:hover { text-decoration-line: none; }
 .muted { color: var(--text-muted); }
 .archived { color: var(--text-muted); }
 
@@ -111,6 +123,7 @@ html, body { margin: 0; padding: 0; }
 
 body {
   position: relative;
+  display: flow-root;           /* contains the content margins */
   min-height: 100dvh;
   background: var(--surface-page);
   font-family: var(--font-family-body);
@@ -122,8 +135,8 @@ body {
 /* avatar — top left */
 .avatar-wrap {
   position: fixed;              /* stays put while the page scrolls */
-  top: var(--space-300);
-  left: var(--space-300);
+  top: 16px;
+  left: 16px;
   width: 56px; height: 56px;
   z-index: 3;
 }
@@ -145,7 +158,7 @@ body {
 .content {
   width: 370px;
   max-width: calc(100% - 2 * var(--space-400));
-  margin: 96px auto 96px;
+  margin: 96px auto 64px;   /* top / bottom */
   display: flex;
   flex-direction: column;
   gap: var(--space-500);
@@ -188,9 +201,9 @@ body {
     position: static;
     width: 350px;
     max-width: calc(100% - 2 * var(--space-400));
-    margin: var(--space-300) auto 0;
+    margin: 32px auto 0;
   }
-  .content { width: 350px; margin: var(--space-100) auto 64px; gap: var(--space-400); }
+  .content { width: 350px; margin: 8px auto 24px; gap: var(--space-400); }
   .btn-action { padding: var(--space-200) var(--space-500); border-radius: var(--space-200); }
 }
 
