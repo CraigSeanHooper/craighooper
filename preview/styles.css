@@ -32,9 +32,9 @@
   --radius-full: 64px;
 
   --font-size-12: 12px; --font-size-14: 14px; --font-size-16: 16px;
-  --font-size-24: 24px; --font-size-32: 32px;
+  --font-size-24: 24px; --font-size-32: 32px; --font-size-48: 48px;
   --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px;
-  --line-height-28: 28px; --line-height-34: 34px;
+  --line-height-28: 28px; --line-height-34: 34px; --line-height-48: 48px;
   --letter-spacing-0: 0px;
 }
 
@@ -44,6 +44,7 @@
   --text-secondary: var(--colour-neutral-70);
   --text-muted:     var(--colour-neutral-50);
   --text-on-accent: var(--colour-neutral-90);
+  --text-inverse:   var(--colour-neutral-0);
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --surface-accent: var(--colour-accent-yellow);
