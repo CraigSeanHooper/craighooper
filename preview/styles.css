@@ -179,9 +179,13 @@ body {
   border-radius: var(--space-300);
   background: var(--surface-accent);
   color: var(--text-on-accent);
-  text-decoration: none;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-thickness: 8%;
+  text-underline-offset: 16%;
   white-space: nowrap;
 }
+.btn-action:hover { text-decoration-line: none; }
 .btn-action:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) { .avatar-btn:hover { animation: none; } }
