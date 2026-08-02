@@ -1,5 +1,5 @@
 /* ============================================================
-   craighooper.xyz — preview
+   craighooper.xyz — preview (v7)
    CSS mirrors Foundations: primitives → semantic → text styles.
    Typography mode: Parabole.
    ============================================================ */
@@ -32,9 +32,11 @@
   --radius-full: 64px;
 
   --font-size-12: 12px; --font-size-14: 14px; --font-size-16: 16px;
-  --font-size-24: 24px; --font-size-32: 32px; --font-size-48: 48px;
+  --font-size-20: 20px; --font-size-24: 24px; --font-size-32: 32px;
+  --font-size-48: 48px;
   --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px;
-  --line-height-28: 28px; --line-height-34: 34px; --line-height-48: 48px;
+  --line-height-24: 24px; --line-height-28: 28px; --line-height-34: 34px;
+  --line-height-48: 48px;
   --letter-spacing-0: 0px;
 }
 
@@ -48,6 +50,7 @@
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --surface-accent: var(--colour-accent-yellow);
+  --surface-blobs:  var(--colour-neutral-0);
   --border-hover:   var(--colour-neutral-80);
   --text-link:      var(--colour-link-blue);
 
@@ -66,11 +69,12 @@
     --surface-page:   var(--colour-neutral-90);
     --border-hover:   var(--colour-neutral-25);
     --text-link:      var(--colour-link-blue-light);
+    /* --surface-blobs stays white: the artwork's large mass is black */
   }
 }
 
 /* ---------------- TEXT STYLES ---------------- */
-.h2 {
+.h2 {                            /* used by 404.html */
   font-family: var(--font-family-heading);
   font-weight: var(--font-style-heading);
   font-size: var(--font-size-32);
@@ -78,15 +82,15 @@
   letter-spacing: var(--letter-spacing-heading);
   color: var(--text-primary);
 }
-.body-md {
-  font-family: var(--font-family-body);
-  font-weight: var(--font-style-body);
-  font-size: var(--font-size-16);
-  line-height: var(--line-height-22);
-  letter-spacing: var(--letter-spacing-body);
-  color: var(--text-secondary);
+.h3 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-style-heading);
+  font-size: var(--font-size-24);
+  line-height: var(--line-height-28);
+  letter-spacing: var(--letter-spacing-heading);
+  color: var(--text-primary);
 }
-.body-lead {
+.body-md {
   font-family: var(--font-family-body);
   font-weight: var(--font-style-body);
   font-size: var(--font-size-16);
@@ -115,8 +119,8 @@
   text-underline-offset: 16%;
 }
 .link-md:hover { text-decoration-line: none; }
-.muted { color: var(--text-muted); }
-.archived { color: var(--text-muted); }
+.primary { color: var(--text-primary); }
+.muted   { color: var(--text-muted); }
 
 /* ---------------- Layout ---------------- */
 * { box-sizing: border-box; }
@@ -154,65 +158,84 @@ body {
 }
 @keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* content column — centred */
-.content {
-  width: 370px;
+/* main column — centred */
+.main {
+  width: 570px;
   max-width: calc(100% - 2 * var(--space-400));
-  margin: 96px auto 64px;   /* top / bottom */
+  margin: 32px auto 96px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* generative blob artwork — drawn by assets/blobs.js */
+.blobs {
+  width: 100%;
+  aspect-ratio: 570 / 320;      /* reserves the space before the script runs */
+  overflow: hidden;
+  background: var(--surface-blobs);
+}
+.blobs svg { display: block; width: 100%; height: auto; touch-action: pan-y; cursor: crosshair; }
+
+.content {
   display: flex;
   flex-direction: column;
   gap: var(--space-500);
+  width: 100%;
 }
 .bio, .work, .social { display: flex; flex-direction: column; gap: var(--space-200); width: 100%; }
 .bio h1 { margin: 0; word-break: break-word; }
 .bio p, .work p, .social p { margin: 0; }
-.bio .stack p + p { margin-top: var(--line-height-20); }
-.work-node { display: flex; flex-direction: column; gap: var(--space-50); width: 100%; }
-.social-links { display: flex; flex-direction: column; gap: var(--space-100); width: 100%; align-items: flex-start; }
+.bio .stack p + p { margin-top: var(--line-height-22); }
 
-/* Say hello button */
+.work-social { display: flex; gap: 30px; width: 100%; align-items: flex-start; }
+.work-social > * { flex: 1 1 0; min-width: 0; }
+
+.work-node { display: flex; flex-direction: column; gap: var(--space-50); width: 100%; }
+.link-copy { display: flex; flex-direction: column; gap: var(--space-50); width: 100%; align-items: flex-start; }
+.social-links { display: flex; flex-direction: column; gap: var(--space-50); width: 100%; align-items: flex-start; }
+
+/* action button — fixed, bottom right */
 .btn-action {
-  display: flex; align-items: center; justify-content: center;
-  gap: var(--space-100);
-  width: 100%;
-  padding: var(--space-300) var(--space-600);
-  border-radius: var(--space-300);
+  position: fixed;
+  right: 16px; bottom: 16px;
+  z-index: 3;
+  display: grid; place-items: center;
+  width: 52px; height: 52px;
+  border-radius: var(--radius-full);
   background: var(--surface-accent);
   color: var(--text-on-accent);
-  text-decoration-line: underline;
-  text-decoration-style: solid;
-  text-decoration-thickness: 8%;
-  text-underline-offset: 16%;
-  white-space: nowrap;
 }
-.btn-action:hover { text-decoration-line: none; }
+.btn-action .icon { display: block; transform: scaleX(-1); }
 .btn-action:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
 
 @media (prefers-reduced-motion: reduce) { .avatar-btn:hover { animation: none; } }
 
 /* ---------------- MOBILE (≤820px) ---------------- */
 @media (max-width: 820px) {
-  .h2      { font-size: var(--font-size-24); line-height: var(--line-height-28); }
+  .h3      { font-size: var(--font-size-20); line-height: var(--line-height-24); }
   .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
   .link-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
-  .bio .stack p + p { margin-top: var(--line-height-18); }
+  .bio .stack p + p { margin-top: var(--line-height-20); }
 
   /* scrolls with the content rather than sticking */
   .avatar-wrap {
     position: static;
     width: 350px;
     max-width: calc(100% - 2 * var(--space-400));
-    margin: 32px auto 0;
+    margin: 20px auto 0;
   }
-  .content { width: 350px; margin: 8px auto 24px; gap: var(--space-400); }
-  .btn-action { padding: var(--space-200) var(--space-500); border-radius: var(--space-200); }
+  .main { width: 350px; margin: 0 auto 96px; }
+  .blobs { aspect-ratio: 350 / 224; }
+  .blobs svg { cursor: default; }
+  .content { gap: var(--space-400); }
+  .work-social { flex-direction: column; gap: var(--space-400); }
 }
-
 
 /* ---------------- Load-in animation (matches the live site) ---------------- */
 @media (prefers-reduced-motion: no-preference) {
   .avatar-wrap,
+  .blobs,
   .bio,
   .work,
   .social,
@@ -222,10 +245,11 @@ body {
     animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
   .avatar-wrap { animation-delay: 0.04s; }
-  .bio         { animation-delay: 0.12s; }
-  .work        { animation-delay: 0.18s; }
-  .social      { animation-delay: 0.26s; }
-  .btn-action  { animation-delay: 0.32s; }
+  .blobs       { animation-delay: 0.08s; }
+  .bio         { animation-delay: 0.16s; }
+  .work        { animation-delay: 0.22s; }
+  .social      { animation-delay: 0.28s; }
+  .btn-action  { animation-delay: 0.34s; }
 
   @keyframes rise {
     to { opacity: 1; translate: 0 0; }
