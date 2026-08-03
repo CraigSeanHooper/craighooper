@@ -4,8 +4,8 @@
 
    TUNED SETTINGS (agreed with Craig — do not change without asking):
      palette   : "Signal"  — black mass + #E8452F, #1F6FEB, #F2C230
-                 the mass reads from the CSS var --blob-mass so it can
-                 flip to white in dark mode; the accents never change
+                 the mass is filled by CSS (--blob-mass) so it flips to
+                 white in dark mode; the accents never change
      roundness : "Round"   — see ROUND below
      morph     : LERP 0.09 (deliberately slowed; 0.16 felt too fast)
      shapes    : 4 only. Cursor must NOT spawn new shapes.
@@ -45,13 +45,7 @@
   var CS = Math.min((VW - 36) / GW, (VH - 24) / GH);
   var OX = (VW - GW * CS) / 2, OY = (VH - GH * CS) / 2;
   var R = CONFIG.round, LP = CONFIG.lerp, BRU = CONFIG.brush;
-  var PAL = CONFIG.palette.accents;
-
-  function massColour() {
-    var v = getComputedStyle(document.documentElement)
-              .getPropertyValue('--blob-mass').trim();
-    return v || CONFIG.palette.mass;
-  }
+  var PAL = CONFIG.palette.accents, DK = CONFIG.palette.mass;
 
   var host = document.getElementById('blobs');
   var svg = document.createElementNS(NS, 'svg');
@@ -264,7 +258,7 @@
       sizes[i] = sizes[j]; sizes[j] = t;
     }
     var anch = [[GW*0.76, GH*0.24], [GW*0.24, GH*0.76], [GW*0.84, GH*0.72]];
-    var raw = [{ b: walk(), c: massColour(), big: true }];
+    var raw = [{ b: walk(), c: DK, big: true }];
     for (i = 0; i < 3; i++)
       raw.push({ b: discs(anch[i][0], anch[i][1], sizes[i]), c: PAL[i % 3], big: false });
 
@@ -275,6 +269,10 @@
       var th = big ? R.threshold : 0.48;
       var bs = clean(raw[i].b.slice(), cp), f = field(bs, br);
       var e = document.createElementNS(NS, 'path');
+      /* The mass is coloured by CSS (.blob-mass -> --blob-mass) so it follows
+         the colour scheme. The fill attribute below is only a fallback for
+         when the stylesheet hasn't applied. */
+      if (big) e.setAttribute('class', 'blob-mass');
       e.setAttribute('fill', raw[i].c);
       e.setAttribute('fill-rule', 'evenodd');
       MK.appendChild(e);
@@ -284,12 +282,6 @@
   }
 
   build();
-
-  /* repaint the mass if the colour scheme flips while the page is open */
-  var scheme = window.matchMedia('(prefers-color-scheme: dark)');
-  var onScheme = function () { if (A.length) A[0].el.setAttribute('fill', massColour()); };
-  if (scheme.addEventListener) scheme.addEventListener('change', onScheme);
-  else if (scheme.addListener) scheme.addListener(onScheme);
 
   if (!interactive) return;   // mobile / reduced motion: static artwork, no listeners
 
