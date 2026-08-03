@@ -50,9 +50,9 @@
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --surface-accent: var(--colour-accent-yellow);
-  --surface-blobs:  var(--colour-neutral-0);
   --border-hover:   var(--colour-neutral-80);
   --text-link:      var(--colour-link-blue);
+  --blob-mass:      #000000;    /* large mass in the blob artwork */
 
   --font-family-heading: var(--font-family-parabole);
   --font-family-body:    var(--font-family-parabole);
@@ -69,7 +69,7 @@
     --surface-page:   var(--colour-neutral-90);
     --border-hover:   var(--colour-neutral-25);
     --text-link:      var(--colour-link-blue-light);
-    /* --surface-blobs stays white: the artwork's large mass is black */
+    --blob-mass:      var(--colour-neutral-0);
   }
 }
 
@@ -172,7 +172,6 @@ body {
   width: 100%;
   aspect-ratio: 570 / 320;      /* reserves the space before the script runs */
   overflow: hidden;
-  background: var(--surface-blobs);
 }
 .blobs svg { display: block; width: 100%; height: auto; touch-action: pan-y; cursor: crosshair; }
 
@@ -230,17 +229,6 @@ body {
   .blobs svg { cursor: default; }
   .content { gap: var(--space-400); }
   .work-social { flex-direction: column; gap: var(--space-400); }
-
-  /* iOS hides its toolbars as you scroll, which grows the viewport and drags
-     a bottom-anchored button down into the corner with it. Anchoring from the
-     top against the *small* viewport height pins the button where it lands on
-     load — 16px up — and leaves it there as the toolbars retract. */
-  @supports (height: 100svh) {
-    .btn-action {
-      top: calc(100svh - 52px - var(--space-300));
-      bottom: auto;
-    }
-  }
 }
 
 /* ---------------- Load-in animation (matches the live site) ---------------- */
