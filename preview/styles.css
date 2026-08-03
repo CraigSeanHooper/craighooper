@@ -230,6 +230,17 @@ body {
   .blobs svg { cursor: default; }
   .content { gap: var(--space-400); }
   .work-social { flex-direction: column; gap: var(--space-400); }
+
+  /* iOS hides its toolbars as you scroll, which grows the viewport and drags
+     a bottom-anchored button down into the corner with it. Anchoring from the
+     top against the *small* viewport height pins the button where it lands on
+     load — 16px up — and leaves it there as the toolbars retract. */
+  @supports (height: 100svh) {
+    .btn-action {
+      top: calc(100svh - 52px - var(--space-300));
+      bottom: auto;
+    }
+  }
 }
 
 /* ---------------- Load-in animation (matches the live site) ---------------- */
