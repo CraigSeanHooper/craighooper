@@ -8,10 +8,20 @@ content:
     fields:
       - { name: headline, label: Headline, type: string }
       - { name: bio, label: Bio paragraphs, type: text, list: true }
-      - name: links
-        label: Buttons
+      - { name: email, label: Email address, type: string }
+      - name: work
+        label: Work history
         type: object
         list: true
         fields:
-          - { name: label, label: Button label, type: string }
+          - { name: dates, label: Dates, type: string }
+          - { name: name, label: Company, type: string }
+          - { name: url, label: Links to, type: string }
+          - { name: role, label: Role, type: string }
+      - name: social
+        label: Social links
+        type: object
+        list: true
+        fields:
+          - { name: label, label: Label, type: string }
           - { name: url, label: Links to, type: string }
