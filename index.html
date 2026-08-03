@@ -4,10 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
   <title>Craig Hooper. Product Designer. Ottawa, Canada.</title>
   <meta name="description" content="Working on design systems and digital modernization for Canadian Blood Services.">
-  <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://craighooper.xyz/">
 
   <meta property="og:title" content="Craig Hooper. Product Designer. Ottawa, Canada.">
@@ -37,100 +36,156 @@
     "name": "Craig Hooper",
     "url": "https://craighooper.xyz/",
     "jobTitle": "Product Designer",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Ottawa",
-      "addressCountry": "Canada"
-    },
+    "address": { "@type": "PostalAddress", "addressLocality": "Ottawa", "addressCountry": "Canada" },
     "sameAs": [
       "https://x.com/craigseanhooper",
+      "https://www.instagram.com/craighooper",
       "https://www.cosmos.so/craighooper"
     ]
   }
   </script>
 </head>
 <body>
-  <main class="card">
-    <!-- Avatar swaps with colour scheme: light line-art on white (default), inverted on dark -->
-    <span class="avatar-link" data-cuelume-hover="sparkle">
-      <img class="avatar avatar--light" src="assets/avatar.jpg" alt="Craig Hooper" width="48" height="48"
-           onerror="this.classList.add('avatar--missing')">
-      <img class="avatar avatar--dark" src="assets/avatar-line.png" alt="Craig Hooper" width="48" height="48"
-           onerror="this.classList.add('avatar--missing')">
-    </span>
+  <div class="avatar-wrap">
+    <button class="avatar-btn" type="button" aria-label="Craig Hooper" data-cuelume-hover="sparkle">
+      <img src="assets/avatar.png" alt="Craig Hooper" width="48" height="48">
+    </button>
+  </div>
+
+  <main class="main">
+    <div class="blobs" id="blobs"></div>
 
     <div class="content">
-      <h1 class="headline">Working on design systems and digital modernization for Canadian Blood Services</h1>
+      <section class="bio">
+        <h1 class="h3">Working on design systems and digital modernization for Canadian Blood Services</h1>
+        <p class="body-md">I've been building digital interfaces for 25 years. It's not a badge of honour — it's just a lot of experience. I designed when the internet was in its infancy, and I've watched this industry evolve.</p>
+        <div class="body-md stack">
+          <p>I still love it. I love to solve problems, and I enjoy distilling the complex into something simpler. We encounter problematic digital experiences every day, and I enjoy playing my part in shaping a better way. I'm a big believer in systems, and in how a well-crafted one keeps design consistent.</p>
+          <p>The rapid rise of agentic workflows fills me with a mix of amazement, curiosity, and caution.</p>
+        </div>
+      </section>
 
-      <div class="copylinks">
-      <div class="bio">
-        <p class="bio-lead">I've been building digital interfaces for 25 years. It's not a badge of honour — it's just a lot of experience. I designed when the internet was in its infancy, and I've watched this industry evolve. I still love it. I love to solve problems, and I enjoy distilling the complex into something simpler. We encounter problematic digital experiences every day, and I enjoy playing my part in shaping a better way.</p>
-        <p class="bio-body">I'm a big believer in systems, and in how a well-crafted one keeps design consistent. I'm watching the rapid rise of agentic workflows with a mix of amazement, curiosity, and a little bit of caution.</p>
-      </div>
+      <div class="work-social">
+        <section class="work">
+          <p class="body-md primary">Work history</p>
 
-      <nav class="links" aria-label="Links">
-        <a class="btn-action" data-cuelume-hover="toggle" href="mailto:craigseanhooper@gmail.com">
-          <span>Mail</span>
-          <svg class="icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M18.3333 9.16666C18.3333 6.83695 18.3333 5.67209 17.9526 4.75324C17.4452 3.5281 16.4718 2.55473 15.2467 2.04726C14.3278 1.66666 13.163 1.66666 10.8333 1.66666H9.66659C6.86632 1.66666 5.46619 1.66666 4.39663 2.21162C3.45582 2.69099 2.69092 3.45589 2.21155 4.3967C1.66659 5.46626 1.66659 6.86639 1.66659 9.66666V15.9756C1.66659 16.4451 1.66659 16.6799 1.70139 16.8386C1.89263 17.7108 2.7987 18.2238 3.64493 17.9391C3.79897 17.8872 4.00027 17.7664 4.40286 17.5249C4.64373 17.3804 4.76417 17.3081 4.88639 17.2437C5.52268 16.9082 6.22385 16.714 6.94205 16.6743C7.08 16.6667 7.22046 16.6667 7.50136 16.6667H10.8333C13.163 16.6667 14.3278 16.6667 15.2467 16.2861C16.4718 15.7786 17.4452 14.8052 17.9526 13.5801C18.3333 12.6612 18.3333 11.4964 18.3333 9.16666Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
-        <a class="btn-link" data-cuelume-hover="toggle" href="https://x.com/craigseanhooper" target="_blank" rel="noopener">
-          <span>Twitter</span>
-          <svg class="icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3.33325 16.6667L16.6666 3.33334M7.49992 3.33334H16.6666V12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
-        <a class="btn-link" data-cuelume-hover="toggle" href="https://www.cosmos.so/craighooper" target="_blank" rel="noopener">
-          <span>Cosmos</span>
-          <svg class="icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M3.33325 16.6667L16.6666 3.33334M7.49992 3.33334H16.6666V12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
-      </nav>
+          <div class="work-node">
+            <p class="body-md muted">2005—2011</p>
+            <div class="link-copy">
+              <a class="link-md" data-cuelume-hover="toggle" href="https://web.archive.org/web/20070822193632/http://www.analogue.ca/main.html" target="_blank" rel="noopener">Analogue</a>
+              <p class="body-sm">Managing partner, designer</p>
+            </div>
+          </div>
+
+          <div class="work-node">
+            <p class="body-md muted">2012—2025</p>
+            <div class="link-copy">
+              <a class="link-md" data-cuelume-hover="toggle" href="https://banfield.agency" target="_blank" rel="noopener">Banfield Agency</a>
+              <p class="body-sm">Senior digital designer</p>
+            </div>
+          </div>
+
+          <div class="work-node">
+            <p class="body-md muted">2025—present</p>
+            <div class="link-copy">
+              <a class="link-md" data-cuelume-hover="toggle" href="https://www.blood.ca" target="_blank" rel="noopener">Canadian Blood Services</a>
+              <p class="body-sm">Senior product designer</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="social">
+          <p class="body-md primary">Social</p>
+          <div class="social-links">
+            <a class="link-md" data-cuelume-hover="toggle" href="https://x.com/craigseanhooper" target="_blank" rel="noopener">Twitter</a>
+            <a class="link-md" data-cuelume-hover="toggle" href="https://www.instagram.com/craighooper" target="_blank" rel="noopener">Instagram</a>
+            <a class="link-md" data-cuelume-hover="toggle" href="https://www.cosmos.so/craighooper" target="_blank" rel="noopener">Cosmos</a>
+          </div>
+        </section>
       </div>
     </div>
   </main>
+
+  <a class="btn-action" data-cuelume-hover="toggle" href="mailto:craigseanhooper@gmail.com" aria-label="Say hello">
+    <svg class="icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M5.00016 6.66667L5.8335 7.22222C7.17487 8.11647 7.84556 8.5636 8.55775 8.77817C9.49847 9.06161 10.5019 9.06161 11.4426 8.77817C12.1548 8.5636 12.8255 8.11647 14.1668 7.22222L15.0002 6.66667M10.8335 17.5H9.16683C6.83712 17.5 5.67227 17.5 4.75341 17.1194C3.52827 16.6119 2.5549 15.6386 2.04743 14.4134C1.66683 13.4946 1.66683 12.3297 1.66683 10C1.66683 7.67029 1.66683 6.50544 2.04743 5.58658C2.5549 4.36144 3.52827 3.38807 4.75341 2.8806C5.67227 2.5 6.83712 2.5 9.16683 2.5H10.8335C13.1632 2.5 14.3281 2.5 15.2469 2.8806C16.4721 3.38807 17.4454 4.36144 17.9529 5.58658C18.3335 6.50544 18.3335 7.67029 18.3335 10C18.3335 12.3297 18.3335 13.4946 17.9529 14.4134C17.4454 15.6386 16.4721 16.6119 15.2469 17.1194C14.3281 17.5 13.1632 17.5 10.8335 17.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </a>
+
   <script>
-    // Pull editable homepage content from content/home.json (managed via /admin/).
+    // Editable homepage content from content/home.json (managed via Pages CMS).
     // The text baked into the HTML above stays as a fallback if this fails.
     (function () {
+      function el(tag, cls, text) {
+        var n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text != null) n.textContent = text;
+        return n;
+      }
+      function link(label, url) {
+        var a = el('a', 'link-md', label);
+        a.setAttribute('data-cuelume-hover', 'toggle');
+        a.href = url || '#';
+        if (!/^(mailto:|tel:)/.test(a.href)) {
+          a.target = '_blank';
+          a.rel = 'noopener';
+        }
+        return a;
+      }
+
       fetch('content/home.json', { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (data) {
           if (!data) return;
-          var h1 = document.querySelector('.headline');
-          var bio = document.querySelector('.bio');
+
+          var h1 = document.querySelector('.bio h1');
           if (data.headline && h1) h1.textContent = data.headline;
-          if (Array.isArray(data.bio) && bio) {
-            bio.innerHTML = '';
-            data.bio.forEach(function (para, i) {
-              if (!para) return;
-              var p = document.createElement('p');
-              p.className = i === 0 ? 'bio-lead' : 'bio-body';
-              p.textContent = para;
-              bio.appendChild(p);
+
+          if (Array.isArray(data.bio) && data.bio.length) {
+            var lead = document.querySelector('.bio > p.body-md');
+            var stack = document.querySelector('.bio .stack');
+            if (lead) lead.textContent = data.bio[0];
+            if (stack) {
+              stack.innerHTML = '';
+              data.bio.slice(1).forEach(function (para) {
+                if (para) stack.appendChild(el('p', null, para));
+              });
+            }
+          }
+
+          var work = document.querySelector('.work');
+          if (Array.isArray(data.work) && work) {
+            work.querySelectorAll('.work-node').forEach(function (n) { n.remove(); });
+            data.work.forEach(function (job) {
+              if (!job || !job.name) return;
+              var node = el('div', 'work-node');
+              node.appendChild(el('p', 'body-md muted', job.dates || ''));
+              var copy = el('div', 'link-copy');
+              copy.appendChild(link(job.name, job.url));
+              copy.appendChild(el('p', 'body-sm', job.role || ''));
+              node.appendChild(copy);
+              work.appendChild(node);
             });
           }
-          if (Array.isArray(data.links)) {
-            var anchors = document.querySelectorAll('.links a');
-            data.links.forEach(function (link, i) {
-              var a = anchors[i];
-              if (!a) return;
-              var span = a.querySelector('span');
-              if (link.label && span) span.textContent = link.label;
-              if (link.url) a.setAttribute('href', link.url);
+
+          var social = document.querySelector('.social-links');
+          if (Array.isArray(data.social) && social) {
+            social.innerHTML = '';
+            data.social.forEach(function (item) {
+              if (item && item.label) social.appendChild(link(item.label, item.url));
             });
           }
+
+          var btn = document.querySelector('.btn-action');
+          if (data.email && btn) btn.href = 'mailto:' + data.email;
         })
         .catch(function () { /* keep baked-in fallback */ });
     })();
   </script>
-  <script src="assets/squircle.js" defer></script>
 
-  <!-- Interaction sounds. Version-pinned; cuelume is pre-1.0.
-       Sounds only fire for a fine pointer, and only after the first click
-       (browsers block audio until then). -->
+  <script src="assets/blobs.js" defer></script>
+
+  <!-- Interaction sounds. Version-pinned; cuelume is pre-1.0. -->
   <script type="module">
     import { bind } from "https://esm.sh/cuelume@0.1.2";
     bind();
