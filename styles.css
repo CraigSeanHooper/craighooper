@@ -185,7 +185,8 @@ body {
 .bio, .work, .social { display: flex; flex-direction: column; gap: var(--space-200); width: 100%; }
 .bio h1 { margin: 0; word-break: break-word; }
 .bio p, .work p, .social p { margin: 0; }
-.bio .stack p + p { margin-top: var(--line-height-22); }
+/* every bio paragraph sits on the same rhythm as the rest of the section */
+.bio .stack { display: flex; flex-direction: column; gap: var(--space-200); }
 
 .work-social { display: flex; gap: 30px; width: 100%; align-items: flex-start; }
 .work-social > * { flex: 1 1 0; min-width: 0; }
@@ -227,7 +228,6 @@ body {
   .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
   .link-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
-  .bio .stack p + p { margin-top: var(--line-height-20); }
 
   /* scrolls with the content rather than sticking */
   .avatar-wrap {
