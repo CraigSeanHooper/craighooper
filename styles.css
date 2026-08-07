@@ -208,7 +208,18 @@ body {
 .btn-action .icon { display: block; }
 .btn-action:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
 
-@media (prefers-reduced-motion: reduce) { .avatar-btn:hover { animation: none; } }
+/* hover lift — desktop only, and kept off the load-in animation's
+   `translate` so the two never fight over the same property */
+@media (hover: hover) and (min-width: 821px) {
+  .btn-action { transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .btn-action:hover { transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-btn:hover { animation: none; }
+  .btn-action { transition: none; }
+  .btn-action:hover { transform: none; }
+}
 
 /* ---------------- MOBILE (≤820px) ---------------- */
 @media (max-width: 820px) {
