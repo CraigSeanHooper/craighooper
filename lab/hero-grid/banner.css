@@ -1,15 +1,16 @@
 @font-face {
-  font-family: "KMR Melange Grotesk";
-  src: url("../../assets/fonts/KMRMelangeGrotesk-ExtraBold.woff2") format("woff2");
-  font-weight: 800; font-style: normal; font-display: swap;
+  font-family: "Parabole";
+  src: url("../../assets/fonts/Parabole-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
 }
 
 :root {
   --surface-page: #ffffff;
   --text-primary: #1a1a1a;
 
-  --font-heading: "KMR Melange Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --letter-spacing-heading: -0.021em;   /* -1px at 48px */
+  --font-heading: "Parabole", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --letter-spacing-heading: 0;
+  --radius-lg: 16px;
 
   /* The collage is composed at 1600 x 937.5 and every photo is positioned as a
      percentage of that, so the whole thing scales as one piece. */
@@ -51,6 +52,7 @@ html, body {
   width: var(--w);
   margin: 0;
   overflow: hidden;
+  border-radius: var(--radius-lg);
   animation: rise .8s cubic-bezier(.2, .7, .3, 1) both;
 }
 
@@ -79,12 +81,12 @@ html, body {
   transform: translate(-50%, -50%);
   z-index: 2;
   margin: 0;
-  /* 48px on a 1600 stage; 7.92em holds the measure at 380px there and keeps
+  /* 32px on a 1600 stage; 11.875em holds the measure at 380px there and keeps
      the same line breaks as it scales. */
-  font-size: clamp(22px, 3vw, 48px);
-  width: 7.92em;
-  font-weight: 800;
-  line-height: 1;
+  font-size: clamp(20px, 2vw, 32px);
+  width: 11.875em;
+  font-weight: 400;
+  line-height: 1.0625;
   letter-spacing: var(--letter-spacing-heading);
   text-align: center;
   font-feature-settings: "salt" 1, "ss08" 1;
@@ -107,9 +109,10 @@ html, body {
     max-width: 15em;
     padding: 0 var(--gutter);
     margin: clamp(24px, 6vw, 56px) 0 0;
-    font-size: clamp(26px, 5.5vw, 40px);
-    line-height: 1.05;
-    text-align: left;
+    font-size: clamp(24px, 5vw, 32px);
+    line-height: 1.0625;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 

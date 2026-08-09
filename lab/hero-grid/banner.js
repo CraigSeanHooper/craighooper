@@ -69,6 +69,9 @@ function render(data) {
     figure.appendChild(img);
     stage.appendChild(figure);
   });
+
+  /* tells squircle.js the photos exist and can have their corners shaped */
+  document.dispatchEvent(new Event("photos:ready"));
 }
 
 fetch("../../content/hero-grid.json", { cache: "no-store" })
