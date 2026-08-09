@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="robots" content="noindex" />
+  <title>Infinite — Craig Hooper</title>
+  <link rel="icon" href="/assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <meta name="theme-color" content="#f4f4f2" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
+
+  <!-- share card -->
+  <meta property="og:title" content="Infinite — Craig Hooper" />
+  <meta property="og:site_name" content="Craig Hooper" />
+  <meta property="og:description" content="The universe is indifferent" />
+  <meta property="og:image" content="https://craighooper.xyz/infinite/assets/share-card.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://craighooper.xyz/infinite/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Infinite — Craig Hooper" />
+  <meta name="twitter:description" content="The universe is indifferent" />
+  <meta name="twitter:image" content="https://craighooper.xyz/infinite/assets/share-card.jpg" />
+  <style>
+    @font-face {
+      font-family: "KMR Melange Grotesk";
+      src: url("/assets/fonts/KMRMelangeGrotesk-Medium.woff2") format("woff2");
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: "Parabole";
+      src: url("/assets/fonts/Parabole-Regular.woff2") format("woff2");
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+
+    :root { --bg: #f4f4f2; --ink: #1a1a1a; --stage-w: 5000px; --stage-h: 3200px; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      background: var(--bg); color: var(--ink);
+      font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overscroll-behavior: none;
+    }
+
+    #viewport { position: fixed; inset: 0; overflow: hidden; cursor: grab; touch-action: none; }
+    #viewport.panning { cursor: grabbing; }
+
+    #stage {
+      position: absolute; top: 0; left: 0;
+      width: var(--stage-w); height: var(--stage-h);
+      transform-origin: 0 0; will-change: transform;
+    }
+
+    .cluster { position: absolute; cursor: grab; touch-action: none; user-select: none; }
+    .cluster.moving { cursor: grabbing; }
+    .cluster > img {
+      display: block; width: 100%; height: 100%;
+      pointer-events: none; -webkit-user-drag: none; user-select: none;
+    }
+    .home-link {
+      position: absolute; display: block; cursor: pointer;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+    .home-link img {
+      display: block; width: 100%; height: 100%;
+      pointer-events: none; -webkit-user-drag: none; user-select: none;
+    }
+
+    /* horizontal text columns (text-1) */
+    .tcol {
+      position: absolute; margin: 0;
+      font-family: "KMR Melange Grotesk", sans-serif; font-weight: 500;
+      font-size: 14px; line-height: 20px; color: #333;
+      font-feature-settings: "ss08" 1; word-break: break-word;
+    }
+
+    /* manson cluster: image + vertical (rotated) live text */
+    .manson-img { position: absolute; }
+    .manson-img img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+    .vcol { position: absolute; display: flex; align-items: center; justify-content: center; }
+    .vcol p {
+      margin: 0; flex: none; transform: rotate(-90deg);
+      font-family: "KMR Melange Grotesk", sans-serif; font-weight: 500;
+      font-size: 10px; line-height: 16px; color: #1a1a1a;
+      font-feature-settings: "ss08" 1; word-break: break-word;
+    }
+    .vcol--cw p { transform: rotate(90deg); }
+
+    /* --- controls (Craig's design): bottom-centre pill --- */
+    .controls {
+      position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+      z-index: 10; display: flex; flex-direction: row; align-items: center; gap: 12px;
+      padding: 8px 24px; background: #fff; border-radius: 64px;
+      max-width: calc(100vw - 24px);
+      touch-action: manipulation;
+    }
+    .controls, .controls * { touch-action: manipulation; }
+    .controls .iconbtn, .sound-toggle {
+      box-sizing: border-box;
+      width: 40px; height: 40px; padding: 8px;
+      border: 1px solid #e6e6e6; border-radius: 50%; background: #fff;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .controls .iconbtn { color: #1a1a1a; }
+    .controls .iconbtn svg, .controls .iconbtn img, .sound-toggle img { display: block; width: 24px; height: 24px; }
+    .controls .pct {
+      min-width: 65px; padding: 8px 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Parabole", serif; font-weight: 400; font-size: 16px; line-height: 22px; color: #333;
+      background: #fff; border: 1px solid #e6e6e6; border-radius: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .controls .fit {
+      border: 0; background: none; cursor: pointer; padding: 0 2px;
+      font-family: "Parabole", serif; font-weight: 400; font-size: 16px; line-height: 22px; color: #333;
+      white-space: nowrap;
+    }
+
+    .sound-toggle {
+      position: fixed; bottom: 18px; right: 24px; z-index: 10;
+      touch-action: manipulation;
+    }
+
+    /* phone: smaller control text (p-parabole/xs), keep "Zoom to fit" on one line */
+    @media (max-width: 600px) {
+      .controls { gap: 12px; padding: 8px 18px; }
+      .controls .pct { font-size: 14px; line-height: 20px; padding: 6px 12px; min-width: 60px; }
+      .controls .fit { font-size: 14px; line-height: 20px; }
+      .sound-toggle { top: 16px; right: 16px; bottom: auto; }
+    }
+
+    /* dark mode (auto, follows OS) — artwork stays, chrome + text flip */
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #111111; }
+      .tcol { color: #b0b0b0; }
+      .vcol p { color: #f5f5f5; }
+      .controls { background: #1c1c1c; }
+      .controls .pct { background: #1c1c1c; border-color: #3a3a3a; color: #f5f5f5; }
+      .controls .iconbtn { background: #1c1c1c; border-color: #3a3a3a; }
+      .controls .fit { color: #f5f5f5; }
+      .controls .iconbtn img { filter: invert(1); }
+      .home-link img { filter: invert(1); }
+      .sound-toggle { background: #1c1c1c; border-color: #3a3a3a; }
+      .sound-toggle img { filter: invert(1); }
+    }
+  </style>
+</head>
+<body>
+  <div id="viewport">
+    <div id="stage">
+
+      <!-- skulls -->
+      <div class="cluster" style="left:376px; top:352px; width:880px; height:880px;"><img src="assets/skulls.png" alt="" /></div>
+
+      <!-- lm (2x2 portraits) -->
+      <div class="cluster" style="left:3143px; top:1770px; width:394px; height:540px;"><img src="assets/lm.png" alt="" /></div>
+
+      <!-- avatar: links home, not draggable -->
+      <a class="home-link" href="/" style="left:2468px; top:1568px; width:64px; height:64px;" aria-label="Back to homepage"><img src="assets/avatar.png" alt="Craig Hooper" /></a>
+
+      <!-- text-1: four horizontal columns -->
+      <div class="cluster" style="left:2372px; top:320px; width:1502px; height:380px;">
+        <p class="tcol" style="left:0px;   top:0px;   width:470px;">Excess skin has long been an issue among patients who’ve had bariatric surgery, which makes the stomach smaller, or otherwise lost weight rapidly. But over the past few years, doctors say they’re seeing loose skin much more often as new obesity drugs —like Ozempic, Zepbound and Wegovy—become more powerful and commonplace.</p>
+        <p class="tcol" style="left:566px;  top:0px;   width:470px;">It is not uncommon for unexploded bombs from 20th-century conflicts to be uncovered in Austria, though accidents like this one appear to be rare. To dispense with the obvious: It’s hard to imagine a president as unlike Donald Trump as Jimmy Carter, with his radically different approach to governing and to morality. But it’s also hard to miss the structural similarities between our time and the era that brought down Carter and shifted political and economic thinking globally to the right, as reflected in the rise of Ronald Reagan in the United States and Margaret Thatcher in Britain. It’s not just that Iran has reoccupied center stage or that fear of stagflation looms again, even if this economy is different in important ways from the old one. In the late 1970s, Americans sensed that their country was growing weaker in the world, in the wake of the Vietnam debacle and as the Soviet invasion of Afghanistan and the Iranian hostage crisis set in. Today, they see it as enfeebled because of Mr. Trump’s assault on longstanding alliances, his devastation of America’s moral standing with his deranged threat to wipe out Iran’s “whole civilization” and his pursuit of a war without a coherent strategy or clear objectives.</p>
+        <p class="tcol" style="left:1132px; top:0px;   width:370px;">During a call from her house in Los Angeles, Kardashian discussed the beauty of motherhood, her workout routine and what snacks she likes to keep on hand. These are edited excerpts from the conversation.</p>
+        <p class="tcol" style="left:1132px; top:120px; width:370px;">Instead of waiting until morning, I decided to start immediately. I planned to finish all my work that day, get home and sit for 20 minutes before bed.  After all, Bryant also did it at night before games, and I was eager to begin. But my brain was already spent. Instead of observing my thoughts with curiosity, I felt a little overwhelmed by them.</p>
+      </div>
+
+      <!-- hs: manson image + vertical live text -->
+      <div class="cluster" style="left:48px; top:1834px; width:368px; height:1358px;">
+        <div class="manson-img" style="left:0px; top:630px; width:360px; height:640px;"><img src="assets/manson.jpg" alt="" /></div>
+        <div class="vcol" style="left:144px; top:68px;  width:16px; height:300px;"><p style="width:300px;">I'm Jesus Christ, whether you want to accept it or not, I don't care.</p></div>
+        <div class="vcol" style="left:144px; top:394px; width:32px; height:470px;"><p style="width:470px;">I can't judge any of you. I have no malice against you and no ribbons for you. But I think that it is high time that you all start looking at yourselves, and judging the lie that you live in.</p></div>
+        <div class="vcol" style="left:180px; top:683px; width:48px; height:180px;"><p style="width:180px;">Look down at me and you see a fool, Look up at me and you see a god, Look straight at me and you see yourself.</p></div>
+        <div class="vcol" style="left:144px; top:888px; width:64px; height:470px;"><p style="width:470px;">Do you feel blame? Are you mad? Uh, do you feel like wolf kabob Roth vantage? Gefrannis booj pooch boo jujube; bear-ramage. Jigiji geeji geeja geeble Google. Begep flagaggle vaggle veditch-waggle bagga? The mind is endless. You put me in a dark solitary cell, and to you that's the end, to me it's the beginning, it's the universe in there, there's a world in there, and I'm free.</p></div>
+      </div>
+
+      <!-- hs-2: manson trial image + vertical live text (reads downward) -->
+      <div class="cluster" style="left:555px; top:2698px; width:411px; height:470px;">
+        <div class="manson-img" style="left:0px; top:174px; width:411px; height:280px;"><img src="assets/hs-2.jpg" alt="" /></div>
+        <div class="vcol vcol--cw" style="left:12px; top:0px; width:64px; height:470px;"><p style="width:470px;">I have ate out of your garbage cans to stay out of jail. I have wore your second-hand clothes. I have done my best to get along in your world and now you want to kill me, and I look at you, and then I say to myself, You want to kill me? Ha! I’m already dead, have been all my life. I’ve spent twenty-three years in tombs that you built.</p></div>
+      </div>
+
+      <!-- cock -->
+      <div class="cluster" style="left:966px; top:2688px; width:512px; height:512px;"><img src="assets/cock.jpg" alt="" /></div>
+
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="iconbtn" id="zin" aria-label="Zoom in"><img src="assets/plus.svg" width="24" height="24" alt="" /></button>
+    <div class="pct" id="zoompct">100%</div>
+    <button class="iconbtn" id="zout" aria-label="Zoom out"><img src="assets/minus.svg" width="24" height="24" alt="" /></button>
+    <button class="fit" id="fit">Zoom to fit</button>
+  </div>
+
+  <button class="sound-toggle" id="sound-toggle" aria-label="Toggle sound">
+    <img id="sound-icon" src="assets/icon-sound-mute.svg" width="24" height="24" alt="" />
+  </button>
+  <audio id="bg-audio" src="assets/infinite.mp3" loop preload="auto"></audio>
+
+  <script src="assets/squircle.js" defer></script>
+
+  <script>
+    (function () {
+      var viewport = document.getElementById('viewport');
+      var stage = document.getElementById('stage');
+      var pctEl = document.getElementById('zoompct');
+      var clusters = [].slice.call(document.querySelectorAll('.cluster'));
+      var STAGE_W = 5000, STAGE_H = 3200, PAD = 40, MAX = 1;
+
+      var s = 1, x = 0, y = 0, topZ = 1, hinted = false;
+      function vw(){ return window.innerWidth; }
+      function vh(){ return window.innerHeight; }
+      function fitScale(){ return Math.min((vw()-PAD*2)/STAGE_W, (vh()-PAD*2)/STAGE_H); }
+      function minScale(){ return fitScale(); }
+
+      function clamp() {
+        s = Math.max(minScale(), Math.min(MAX, s));
+        var cw = STAGE_W*s, ch = STAGE_H*s;
+        if (cw <= vw()) x = (vw()-cw)/2; else x = Math.min(0, Math.max(vw()-cw, x));
+        if (ch <= vh()) y = (vh()-ch)/2; else y = Math.min(0, Math.max(vh()-ch, y));
+      }
+      function apply() {
+        clamp();
+        stage.style.transform = 'translate3d('+x+'px,'+y+'px,0) scale('+s+')';
+        if (pctEl) pctEl.textContent = Math.round(s*100) + '%';
+      }
+      function fit() { s = fitScale(); x = (vw()-STAGE_W*s)/2; y = (vh()-STAGE_H*s)/2; apply(); }
+      function zoomAround(px, py, ns) {
+        ns = Math.max(minScale(), Math.min(MAX, ns));
+        var stX = (px - x)/s, stY = (py - y)/s;
+        s = ns; x = px - stX*s; y = py - stY*s; apply();
+      }
+      function dismissHint(){}
+
+      var pts = {}, panOX, panOY, pinch = null;
+      function n(){ return Object.keys(pts).length; }
+
+      viewport.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.cluster')) return;
+        pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        viewport.setPointerCapture(e.pointerId);
+        if (n() === 1) { viewport.classList.add('panning'); panOX = x; panOY = y; }
+        else if (n() === 2) {
+          var p = Object.keys(pts).map(function(k){return pts[k];});
+          pinch = { dist: Math.hypot(p[0].x-p[1].x, p[0].y-p[1].y), cx:(p[0].x+p[1].x)/2, cy:(p[0].y+p[1].y)/2, s0:s };
+        }
+      });
+      viewport.addEventListener('pointermove', function (e) {
+        if (!(e.pointerId in pts)) return;
+        var prev = pts[e.pointerId];
+        pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+        if (n() === 2 && pinch) {
+          var p = Object.keys(pts).map(function(k){return pts[k];});
+          var dist = Math.hypot(p[0].x-p[1].x, p[0].y-p[1].y);
+          var cx = (p[0].x+p[1].x)/2, cy = (p[0].y+p[1].y)/2;
+          zoomAround(cx, cy, pinch.s0 * (dist/pinch.dist));
+          x += cx - pinch.cx; y += cy - pinch.cy; apply();
+          pinch.cx = cx; pinch.cy = cy; dismissHint();
+        } else if (n() === 1) {
+          x += e.clientX - prev.x; y += e.clientY - prev.y; apply(); dismissHint();
+        }
+      });
+      function bgUp(e) {
+        if (!(e.pointerId in pts)) return;
+        delete pts[e.pointerId];
+        try { viewport.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (n() < 2) pinch = null;
+        if (n() === 0) viewport.classList.remove('panning');
+      }
+      viewport.addEventListener('pointerup', bgUp);
+      viewport.addEventListener('pointercancel', bgUp);
+
+      viewport.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        if (e.ctrlKey || e.metaKey) zoomAround(e.clientX, e.clientY, s * (1 - e.deltaY*0.01));
+        else { x -= e.deltaX; y -= e.deltaY; apply(); }
+        dismissHint();
+      }, { passive: false });
+
+      // Trackpad pinch on Safari / iPadOS fires gesture events that would zoom the whole
+      // page (control bar included). Catch them and zoom the canvas instead.
+      var gestureStartScale = 1;
+      window.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
+        gestureStartScale = s;
+      }, { passive: false });
+      window.addEventListener('gesturechange', function (e) {
+        e.preventDefault();
+        var cx = (e.clientX != null) ? e.clientX : vw()/2;
+        var cy = (e.clientY != null) ? e.clientY : vh()/2;
+        zoomAround(cx, cy, gestureStartScale * e.scale);
+        dismissHint();
+      }, { passive: false });
+      window.addEventListener('gestureend', function (e) { e.preventDefault(); }, { passive: false });
+
+      clusters.forEach(function (el) {
+        var sx, sy, ox, oy, dragging = false;
+        el.addEventListener('pointerdown', function (e) {
+          e.stopPropagation();
+          dragging = true; el.classList.add('moving');
+          el.setPointerCapture(e.pointerId); el.style.zIndex = ++topZ;
+          sx = e.clientX; sy = e.clientY;
+          ox = parseFloat(el.style.left); oy = parseFloat(el.style.top);
+        });
+        el.addEventListener('pointermove', function (e) {
+          if (!dragging) return;
+          el.style.left = (ox + (e.clientX - sx)/s) + 'px';
+          el.style.top  = (oy + (e.clientY - sy)/s) + 'px';
+          dismissHint();
+        });
+        function done(e){ if(!dragging) return; dragging=false; el.classList.remove('moving'); try{el.releasePointerCapture(e.pointerId);}catch(err){} }
+        el.addEventListener('pointerup', done);
+        el.addEventListener('pointercancel', done);
+      });
+
+      var home = document.querySelector('.home-link');
+      if (home) home.addEventListener('pointerdown', function(e){ e.stopPropagation(); });
+
+      // sound toggle: play/loop on, pause off, swap icon
+      var bgAudio = document.getElementById('bg-audio');
+      var soundBtn = document.getElementById('sound-toggle');
+      var soundIcon = document.getElementById('sound-icon');
+      if (soundBtn && bgAudio) {
+        soundBtn.addEventListener('click', function(){
+          if (bgAudio.paused) {
+            bgAudio.play();
+            soundIcon.src = 'assets/icon-sound-on.svg';
+            soundBtn.setAttribute('aria-label', 'Mute sound');
+          } else {
+            bgAudio.pause();
+            soundIcon.src = 'assets/icon-sound-mute.svg';
+            soundBtn.setAttribute('aria-label', 'Play sound');
+          }
+        });
+      }
+
+      document.getElementById('zin').addEventListener('click', function(){ zoomAround(vw()/2, vh()/2, s*1.25); });
+
+      // keyboard zoom: + / - (and = for unshifted plus)
+      window.addEventListener('keydown', function(e){
+        if (e.metaKey || e.ctrlKey || e.altKey) return;   // leave browser shortcuts alone
+        if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomAround(vw()/2, vh()/2, s*1.25); }
+        else if (e.key === '-') { e.preventDefault(); zoomAround(vw()/2, vh()/2, s*0.8); }
+      });
+      document.getElementById('zout').addEventListener('click', function(){ zoomAround(vw()/2, vh()/2, s*0.8); });
+      document.getElementById('fit').addEventListener('click', fit);
+      window.addEventListener('resize', apply);
+
+      fit();
+    })();
+  </script>
+</body>
+</html>

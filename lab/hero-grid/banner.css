@@ -1,0 +1,122 @@
+@font-face {
+  font-family: "KMR Melange Grotesk";
+  src: url("../../assets/fonts/KMRMelangeGrotesk-ExtraBold.woff2") format("woff2");
+  font-weight: 800; font-style: normal; font-display: swap;
+}
+
+:root {
+  --surface-page: #ffffff;
+  --text-primary: #1a1a1a;
+
+  --font-heading: "KMR Melange Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --letter-spacing-heading: -0.021em;   /* -1px at 48px */
+
+  /* The collage is composed at 1600 x 937.5 and every photo is positioned as a
+     percentage of that, so the whole thing scales as one piece. */
+  --stage-ratio: 1600 / 937.5;
+  --gutter: 24px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- banner ---------- */
+
+.banner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--surface-page);
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--stage-ratio);
+}
+
+/* ---------- photos ---------- */
+
+.photo {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--w);
+  margin: 0;
+  overflow: hidden;
+  animation: rise .8s cubic-bezier(.2, .7, .3, 1) both;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: auto;                  /* each photo keeps its own proportions */
+  transition: transform .5s cubic-bezier(.2, .7, .3, 1);
+}
+
+@media (hover: hover) {
+  .photo:hover img { transform: scale(1.04); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- headline ---------- */
+
+.headline {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  margin: 0;
+  /* 48px on a 1600 stage; 7.92em holds the measure at 380px there and keeps
+     the same line breaks as it scales. */
+  font-size: clamp(22px, 3vw, 48px);
+  width: 7.92em;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: var(--letter-spacing-heading);
+  text-align: center;
+  font-feature-settings: "salt" 1, "ss08" 1;
+  animation: fade .8s .25s cubic-bezier(.2, .7, .3, 1) both;
+}
+
+@keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+
+/* ---------- small: headline leaves the collage ----------
+   Below 820px the collage keeps scaling on its own and the headline drops out
+   from under it, at a readable size rather than shrinking with the artwork. */
+
+@media (max-width: 820px) {
+  .banner { padding-bottom: clamp(32px, 8vw, 72px); }
+
+  .headline {
+    position: static;
+    transform: none;
+    width: auto;
+    max-width: 15em;
+    padding: 0 var(--gutter);
+    margin: clamp(24px, 6vw, 56px) 0 0;
+    font-size: clamp(26px, 5.5vw, 40px);
+    line-height: 1.05;
+    text-align: left;
+  }
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .photo, .headline { animation: none; }
+  .photo img { transition: none; }
+  .photo:hover img { transform: none; }
+}
