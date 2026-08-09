@@ -8,19 +8,22 @@
    the headline. Photos are listed in the same order as the slots below, so
    reordering them in the CMS reshuffles the composition.
 
-   Heights are not set: each photo keeps its own proportions, so any crop works. */
+   Each photo also carries its own size. Photos are exported at twice their
+   intended size, so once one loads its width is taken from the file itself.
+   That way a photo keeps the size it was drawn at even if it's moved to a
+   different slot. The width on each slot below is just the starting value. */
 
 const SLOTS = [
   { x: 47.6875, y: 72.1067, w: 18.75    },
   { x: 80.4375, y: 74.9867, w: 13.375   },
-  { x: 71.0493, y: -3.4947, w: 18.0625  },
+  { x: 71.0625, y: -3.52,   w: 18.0625  },
   { x: 44.8954, y:  4.1168, w: 12.0625  },
-  { x: -2.5,    y: 58.24,   w:  9.25    },
+  { x: -2.5,    y: 58.24,   w: 11.75    },
   { x: 16.1875, y: 30.9333, w: 11.75    },
   { x: 70.5,    y: 37.44,   w: 13.375   },
-  { x: 18.7352, y: -4.0280, w: 17.0625  },
-  { x: 87.8197, y: 28.8199, w: 12.1875  },
-  { x: -4.5537, y: 23.2112, w: 10.2188  },
+  { x: 18.75,   y: -4.0533, w: 17.0625  },
+  { x: 87.8197, y: 28.8199, w: 16.0625  },
+  { x: -4.5537, y: 23.2112, w: 14.75    },
   { x: 22.6527, y: 76.9954, w: 16.0625  }
 ];
 
@@ -65,6 +68,13 @@ function render(data) {
     img.src = photo.src;
     img.alt = photo.alt || "";
     img.decoding = "async";
+
+    /* once loaded, size the photo from the file rather than the slot */
+    img.addEventListener("load", () => {
+      const width = img.naturalWidth / 2;
+      if (width) figure.style.setProperty("--w", (width / 1600 * 100) + "%");
+      document.dispatchEvent(new Event("photos:ready"));
+    });
 
     figure.appendChild(img);
     stage.appendChild(figure);
