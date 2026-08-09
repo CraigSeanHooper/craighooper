@@ -2,48 +2,37 @@
   "headline": "A more meaningful home for photography",
   "photos": [
     {
-      "src": "/lab/hero-grid/assets/images/image-11.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-11.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-10.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-10.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-9.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-9.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-8.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-8.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-7.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-7.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-6.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-6.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-5.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-5.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-4.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-4.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-3.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-3.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-2.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-2.jpg"
     },
     {
-      "src": "/lab/hero-grid/assets/images/image-1.jpg",
-      "alt": ""
+      "src": "/lab/hero-grid/assets/images/image-1.jpg"
     }
   ]
 }
