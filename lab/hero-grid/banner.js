@@ -8,23 +8,26 @@
    the headline. Photos are listed in the same order as the slots below, so
    reordering them in the CMS reshuffles the composition.
 
+   The canvas is 1600 x 1016.832 — the Figma frame made taller so no photo
+   crosses the top or bottom edge. Photos still bleed off the left and right.
+
    Each photo also carries its own size. Photos are exported at twice their
    intended size, so once one loads its width is taken from the file itself.
    That way a photo keeps the size it was drawn at even if it's moved to a
    different slot. The width on each slot below is just the starting value. */
 
 const SLOTS = [
-  { x: 47.6875, y: 72.1067, w: 18.75    },
-  { x: 80.4375, y: 74.9867, w: 13.375   },
-  { x: 71.0625, y: -3.52,   w: 18.0625  },
-  { x: 44.8954, y:  4.1168, w: 12.0625  },
-  { x: -2.5,    y: 58.24,   w: 11.75    },
-  { x: 16.1875, y: 30.9333, w: 11.75    },
-  { x: 70.5,    y: 37.44,   w: 13.375   },
-  { x: 18.75,   y: -4.0533, w: 17.0625  },
-  { x: 87.8197, y: 28.8199, w: 16.0625  },
-  { x: -4.5537, y: 23.2112, w: 14.75    },
-  { x: 22.6527, y: 76.9954, w: 16.0625  }
+  { x: 47.6875, y: 70.2181, w: 18.75    },
+  { x: 80.4375, y: 72.8734, w: 13.375   },
+  { x: 71.0625, y:  0.4917, w: 18.0625  },
+  { x: 44.8954, y:  7.5328, w: 12.0625  },
+  { x: -2.5,    y: 57.4333, w: 11.75    },
+  { x: 16.1875, y: 32.2570, w: 11.75    },
+  { x: 70.5,    y: 38.2561, w: 13.375   },
+  { x: 18.75,   y:  0.0000, w: 17.0625  },
+  { x: 87.8197, y: 30.3085, w: 16.0625  },
+  { x: -4.5537, y: 25.1374, w: 14.75    },
+  { x: 22.6527, y: 74.7254, w: 16.0625  }
 ];
 
 /* Used when the content file can't be loaded — opening index.html straight from

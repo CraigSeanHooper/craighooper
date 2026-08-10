@@ -12,9 +12,9 @@
   --letter-spacing-heading: 0;
   --radius-lg: 16px;
 
-  /* The collage is composed at 1600 x 937.5 and every photo is positioned as a
-     percentage of that, so the whole thing scales as one piece. */
-  --stage-ratio: 1600 / 937.5;
+  /* The collage is composed at 1600 x 1016.832 and every photo is positioned
+     as a percentage of that, so it scales as one piece. */
+  --stage-ratio: 1600 / 1016.832;
   --gutter: 24px;
 }
 
@@ -51,7 +51,9 @@ html, body {
   top: var(--y);
   width: var(--w);
   margin: 0;
-  overflow: hidden;
+  /* the radius is read by squircle.js, which does the actual corner shaping.
+     No overflow clip here — it would round the corners the ordinary way and
+     mask the smoothed shape underneath. */
   border-radius: var(--radius-lg);
   animation: rise .8s cubic-bezier(.2, .7, .3, 1) both;
 }
@@ -94,6 +96,12 @@ html, body {
 }
 
 @keyframes fade { from { opacity: 0 } to { opacity: 1 } }
+
+/* ---------- corner radius by breakpoint ----------
+   squircle.js reads this value, so the smoothing stays the same throughout. */
+
+@media (max-width: 1200px) { :root { --radius-lg: 12px; } }
+@media (max-width:  820px) { :root { --radius-lg:  8px; } }
 
 /* ---------- small: headline leaves the collage ----------
    Below 820px the collage keeps scaling on its own and the headline drops out
