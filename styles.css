@@ -95,7 +95,7 @@
   letter-spacing: var(--letter-spacing-display);
   text-transform: uppercase;
   color: var(--text-primary);
-  text-shadow: 0 0 4px var(--h1-bloom);
+  text-shadow: 0 0 2px var(--h1-bloom);
 }
 .h3 {                            /* 404 */
   font-family: var(--font-family-heading);
