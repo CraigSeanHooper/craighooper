@@ -5,9 +5,10 @@
    ============================================================ */
 
 @font-face {
-  font-family: "Marlin Soft SQ";
-  src: url("assets/fonts/MarlinSoftSQ-ExtraBlack.woff2") format("woff2");
-  font-weight: 950; font-style: normal; font-display: swap;
+  font-family: "Means Web";
+  src: url("assets/fonts/MeansWeb-Light.woff2") format("woff2"),
+       url("assets/fonts/MeansWeb-Light.woff") format("woff");
+  font-weight: 300; font-style: normal; font-display: swap;
 }
 
 @font-face {
@@ -31,7 +32,8 @@
   --colour-link-blue-light: #8ab4f8;
 
   --font-family-parabole: "Parabole", "Helvetica Neue", Arial, sans-serif;
-  --font-family-marlin: "Marlin Soft SQ", "Helvetica Neue", Arial, sans-serif;
+  --font-family-means: "Means Web", "Times New Roman", Georgia, serif;
+  --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-extra-black: 950;
 
@@ -60,11 +62,10 @@
   --border-hover:   var(--colour-neutral-80);
   --text-link:      var(--colour-link-blue);
   --blob-mass:      #000000;    /* large mass in the blob artwork */
-  --h1-bloom:       rgba(26, 26, 26, 0.24);   /* soft halation on the headline */
 
-  --font-family-display: var(--font-family-marlin);
-  --font-style-display:  var(--font-weight-extra-black);
-  --letter-spacing-display: var(--letter-spacing-minus-1);
+  --font-family-display: var(--font-family-means);
+  --font-style-display:  var(--font-weight-light);
+  --letter-spacing-display: var(--letter-spacing-0);
 
   --font-family-heading: var(--font-family-parabole);
   --font-family-body:    var(--font-family-parabole);
@@ -82,7 +83,6 @@
     --border-hover:   var(--colour-neutral-25);
     --text-link:      var(--colour-link-blue-light);
     --blob-mass:      var(--colour-neutral-0);
-    --h1-bloom:       rgba(245, 245, 245, 0.24);
   }
 }
 
@@ -90,12 +90,10 @@
 .h1 {                            /* headline */
   font-family: var(--font-family-display);
   font-weight: var(--font-style-display);
-  font-size: var(--font-size-32);
-  line-height: var(--line-height-32);
+  font-size: var(--font-size-24);
+  line-height: var(--line-height-26);
   letter-spacing: var(--letter-spacing-display);
-  text-transform: uppercase;
   color: var(--text-primary);
-  text-shadow: 0 0 2px var(--h1-bloom);
 }
 .h3 {                            /* 404 */
   font-family: var(--font-family-heading);
@@ -195,7 +193,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--space-500);
-  width: 100%;
+  width: 470px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 .bio, .work, .social { display: flex; flex-direction: column; gap: var(--space-200); width: 100%; }
 .bio h1, .work h2, .social h2 { margin: 0; }
@@ -240,7 +240,7 @@ body {
 
 /* ---------------- MOBILE (≤820px) ---------------- */
 @media (max-width: 820px) {
-  .h1      { font-size: var(--font-size-24); line-height: var(--line-height-26); }
+  .h1      { font-size: var(--font-size-20); line-height: var(--line-height-22); }
   .h3      { font-size: var(--font-size-20); line-height: var(--line-height-24); }
   .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
@@ -256,7 +256,7 @@ body {
   .main { width: 350px; margin: 0 auto 96px; }
   .blobs { aspect-ratio: 350 / 224; }
   .blobs svg { cursor: default; }
-  .content { gap: var(--space-400); }
+  .content { gap: var(--space-400); width: 100%; }
   .work-social { flex-direction: column; gap: var(--space-400); }
 }
 
