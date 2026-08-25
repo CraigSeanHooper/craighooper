@@ -1,29 +1,9 @@
 {
-  "headline": "Working on digital modernization for Canadian Blood Services",
+  "headline": "Working on digital modernization for \nCanadian Blood Services",
   "bio": [
     "I began building interfaces at the outset of the web, and at each evolution over the past 25 years, I have adapted my skillset to match. I work on design systems and component libraries, with the aim of promoting consistency, and a systems-based workflow."
   ],
   "email": "craigseanhooper@gmail.com",
-  "work": [
-    {
-      "dates": "2025—present",
-      "name": "Canadian Blood Services",
-      "url": "https://www.blood.ca",
-      "role": "Senior product designer"
-    },
-    {
-      "dates": "2012—2025",
-      "name": "Banfield Agency",
-      "url": "https://banfield.agency",
-      "role": "Senior digital designer"
-    },
-    {
-      "dates": "2005—2011",
-      "name": "Analogue",
-      "url": "https://web.archive.org/web/20070822193632/http://www.analogue.ca/main.html",
-      "role": "Managing partner, designer"
-    }
-  ],
   "social": [
     {
       "label": "Twitter",
@@ -36,6 +16,10 @@
     {
       "label": "Cosmos",
       "url": "https://www.cosmos.so/craighooper"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/craigseanhooper/"
     }
   ]
 }
