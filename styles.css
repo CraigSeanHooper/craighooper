@@ -61,8 +61,11 @@
     --text-secondary: var(--colour-neutral-30);
     --text-link:      var(--colour-link-blue-light);
     --surface-page:   var(--colour-neutral-90);
+    --surface-avatar: var(--colour-neutral-90);
     --blob-mass:      var(--colour-neutral-0);
   }
+  /* the avatar is black line art on a transparent background; flip it to white */
+  .avatar-btn img { filter: invert(1); }
 }
 
 /* ---------------- BASE ---------------- */
