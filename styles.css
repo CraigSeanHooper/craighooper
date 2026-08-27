@@ -5,8 +5,8 @@
   font-weight: 500; font-style: normal; font-display: swap;
 }
 @font-face {
-  font-family: "FT System Mono";
-  src: url("assets/fonts/FTSystemMono-Regular.woff2") format("woff2");
+  font-family: "Parabole";
+  src: url("assets/fonts/Parabole-Regular.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;
 }
 
@@ -23,7 +23,7 @@
   --line-height-24: 24px;
 
   --font-family-ft:       "FT System", "Helvetica Neue", Arial, sans-serif;
-  --font-family-ft-mono:  "FT System Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-family-parabole: "Parabole", "Helvetica Neue", Arial, sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium:  500;
 
@@ -50,7 +50,7 @@
 
   --font-family-display: var(--font-family-ft);
   --font-style-display:  var(--font-weight-medium);
-  --font-family-body: var(--font-family-ft-mono);
+  --font-family-body: var(--font-family-parabole);
   --font-style-body:  var(--font-weight-regular);
   --letter-spacing-body: var(--letter-spacing-0);
 }
@@ -99,13 +99,13 @@ h1 { margin: 0; }
   font-size: var(--font-size-24);
   line-height: var(--line-height-26);
 }
-.body-sm { font-size: var(--font-size-14); line-height: var(--line-height-20); }
+.body-sm { font-size: var(--font-size-16); line-height: var(--line-height-22); }
 .primary   { color: var(--text-primary); }
 .secondary { color: var(--text-secondary); }
 
 .link {
-  font-size: var(--font-size-14);
-  line-height: var(--line-height-20);
+  font-size: var(--font-size-16);
+  line-height: var(--line-height-22);
   color: var(--text-link);
   text-decoration-line: underline;
   text-decoration-style: solid;
@@ -208,8 +208,8 @@ h1 { margin: 0; }
   }
 
   .headline { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
-  .link    { font-size: var(--font-size-12); line-height: var(--line-height-18); }
+  .body-sm { font-size: var(--font-size-14); line-height: var(--line-height-20); }
+  .link    { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .h3      { font-size: var(--font-size-20); line-height: var(--line-height-24); }
 
   .copy { gap: var(--space-100); }
