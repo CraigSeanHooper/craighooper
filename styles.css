@@ -1,8 +1,8 @@
 /* ---------------- FONTS ---------------- */
 @font-face {
   font-family: "FT System";
-  src: url("assets/fonts/FTSystem-BlankMedium.woff2") format("woff2");
-  font-weight: 500; font-style: normal; font-display: swap;
+  src: url("assets/fonts/FTSystem-BlankSemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Parabole";
@@ -30,7 +30,7 @@
   --font-family-ft:       "FT System", "Helvetica Neue", Arial, sans-serif;
   --font-family-parabole: "Parabole", "Helvetica Neue", Arial, sans-serif;
   --font-weight-regular: 400;
-  --font-weight-medium:  500;
+  --font-weight-semibold: 600;
 
   --space-50: 4px; --space-100: 8px; --space-200: 12px;
   --radius-sm: 8px;
@@ -59,7 +59,7 @@
   --blob-mass:      #000000;
 
   --font-family-display: var(--font-family-ft);
-  --font-style-display:  var(--font-weight-medium);
+  --font-style-display:  var(--font-weight-semibold);
   --font-family-body: var(--font-family-parabole);
   --font-style-body:  var(--font-weight-regular);
   --letter-spacing-body: var(--letter-spacing-0);
@@ -119,7 +119,7 @@ h1 { margin: 0; }
   display: inline-flex;
   align-items: center;
   gap: var(--space-100);
-  padding: var(--space-50) var(--space-300);
+  padding: var(--space-50) var(--space-200);
   background: var(--surface-raised);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-14);
