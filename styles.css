@@ -18,6 +18,11 @@
   --colour-neutral-70: #4d4d4d;
   --colour-neutral-90: #1a1a1a;
   --colour-link-blue:  #0000ee;
+  --colour-accent-green: #22c55e;
+  --colour-accent-red:   #ef4444;
+  --colour-neutral-5:  #f2f2f2;
+  --colour-neutral-95: #0d0d0d;
+  --colour-neutral-20: #cccccc;
   --colour-link-blue-light: #8ab4f8;
   --font-size-20: 20px;
   --line-height-24: 24px;
@@ -28,6 +33,7 @@
   --font-weight-medium:  500;
 
   --space-50: 4px; --space-100: 8px; --space-200: 12px;
+  --radius-sm: 8px;
   --space-300: 16px; --space-500: 24px;
   --radius-full: 64px;
 
@@ -43,6 +49,10 @@
   --text-primary:   var(--colour-neutral-90);
   --text-secondary: var(--colour-neutral-70);
   --text-link:      var(--colour-link-blue);
+  --border-subtle:  var(--colour-neutral-20);
+  --status-available:     var(--colour-accent-green);
+  --status-not-available: var(--colour-accent-red);
+  --surface-raised:       var(--colour-neutral-5);
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --text-inverse:   var(--colour-neutral-0);
@@ -62,6 +72,8 @@
     --text-link:      var(--colour-link-blue-light);
     --surface-page:   var(--colour-neutral-90);
     --surface-avatar: var(--colour-neutral-90);
+    --border-subtle:  var(--colour-neutral-70);
+    --surface-raised: var(--colour-neutral-95);
     --blob-mass:      var(--colour-neutral-0);
   }
   /* the avatar is black line art on a transparent background; flip it to white */
@@ -100,6 +112,28 @@ h1 { margin: 0; }
   line-height: var(--line-height-26);
 }
 .body-sm { font-size: var(--font-size-16); line-height: var(--line-height-22); }
+
+/* availability pill */
+.pill {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-100);
+  padding: var(--space-50) var(--space-300);
+  background: var(--surface-raised);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
+  color: var(--text-primary);
+}
+.pill[hidden] { display: none; }
+.pill-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--status-available);
+  flex: none;
+}
+.pill.is-unavailable .pill-dot { background: var(--status-not-available); }
 .primary   { color: var(--text-primary); }
 .secondary { color: var(--text-secondary); }
 
@@ -209,6 +243,7 @@ h1 { margin: 0; }
 
   .headline { font-size: var(--font-size-24); line-height: var(--line-height-26); }
   .body-sm { font-size: var(--font-size-14); line-height: var(--line-height-20); }
+  .pill    { font-size: var(--font-size-12); line-height: var(--line-height-18); }
   .link    { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .h3      { font-size: var(--font-size-20); line-height: var(--line-height-24); }
 
