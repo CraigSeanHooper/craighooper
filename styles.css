@@ -42,6 +42,7 @@
   --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px;
   --line-height-26: 26px; --line-height-32: 32px;
   --letter-spacing-0: 0px;
+  --letter-spacing-minus-1: -1px;
 }
 
 /* ---------------- SEMANTIC ---------------- */
@@ -63,6 +64,7 @@
   --font-family-body: var(--font-family-parabole);
   --font-style-body:  var(--font-weight-regular);
   --letter-spacing-body: var(--letter-spacing-0);
+  --letter-spacing-display: var(--letter-spacing-minus-1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -100,6 +102,7 @@ h1 { margin: 0; }
 /* ---------------- TEXT STYLES ---------------- */
 .headline {
   font-feature-settings: "salt" 1;
+  letter-spacing: var(--letter-spacing-display);
   font-family: var(--font-family-display);
   font-weight: var(--font-style-display);
   font-size: var(--font-size-32);
