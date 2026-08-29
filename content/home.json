@@ -1,8 +1,8 @@
 {
   "pill": {
     "show": true,
-    "status": "Available",
-    "text": "Available for freelance"
+    "status": "Not available",
+    "text": "Not available for freelance"
   },
   "headline": "Working on digital modernization for \nCanadian Blood Services",
   "bio": [
