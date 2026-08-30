@@ -40,7 +40,7 @@
   --font-size-12: 12px; --font-size-14: 14px; --font-size-16: 16px;
   --font-size-24: 24px; --font-size-32: 32px;
   --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px;
-  --line-height-26: 26px; --line-height-32: 32px;
+  --line-height-26: 26px; --line-height-34: 34px;
   --letter-spacing-0: 0px;
   --letter-spacing-minus-1: -1px;
 }
@@ -108,7 +108,7 @@ h1 { margin: 0; }
   font-family: var(--font-family-display);
   font-weight: var(--font-style-display);
   font-size: var(--font-size-32);
-  line-height: var(--line-height-32);
+  line-height: var(--line-height-34);
 }
 .h3 {                            /* used by 404.html */
   font-family: var(--font-family-body);
