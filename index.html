@@ -134,7 +134,12 @@
           var mail = document.querySelector('.mail');
           if (data.email && mail) mail.href = 'mailto:' + data.email;
         })
-        .catch(function () { /* keep baked-in fallback */ });
+        .catch(function () { /* keep baked-in fallback */ })
+        .then(function () {
+          var s = document.createElement('script');
+          s.src = 'assets/squircle.js';
+          document.body.appendChild(s);
+        });
     })();
   </script>
 
