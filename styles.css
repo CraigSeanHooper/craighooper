@@ -33,7 +33,11 @@
   --font-weight-semibold: 600;
 
   --space-50: 4px; --space-100: 8px; --space-200: 12px;
+  --radius-none: 0px;
+  --radius-xs: 4px;
   --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
   --space-300: 16px; --space-500: 24px;
   --radius-full: 64px;
 
@@ -132,6 +136,12 @@ h1 { margin: 0; }
   color: var(--text-primary);
 }
 .pill[hidden] { display: none; }
+.pill[data-radius="None"]    { border-radius: var(--radius-none); }
+.pill[data-radius="X-Small"] { border-radius: var(--radius-xs); }
+.pill[data-radius="Small"]   { border-radius: var(--radius-sm); }
+.pill[data-radius="Medium"]  { border-radius: var(--radius-md); }
+.pill[data-radius="Large"]   { border-radius: var(--radius-lg); }
+.pill[data-radius="Full"]    { border-radius: var(--radius-full); }
 .pill-dot {
   width: 8px; height: 8px;
   border-radius: 50%;

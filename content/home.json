@@ -2,7 +2,8 @@
   "pill": {
     "show": true,
     "status": "Available",
-    "text": "Available for freelance"
+    "text": "Available for freelance",
+    "radius": "Small"
   },
   "headline": "Working on digital modernization for Canadian Blood Services",
   "bio": [

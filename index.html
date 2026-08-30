@@ -61,8 +61,8 @@
     <div class="blobs" id="blobs"></div>
 
     <div class="copy">
-      <p class="pill"><span class="pill-dot" aria-hidden="true"></span><span class="pill-text">Available for freelance</span></p>
-      <h1 class="headline primary">Working on digital modernization for <br>Canadian Blood Services</h1>
+      <p class="pill" data-radius="Small"><span class="pill-dot" aria-hidden="true"></span><span class="pill-text">Available for freelance</span></p>
+      <h1 class="headline primary">Working on digital modernization for Canadian Blood Services</h1>
       <p class="body-sm secondary">I began building interfaces at the outset of the web, and at each evolution over the past 25 years, I have adapted my skillset to match. I work on design systems and component libraries, with the aim of promoting consistency, and a systems-based workflow.</p>
     </div>
 
@@ -127,6 +127,7 @@
             } else if (data.pill) {
               if (data.pill.text) pill.querySelector('.pill-text').textContent = data.pill.text;
               pill.classList.toggle('is-unavailable', data.pill.status === 'Not available');
+              if (data.pill.radius) pill.setAttribute('data-radius', data.pill.radius);
             }
           }
 
