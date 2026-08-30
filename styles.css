@@ -70,7 +70,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --text-primary:   var(--colour-neutral-10);
-    --text-secondary: var(--colour-neutral-30);
+    --text-secondary: var(--colour-neutral-20);
     --text-link:      var(--colour-link-blue-light);
     --surface-page:   var(--colour-neutral-90);
     --surface-avatar: var(--colour-neutral-90);
@@ -114,7 +114,7 @@ h1 { margin: 0; }
   font-size: var(--font-size-24);
   line-height: var(--line-height-26);
 }
-.body-sm { font-size: var(--font-size-16); line-height: var(--line-height-22); }
+.body-sm { font-size: var(--font-size-14); line-height: var(--line-height-20); }
 
 /* availability pill */
 .pill {
@@ -141,8 +141,8 @@ h1 { margin: 0; }
 .secondary { color: var(--text-secondary); }
 
 .link {
-  font-size: var(--font-size-16);
-  line-height: var(--line-height-22);
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
   color: var(--text-link);
   text-decoration-line: underline;
   text-decoration-style: solid;
@@ -245,9 +245,9 @@ h1 { margin: 0; }
   }
 
   .headline { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .body-sm { font-size: var(--font-size-14); line-height: var(--line-height-20); }
+  .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
   .pill    { font-size: var(--font-size-12); line-height: var(--line-height-18); }
-  .link    { font-size: var(--font-size-14); line-height: var(--line-height-20); }
+  .link    { font-size: var(--font-size-12); line-height: var(--line-height-18); }
   .h3      { font-size: var(--font-size-20); line-height: var(--line-height-24); }
 
   .copy { gap: var(--space-100); }
