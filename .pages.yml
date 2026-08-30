@@ -22,6 +22,7 @@ content:
           - { name: show, label: Show the pill, type: boolean, default: true }
           - { name: status, label: Status, type: select, options: { values: [Available, Not available] }, default: Available }
           - { name: text, label: Pill Text, type: string }
+          - { name: radius, label: Corner Radius, type: select, options: { values: [None, X-Small, Small, Medium, Large, Full] }, default: Small }
       - { name: headline, label: Headline, type: text, description: "Press Enter where you want the line to break." }
       - { name: bio, label: Bio Paragraphs, type: text, list: true }
       - { name: email, label: Email Address, type: string }
