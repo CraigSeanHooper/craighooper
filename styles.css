@@ -18,6 +18,7 @@
   --colour-neutral-70: #4d4d4d;
   --colour-neutral-90: #1a1a1a;
   --colour-link-blue:  #0000ee;
+  --colour-accent-yellow: #fffbc6;
   --colour-accent-green: #22c55e;
   --colour-accent-red:   #ef4444;
   --colour-neutral-5:  #f2f2f2;
@@ -38,7 +39,7 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --space-300: 16px; --space-500: 24px;
+  --space-300: 16px; --space-400: 20px; --space-500: 24px;
   --radius-full: 64px;
 
   --font-size-12: 12px; --font-size-14: 14px; --font-size-16: 16px;
@@ -58,6 +59,8 @@
   --status-available:     var(--colour-accent-green);
   --status-not-available: var(--colour-accent-red);
   --surface-raised:       var(--colour-neutral-5);
+  --surface-accent:       var(--colour-accent-yellow);
+  --text-on-accent:       var(--colour-neutral-90);
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --text-inverse:   var(--colour-neutral-0);
@@ -192,11 +195,25 @@ h1 { margin: 0; }
   .avatar-btn:hover { animation: none; }
 }
 
-.mail {
+/* mail button — top right */
+.btn-action {
   position: fixed;
-  top: var(--space-300);
-  right: var(--space-500);
+  top: var(--space-200);
+  right: var(--space-200);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-100);
+  padding: var(--space-200) var(--space-400);
+  background: var(--surface-accent);
+  border-radius: var(--radius-md);
+  color: var(--text-on-accent);
+  font-size: var(--font-size-16);
+  line-height: var(--line-height-22);
+  text-decoration: none;
+  white-space: nowrap;
 }
+.btn-action:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
 
 /* ---------------- STAGE ---------------- */
 .stage {
@@ -244,7 +261,12 @@ h1 { margin: 0; }
     padding: 96px var(--space-500) var(--space-500);
   }
 
-  .mail { right: var(--space-500); }
+  .btn-action {
+    padding: var(--space-100) var(--space-300);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+  }
 
   .blobs { width: 350px; aspect-ratio: 350 / 224; }
   .blobs svg { cursor: default; }
@@ -269,7 +291,7 @@ h1 { margin: 0; }
 /* ---------------- Load-in animation (matches the live homepage) ---------------- */
 @media (prefers-reduced-motion: no-preference) {
   .avatar-wrap,
-  .mail,
+  .btn-action,
   .blobs,
   .copy,
   .links {
@@ -278,7 +300,7 @@ h1 { margin: 0; }
     animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
   .avatar-wrap { animation-delay: 0.04s; }
-  .mail   { animation-delay: 0.10s; }
+  .btn-action { animation-delay: 0.10s; }
   .blobs  { animation-delay: 0.16s; }
   .copy   { animation-delay: 0.24s; }
   .links  { animation-delay: 0.30s; }

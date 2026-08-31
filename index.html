@@ -55,7 +55,7 @@
     </button>
   </div>
 
-  <a class="mail link" data-cuelume-hover="toggle" href="mailto:craigseanhooper@gmail.com">Mail</a>
+  <a class="btn-action" data-cuelume-hover="toggle" href="mailto:craigseanhooper@gmail.com">Mail</a>
 
   <main class="stage">
     <div class="blobs" id="blobs"></div>
@@ -131,7 +131,7 @@
             }
           }
 
-          var mail = document.querySelector('.mail');
+          var mail = document.querySelector('.btn-action');
           if (data.email && mail) mail.href = 'mailto:' + data.email;
         })
         .catch(function () { /* keep baked-in fallback */ })
