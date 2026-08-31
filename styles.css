@@ -19,6 +19,10 @@
   --colour-neutral-90: #1a1a1a;
   --colour-link-blue:  #0000ee;
   --colour-accent-yellow: #fffbc6;
+  --colour-link-blue-hover: #0000aa;
+  --colour-link-blue-mid: #3a6fd8;
+  --colour-link-blue-mid-hover: #2b57ae;
+  --colour-link-blue-light-hover: #a8c7fa;
   --colour-accent-green: #22c55e;
   --colour-accent-red:   #ef4444;
   --colour-neutral-5:  #f2f2f2;
@@ -61,7 +65,11 @@
   --status-not-available: var(--colour-accent-red);
   --surface-raised:       var(--colour-neutral-5);
   --surface-accent:       var(--colour-accent-yellow);
+  --surface-link:         var(--colour-link-blue);
+  --surface-link-hover:   var(--colour-link-blue-hover);
+  --text-on-dark:         var(--colour-neutral-0);
   --text-on-accent:       var(--colour-neutral-90);
+  --text-link-hover:      var(--colour-link-blue-hover);
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --text-inverse:   var(--colour-neutral-0);
@@ -79,7 +87,10 @@
   :root {
     --text-primary:   var(--colour-neutral-10);
     --text-secondary: var(--colour-neutral-20);
-    --text-link:      var(--colour-link-blue-light);
+    --text-link:          var(--colour-link-blue-light);
+    --text-link-hover:    var(--colour-link-blue-light-hover);
+    --surface-link:       var(--colour-link-blue-mid);
+    --surface-link-hover: var(--colour-link-blue-mid-hover);
     --surface-page:   var(--colour-neutral-90);
     --surface-avatar: var(--colour-neutral-90);
     --border-subtle:  var(--colour-neutral-70);
@@ -166,7 +177,7 @@ h1 { margin: 0; }
   text-underline-offset: 16%;
   white-space: nowrap;
 }
-.link:hover { text-decoration-line: none; }
+.link:hover { text-decoration-line: none; color: var(--text-link-hover); }
 
 /* ---------------- PINNED ELEMENTS ---------------- */
 /* avatar — top left. Wrapper handles position and the load-in; the button
@@ -206,19 +217,18 @@ h1 { margin: 0; }
   justify-content: center;
   gap: var(--space-100);
   padding: var(--space-200) var(--space-400);
-  background: var(--surface-accent);
+  background: var(--surface-link);
   border-radius: var(--radius-md);
-  color: var(--text-on-accent);
-  font-size: var(--font-size-16);
-  line-height: var(--line-height-22);
+  color: var(--text-on-dark);
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: background-color 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.btn-action:hover { transform: scale(1.04); }
+.btn-action:hover { background: var(--surface-link-hover); }
 @media (prefers-reduced-motion: reduce) {
   .btn-action { transition: none; }
-  .btn-action:hover { transform: none; }
 }
 .btn-action:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
 
@@ -271,8 +281,8 @@ h1 { margin: 0; }
   .btn-action {
     padding: var(--space-100) var(--space-300);
     border-radius: var(--radius-sm);
-    font-size: var(--font-size-14);
-    line-height: var(--line-height-20);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-18);
   }
 
   .blobs { width: 350px; aspect-ratio: 350 / 224; }
