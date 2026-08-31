@@ -24,6 +24,7 @@
   --colour-neutral-5:  #f2f2f2;
   --colour-neutral-95: #0d0d0d;
   --colour-neutral-20: #cccccc;
+  --colour-neutral-80: #333333;
   --colour-link-blue-light: #8ab4f8;
   --font-size-20: 20px;
   --line-height-24: 24px;
@@ -56,6 +57,7 @@
   --text-secondary: var(--colour-neutral-70);
   --text-link:      var(--colour-link-blue);
   --border-subtle:  var(--colour-neutral-20);
+  --border-hover:   var(--colour-neutral-80);
   --status-available:     var(--colour-accent-green);
   --status-not-available: var(--colour-accent-red);
   --surface-raised:       var(--colour-neutral-5);
@@ -82,6 +84,7 @@
     --surface-page:   var(--colour-neutral-90);
     --surface-avatar: var(--colour-neutral-90);
     --border-subtle:  var(--colour-neutral-70);
+    --border-hover:   var(--colour-neutral-20);
     --surface-raised: var(--colour-neutral-95);
     --blob-mass:      var(--colour-neutral-0);
   }
@@ -213,6 +216,8 @@ h1 { margin: 0; }
   text-decoration: none;
   white-space: nowrap;
 }
+/* hover draws a 1px border outside the box, so nothing shifts */
+.btn-action:hover { box-shadow: 0 0 0 1px var(--border-hover); }
 .btn-action:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
 
 /* ---------------- STAGE ---------------- */
