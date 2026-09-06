@@ -1,6 +1,6 @@
 {
   "pill": {
-    "show": true,
+    "show": false,
     "status": "Available",
     "text": "Available for freelance",
     "radius": "Small"
