@@ -52,7 +52,7 @@
   --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px;
   --line-height-26: 26px; --line-height-34: 34px;
   --letter-spacing-0: 0px;
-  --letter-spacing-minus-1: -1px;
+  --letter-spacing-minus-1: -0.5px;
 }
 
 /* ---------------- SEMANTIC ---------------- */
