@@ -1,7 +1,7 @@
 /* ---------------- FONTS ---------------- */
 @font-face {
-  font-family: "FT System";
-  src: url("assets/fonts/FTSystem-BlankSemiBold.woff2") format("woff2");
+  font-family: "KMR Melange Grotesk";
+  src: url("assets/fonts/KMRMelangeGrotesk-SemiBold.woff2") format("woff2");
   font-weight: 600; font-style: normal; font-display: swap;
 }
 @font-face {
@@ -33,7 +33,7 @@
   --font-size-20: 20px;
   --line-height-24: 24px;
 
-  --font-family-ft:       "FT System", "Helvetica Neue", Arial, sans-serif;
+  --font-family-melange:  "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
   --font-family-parabole: "Parabole", "Helvetica Neue", Arial, sans-serif;
   --font-weight-regular: 400;
   --font-weight-semibold: 600;
@@ -75,12 +75,12 @@
   --text-inverse:   var(--colour-neutral-0);
   --blob-mass:      #000000;
 
-  --font-family-display: var(--font-family-ft);
-  --font-style-display:  var(--font-weight-semibold);
+  --font-family-heading: var(--font-family-melange);
+  --font-style-heading:  var(--font-weight-semibold);
   --font-family-body: var(--font-family-parabole);
   --font-style-body:  var(--font-weight-regular);
   --letter-spacing-body: var(--letter-spacing-0);
-  --letter-spacing-display: var(--letter-spacing-minus-1);
+  --letter-spacing-heading: var(--letter-spacing-minus-1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -123,9 +123,9 @@ h1 { margin: 0; }
 /* ---------------- TEXT STYLES ---------------- */
 .headline {
   font-feature-settings: "salt" 1;
-  letter-spacing: var(--letter-spacing-display);
-  font-family: var(--font-family-display);
-  font-weight: var(--font-style-display);
+  letter-spacing: var(--letter-spacing-heading);
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-style-heading);
   font-size: var(--font-size-32);
   line-height: var(--line-height-34);
 }
