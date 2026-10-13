@@ -11,7 +11,8 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
   <style>
-    @font-face { font-family: "Parabole"; src: url("/assets/fonts/Parabole-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: "KMR Melange Grotesk"; src: url("/assets/fonts/KMRMelangeGrotesk-Book.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: "KMR Melange Grotesk"; src: url("/assets/fonts/KMRMelangeGrotesk-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
 
     /* Look and feel referenced from base-ui.com; not yet in Foundations. */
     :root {
@@ -54,9 +55,9 @@
     body {
       margin: 0; height: 100vh; height: 100dvh;
       background: var(--ui-page); color: var(--ui-text);
-      font-family: "Parabole", "Helvetica Neue", Arial, sans-serif;
+      font-family: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
       font-weight: 400; font-synthesis: none;
-      font-feature-settings: "salt" 1, "ss08" 1;
+      font-feature-settings: "ss08" 1;
       font-size: 14px; line-height: 22px;
       -webkit-font-smoothing: antialiased;
     }
@@ -337,6 +338,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=5"></script>
+  <script src="effects.js?v=6"></script>
 </body>
 </html>
