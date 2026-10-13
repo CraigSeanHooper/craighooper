@@ -230,12 +230,20 @@
   // ---------- controls ----------
   function setStatus(t) { $("status").textContent = t; }
 
+  // sizes a hex field to exactly fit its text, so the box hugs the code
+  var measurer = document.createElement("canvas").getContext("2d");
+  function fitHex(el) {
+    var cs = getComputedStyle(el);
+    measurer.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+    el.style.width = Math.ceil(measurer.measureText((el.value || "#000000").toUpperCase()).width) + 2 + "px";
+  }
+
   // fills the slider track up to the thumb
   function fill(el) { el.style.setProperty("--p", ((el.value - el.min) / (el.max - el.min) * 100) + "%"); }
 
   function syncControls() {
     SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").textContent = s[k]; fill($(k)); });
-    ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); });
+    ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitHex($("c-" + k + "-hex")); });
     ["mode", "ink", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.value === s[id]); });
     });
@@ -257,7 +265,8 @@
       });
     });
     ["dark", "mid", "light"].forEach(function (k) {
-      $("c-" + k).addEventListener("input", function () { s[k] = $("c-" + k).value; $("c-" + k + "-hex").value = s[k].toUpperCase(); update(); });
+      $("c-" + k).addEventListener("input", function () { s[k] = $("c-" + k).value; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitHex($("c-" + k + "-hex")); update(); });
+      $("c-" + k + "-hex").addEventListener("input", function () { fitHex($("c-" + k + "-hex")); });
       $("c-" + k + "-hex").addEventListener("change", function () {
         var v = $("c-" + k + "-hex").value.trim();
         if (v[0] !== "#") v = "#" + v;
@@ -372,5 +381,6 @@
     bind();
     syncControls();
     initSquircles();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncControls);   // re-measure hex fields once the font is in
   });
 })();

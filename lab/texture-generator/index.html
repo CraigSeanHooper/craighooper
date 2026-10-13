@@ -166,11 +166,11 @@
 
     /* colour fields: swatch inside a text input */
     .colour-fields { display: grid; gap: var(--space-100); }
-    .colour-field { display: grid; grid-template-columns: 1fr 150px; align-items: center; gap: var(--space-150); }
+    .colour-field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--space-150); }
     .colour-field[hidden] { display: none; }
-    .input { display: flex; align-items: center; gap: var(--space-100); height: 32px; padding: 0 var(--space-100) 0 5px; }
+    .input { display: inline-flex; align-items: center; gap: var(--space-100); height: 32px; padding: 0 10px 0 5px; }   /* hugs its contents; effects.js sizes the text field to the hex code */
     .input:focus-within { --sq-line: var(--ui-focus); }
-    .input input[type="text"] { flex: 1; min-width: 0; border: 0; background: none; outline: none; text-transform: uppercase; }
+    .input input[type="text"] { width: 7ch; padding: 0; border: 0; background: none; outline: none; text-transform: uppercase; }
     input[type="color"] {
       --r: 5px;
       width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; flex: none;
@@ -202,7 +202,6 @@
       .panel { order: 2; }
       .panel-foot { order: -1; padding: var(--space-300) var(--space-200) 0; }
       .panel-body { overflow: visible; padding: var(--space-500) var(--space-200) var(--space-400); }
-      .colour-field { grid-template-columns: 1fr 140px; }
     }
   </style>
 </head>
@@ -321,6 +320,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=10"></script>
+  <script src="effects.js?v=11"></script>
 </body>
 </html>
