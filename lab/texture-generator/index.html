@@ -65,7 +65,6 @@
       -webkit-font-smoothing: antialiased;
     }
     button, input, output { font: inherit; font-feature-settings: inherit; color: inherit; }
-    .mono { font-variant-numeric: tabular-nums; }
 
     /* ---------- squircle shapes ----------
        .sq elements get smoothed corners from effects.js, which writes the
@@ -103,7 +102,7 @@
 
     .field + .field { margin-top: var(--space-200); }
     .field-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-    .field-head output { color: var(--ui-muted); font-variant-numeric: tabular-nums; }
+    .field-head output { color: var(--ui-muted); }   /* proportional figures: tabular ones look spaced out in Melange */
     .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-150); }
     .stack > * + * { margin-top: var(--space-200); }
 
