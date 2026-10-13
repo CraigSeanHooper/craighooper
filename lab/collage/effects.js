@@ -146,12 +146,14 @@
     }
   }
 
-  // Film grain: light and dark specks, scaled to the photo.
+  // Film grain: light and dark specks, scaled to the photo. Seeded, so the
+  // pattern holds still while sliders move and changes on "New texture pattern".
   function grain(ctx, W, H, U) {
+    var rand = mulberry32(textureSeed * 17 + 9);
     var size = Math.max(1, s.grainSize * 0.8 * U), gw = Math.ceil(W / size), gh = Math.ceil(H / size);
     var g = canvasOf(gw, gh), gc = g.getContext("2d"), d = gc.createImageData(gw, gh), p = d.data, k = s.grain / 100 * 70;
     for (var i = 0; i < p.length; i += 4) {
-      var nv = (Math.random() - 0.5) * k, v = nv > 0 ? 255 : 0;
+      var nv = (rand() - 0.5) * k, v = nv > 0 ? 255 : 0;
       p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = Math.abs(nv) * 2;
     }
     gc.putImageData(d, 0, 0);
@@ -270,8 +272,8 @@
     });
     PRESETS.forEach(function (p) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "preset"; b.setAttribute("aria-label", "Use colours " + p.join(", "));
-      b.innerHTML = p.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("");
+      b.type = "button"; b.className = "preset sq"; b.setAttribute("aria-label", "Use colours " + p.join(", "));
+      b.innerHTML = '<span class="chips">' + p.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("") + "</span>";
       b.addEventListener("click", function () { s.dark = p[0]; s.mid = p[1]; s.light = p[2]; syncControls(); update(); });
       $("presets").appendChild(b);
     });
@@ -307,8 +309,74 @@
     window.addEventListener("resize", fitPreview);
   }
 
+  // ---------- squircle corners ----------
+  // Smoothed ("squircle") corners, using the same geometry as Figma's corner
+  // smoothing at 100%. Each .sq element gets its outline and a 1px-inset copy
+  // as clip paths; CSS uses them to draw a crisp 1px border with smooth corners.
+  function squirclePath(w, h, radius) {
+    var budget = Math.min(w, h) / 2, r = Math.min(radius, budget), sm = 1;
+    if (r <= 0) return "M0 0 H" + w + " V" + h + " H0 Z";
+    var rad = function (deg) { return deg * Math.PI / 180; };
+    var p = (1 + sm) * r;
+    var arcMeasure = 90 * (1 - sm);
+    var arc = Math.sin(rad(arcMeasure / 2)) * r * Math.sqrt(2);
+    var alpha = (90 - arcMeasure) / 2;
+    var p3p4 = r * Math.tan(rad(alpha / 2));
+    var beta = 45 * sm;
+    var c = p3p4 * Math.cos(rad(beta));
+    var d = c * Math.tan(rad(beta));
+    var b = (p - arc - c - d) / 3, a = 2 * b;
+    if (p > budget) {
+      var avail = budget - d - arc - c, b2 = avail - avail / 6;
+      b = Math.min(b, b2); a = avail - b; p = Math.min(p, budget);
+    }
+    var f = function (n) { return +n.toFixed(3); };
+    var abc = a + b + c, bc = b + c, ab = a + b;
+    return [
+      "M", f(w - p), 0,
+      "c", f(a), 0, f(ab), 0, f(abc), f(d),
+      "a", f(r), f(r), 0, 0, 1, f(arc), f(arc),
+      "c", f(d), f(c), f(d), f(bc), f(d), f(abc),
+      "L", f(w), f(h - p),
+      "c", 0, f(a), 0, f(ab), f(-d), f(abc),
+      "a", f(r), f(r), 0, 0, 1, f(-arc), f(arc),
+      "c", f(-c), f(d), f(-bc), f(d), f(-abc), f(d),
+      "L", f(p), f(h),
+      "c", f(-a), 0, f(-ab), 0, f(-abc), f(-d),
+      "a", f(r), f(r), 0, 0, 1, f(-arc), f(-arc),
+      "c", f(-d), f(-c), f(-d), f(-bc), f(-d), f(-abc),
+      "L", 0, f(p),
+      "c", 0, f(-a), 0, f(-ab), f(d), f(-abc),
+      "a", f(r), f(r), 0, 0, 1, f(arc), f(-arc),
+      "c", f(c), f(-d), f(bc), f(-d), f(abc), f(-d),
+      "Z"
+    ].join(" ");
+  }
+
+  function radiusOf(el) {
+    if (el.type === "color") return 5;
+    if (el.classList.contains("toggle")) return 10;
+    if (el.classList.contains("empty")) return 12;
+    return 8;
+  }
+
+  function shape(el) {
+    var w = el.offsetWidth, h = el.offsetHeight, r = radiusOf(el);
+    if (!w || !h) return;
+    el.style.setProperty("--sq-outer", "path('" + squirclePath(w, h, r) + "')");
+    el.style.setProperty("--sq-inner", "path('" + squirclePath(w - 2, h - 2, r - 1) + "')");
+  }
+
+  function initSquircles() {
+    var els = document.querySelectorAll(".sq, input[type=color]");
+    var ro = "ResizeObserver" in window ? new ResizeObserver(function (entries) { entries.forEach(function (e) { shape(e.target); }); }) : null;
+    els.forEach(function (el) { shape(el); if (ro) ro.observe(el); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { els.forEach(shape); });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     bind();
     syncControls();
+    initSquircles();
   });
 })();
