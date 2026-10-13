@@ -1,0 +1,4 @@
+# Lets photos.craighooper.xyz read the email address set in Pages CMS,
+# so the gallery's "Say hello" button always matches this site.
+/content/home.json
+  Access-Control-Allow-Origin: https://photos.craighooper.xyz
