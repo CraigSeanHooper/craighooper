@@ -197,7 +197,6 @@
       source = img;
       fileBase = (file.name || "photo").replace(/\.[^.]+$/, "") || "photo";
       previewBase = scaled(img, PREVIEW_MAX);
-      $("empty").hidden = true;
       $("preview").hidden = false;
       $("download").disabled = false;
       var w = img.naturalWidth, h = img.naturalHeight;
@@ -279,7 +278,7 @@
     $("reset").addEventListener("click", function () { var f = s.format; s = JSON.parse(JSON.stringify(DEFAULTS)); s.format = f; syncControls(); update(); });
 
     var file = $("file");
-    ["choose", "choose-3"].forEach(function (id) { $(id).addEventListener("click", function () { file.click(); }); });
+    $("choose").addEventListener("click", function () { file.click(); });
     file.addEventListener("change", function () { loadFile(file.files[0]); file.value = ""; });
     $("download").addEventListener("click", download);
 
