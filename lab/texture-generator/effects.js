@@ -13,6 +13,17 @@
   var PREVIEW_MAX = 1600;   // longest side of the on-screen preview
   var EXPORT_MAX = 6000;    // longest side of a download
 
+  // Two-colour sets for Duotone: a deep shadow and a lighter tint of the same hue.
+  var DUO_PRESETS = [
+    ["#2b2418", "#e9b45a"],  // ochre
+    ["#0f1d3d", "#7fa8f0"],  // cobalt
+    ["#1f2a0c", "#b9d36a"],  // moss
+    ["#2a1a14", "#f08a5d"],  // rust
+    ["#2a1f22", "#f0b8b8"],  // rose
+    ["#1e2633", "#b8c4d8"],  // slate
+    ["#000000", "#ffffff"]   // black and white
+  ];
+  // Three-colour sets for Tritone: shadow, midtone, highlight.
   var PRESETS = [
     ["#2e291f", "#a8701f", "#e9dfc4"],  // ochre
     ["#14213d", "#4a7fd8", "#e2ddcb"],  // cobalt
@@ -25,7 +36,7 @@
 
   var DEFAULTS = {
     mode: "duo",
-    dark: PRESETS[0][0], mid: PRESETS[0][1], light: PRESETS[0][2],
+    dark: DUO_PRESETS[0][0], mid: PRESETS[0][1], light: DUO_PRESETS[0][1],
     amount: 100,
     brightness: 0, contrast: 15, midtones: 0,
     grain: 40, grainSize: 2, speckle: 0,
@@ -248,6 +259,11 @@
       $(id).querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.value === s[id]); });
     });
     $("mid-row").hidden = s.mode !== "tri";
+    var set = s.mode === "tri" ? PRESETS : DUO_PRESETS;
+    $("presets").querySelectorAll(".preset").forEach(function (b, i) {
+      b.setAttribute("aria-label", "Use colours " + set[i].join(", "));
+      b.firstChild.innerHTML = set[i].map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("");
+    });
     $("colours").dataset.off = s.mode === "original";
     var png = s.format === "png";
     $("quality").disabled = png; $("quality-value").disabled = png;
@@ -298,11 +314,16 @@
         syncControls();
       });
     });
-    PRESETS.forEach(function (p) {
+    // one row of preset buttons; their chips are redrawn for the current mode in syncControls
+    PRESETS.forEach(function (p, i) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "preset sq"; b.setAttribute("aria-label", "Use colours " + p.join(", "));
-      b.innerHTML = '<span class="chips">' + p.map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("") + "</span>";
-      b.addEventListener("click", function () { s.dark = p[0]; s.mid = p[1]; s.light = p[2]; syncControls(); update(); });
+      b.type = "button"; b.className = "preset sq";
+      b.innerHTML = '<span class="chips"></span>';
+      b.addEventListener("click", function () {
+        if (s.mode === "tri") { s.dark = PRESETS[i][0]; s.mid = PRESETS[i][1]; s.light = PRESETS[i][2]; }
+        else { s.dark = DUO_PRESETS[i][0]; s.light = DUO_PRESETS[i][1]; }
+        syncControls(); update();
+      });
       $("presets").appendChild(b);
     });
     $("swap").addEventListener("click", function () { var t = s.dark; s.dark = s.light; s.light = t; syncControls(); update(); });
