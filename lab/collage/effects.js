@@ -197,6 +197,7 @@
       previewBase = scaled(img, PREVIEW_MAX);
       $("file-name").textContent = file.name || "Pasted image";
       $("file-name").title = file.name || "";
+      $("file-name").classList.add("has-file");
       $("empty").hidden = true;
       $("preview").hidden = false;
       $("download").disabled = false;
@@ -231,8 +232,11 @@
   // ---------- controls ----------
   function setStatus(t) { $("status").textContent = t; }
 
+  // fills the slider track up to the thumb
+  function fill(el) { el.style.setProperty("--p", ((el.value - el.min) / (el.max - el.min) * 100) + "%"); }
+
   function syncControls() {
-    SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").textContent = s[k]; });
+    SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").textContent = s[k]; fill($(k)); });
     ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); });
     ["mode", "ink", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.value === s[id]); });
@@ -245,7 +249,7 @@
   function bind() {
     SLIDERS.forEach(function (k) {
       $(k).addEventListener("input", function () {
-        s[k] = +$(k).value; $(k + "-value").textContent = s[k];
+        s[k] = +$(k).value; $(k + "-value").textContent = s[k]; fill($(k));
         if (k !== "quality") update();
       });
     });

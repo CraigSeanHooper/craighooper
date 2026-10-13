@@ -8,40 +8,47 @@
   <link rel="icon" href="/assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
-  <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#14120b" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
   <style>
     @font-face { font-family: "FT System Blank"; src: url("/assets/fonts/FTSystem-BlankRegular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
     @font-face { font-family: "FT System Blank"; src: url("/assets/fonts/FTSystem-BlankMedium.woff2") format("woff2"); font-weight: 500; font-display: swap; }
     @font-face { font-family: "FT System Mono"; src: url("/assets/fonts/FTSystemMono-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 
-    /* Look and feel referenced from cursor.com; not yet in Foundations. */
+    /* Look and feel referenced from base-ui.com; not yet in Foundations. */
     :root {
-      --ui-page:    #f7f7f4;
-      --ui-panel:   #f0efea;
-      --ui-raised:  #e6e5df;
-      --ui-border:  rgba(38, 37, 30, 0.12);
-      --ui-text:    #26251e;
-      --ui-muted:   rgba(38, 37, 30, 0.58);
-      --ui-primary: #26251e;
-      --ui-on-primary: #f7f7f4;
-      --ui-stage:   #ebeae4;
+      --ui-page:     #ffffff;
+      --ui-subtle:   #f9f9f9;
+      --ui-control:  #f5f5f5;
+      --ui-hover:    #efefef;
+      --ui-line:     rgba(0, 0, 0, 0.08);
+      --ui-border:   #e2e2e2;
+      --ui-border-strong: #cfcfcf;
+      --ui-text:     #2e2e2e;
+      --ui-muted:    #767676;
+      --ui-primary:  #2e2e2e;
+      --ui-on-primary: #ffffff;
+      --ui-focus:    oklch(0.55 0.2 264);
+      --ui-shadow:   0 1px 2px rgba(0, 0, 0, 0.06);
 
-      --space-50: 4px; --space-100: 8px; --space-200: 12px; --space-300: 16px; --space-500: 24px;
-      --radius-xs: 4px; --radius-sm: 8px; --radius-md: 12px; --radius-full: 64px;
-      --font-size-12: 12px; --font-size-14: 14px; --line-height-18: 18px; --line-height-20: 20px;
+      --space-50: 4px; --space-100: 8px; --space-150: 12px; --space-200: 16px; --space-300: 24px;
+      --radius-sm: 6px; --radius-md: 8px; --radius-lg: 11px;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --ui-page:    #14120b;
-        --ui-panel:   #1b1913;
-        --ui-raised:  #26241d;
-        --ui-border:  rgba(237, 236, 228, 0.1);
-        --ui-text:    #edece4;
-        --ui-muted:   rgba(237, 236, 228, 0.55);
-        --ui-primary: #edece4;
-        --ui-on-primary: #14120b;
-        --ui-stage:   #0f0d08;
+        --ui-page:     #111111;
+        --ui-subtle:   #161616;
+        --ui-control:  #1c1c1c;
+        --ui-hover:    #242424;
+        --ui-line:     rgba(255, 255, 255, 0.09);
+        --ui-border:   #2c2c2c;
+        --ui-border-strong: #3a3a3a;
+        --ui-text:     #ececec;
+        --ui-muted:    #8e8e8e;
+        --ui-primary:  #ececec;
+        --ui-on-primary: #111111;
+        --ui-focus:    oklch(0.72 0.15 264);
+        --ui-shadow:   0 1px 2px rgba(0, 0, 0, 0.4);
       }
     }
 
@@ -50,234 +57,266 @@
     body {
       margin: 0; height: 100vh; height: 100dvh;
       background: var(--ui-page); color: var(--ui-text);
-      font-family: "FT System Blank", "Helvetica Neue", Arial, sans-serif;
-      font-size: var(--font-size-14); line-height: var(--line-height-20);
+      font-family: "FT System Blank", system-ui, sans-serif;
+      font-size: 14px; line-height: 22px;
       -webkit-font-smoothing: antialiased;
     }
     button, input { font: inherit; color: inherit; }
-    .mono { font-family: "FT System Mono", ui-monospace, Menlo, monospace; font-size: var(--font-size-12); }
+    .mono { font-family: "FT System Mono", ui-monospace, Menlo, monospace; font-size: 13px; }
+    :focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
 
-    .app { display: grid; grid-template-columns: 300px 1fr; height: 100%; }
+    .app { display: grid; grid-template-columns: 380px 1fr; grid-template-rows: 48px 1fr; height: 100%; }
 
-    /* ---------- panel ---------- */
-    .panel {
-      background: var(--ui-panel); border-right: 1px solid var(--ui-border);
-      display: flex; flex-direction: column; min-height: 0;
+    /* ---------- header ---------- */
+    .header {
+      grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--space-300); border-bottom: 1px solid var(--ui-line);
     }
-    .panel-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: var(--space-300) var(--space-500); border-bottom: 1px solid var(--ui-border);
-    }
-    .panel-head a { color: var(--ui-muted); text-decoration: none; }
-    .panel-head a:hover { color: var(--ui-text); }
-    .title { font-weight: 500; }
-    .panel-body { flex: 1; overflow-y: auto; padding: var(--space-100) var(--space-500) var(--space-500); }
+    .header .title { font-weight: 500; }
+    .header .crumb { color: var(--ui-muted); }
+    .header a { color: var(--ui-muted); text-decoration: none; }
+    .header a:hover { color: var(--ui-text); }
 
-    .group { padding: var(--space-300) 0; border-bottom: 1px solid var(--ui-border); }
-    .group:last-child { border-bottom: 0; }
-    .group-title { color: var(--ui-text); margin-bottom: var(--space-300); }
-    .label { display: flex; justify-content: space-between; color: var(--ui-muted); margin-bottom: var(--space-100); }
-    .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-200); }
-    .row + .row, .row + .slider, .slider + .row, .segment + .row, .presets + .row, .segment + .presets { margin-top: var(--space-300); }
-    .slider + .slider { margin-top: var(--space-300); }
-    .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ui-muted); min-width: 0; }
+    /* ---------- sidebar ---------- */
+    .panel { border-right: 1px solid var(--ui-line); display: flex; flex-direction: column; min-height: 0; }
+    .panel-body { flex: 1; overflow-y: auto; padding: 0 var(--space-300); }
 
-    .segment {
-      display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
-      padding: 3px; gap: 3px; background: var(--ui-raised); border-radius: var(--radius-sm);
-    }
-    .segment button {
-      border: 0; background: none; padding: 5px 0; border-radius: 6px; cursor: pointer; color: var(--ui-muted);
-    }
-    .segment button[aria-pressed="true"] { background: var(--ui-page); color: var(--ui-text); box-shadow: 0 0 0 1px var(--ui-border); }
+    .section { padding: var(--space-300) 0; border-bottom: 1px solid var(--ui-line); }
+    .section:last-child { border-bottom: 0; }
+    .heading { color: var(--ui-muted); margin: 0 0 var(--space-150); padding: 3px 0; font-size: 14px; font-weight: 400; }
 
-    input[type="range"] { width: 100%; accent-color: var(--ui-text); margin: 0; }
-    input[type="range"]:disabled { opacity: 0.35; }
+    .field + .field { margin-top: var(--space-200); }
+    .field-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .field-head output { color: var(--ui-muted); font-variant-numeric: tabular-nums; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-150); }
+    .stack > * + * { margin-top: var(--space-200); }
 
-    /* colour presets */
-    .presets { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-    .preset {
-      height: 28px; padding: 0; border: 0; border-radius: 6px; cursor: pointer;
-      box-shadow: 0 0 0 1px var(--ui-border); overflow: hidden; display: flex;
-    }
-    .preset i { flex: 1; }
-    .preset:hover { box-shadow: 0 0 0 1px var(--ui-text); }
+    .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; color: var(--ui-muted); }
+    .file-name.has-file { color: var(--ui-text); }
 
-    /* colour pickers */
-    .swatch-row { display: grid; grid-template-columns: 1fr auto 80px; align-items: center; gap: var(--space-200); }
-    .swatch-row + .swatch-row { margin-top: var(--space-100); }
-    .swatch-row[hidden] { display: none; }
-    .swatch-row span { color: var(--ui-muted); }
-    input[type="color"] {
-      width: 28px; height: 28px; padding: 0; border: 0; border-radius: 6px; background: none; cursor: pointer;
-      box-shadow: 0 0 0 1px var(--ui-border);
-    }
-    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
-    input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 6px; }
-    input[type="color"]::-moz-color-swatch { border: 0; border-radius: 6px; }
-    .hex {
-      width: 80px; height: 28px; padding: 0 8px; border-radius: 6px; border: 1px solid var(--ui-border);
-      background: var(--ui-page); text-transform: uppercase;
-    }
-    .colours[data-off="true"] { opacity: 0.4; pointer-events: none; }
-
+    /* buttons */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: var(--space-100);
-      height: 34px; padding: 0 var(--space-300); border-radius: var(--radius-full);
-      border: 1px solid var(--ui-border); background: var(--ui-page); cursor: pointer;
-      min-width: 0; white-space: nowrap;
+      height: 32px; padding: 0 var(--space-150); border-radius: var(--radius-sm);
+      border: 1px solid var(--ui-border); background: var(--ui-subtle); box-shadow: var(--ui-shadow);
+      cursor: pointer; white-space: nowrap; font-weight: 500;
     }
-    .btn-sm { height: 28px; padding: 0 var(--space-200); }
-    .btn:hover { background: var(--ui-raised); }
-    .btn:disabled { opacity: 0.4; cursor: default; }
-    .btn-primary { background: var(--ui-primary); color: var(--ui-on-primary); border-color: transparent; }
-    .btn-primary:hover { background: var(--ui-primary); opacity: 0.88; }
+    .btn:hover { background: var(--ui-control); }
+    .btn:active { background: var(--ui-hover); box-shadow: none; }
+    .btn:disabled { opacity: 0.45; cursor: default; }
+    .btn-lg { height: 40px; padding: 0 var(--space-200); }
+    .btn-primary { background: var(--ui-primary); color: var(--ui-on-primary); border-color: var(--ui-primary); }
+    .btn-primary:hover { background: var(--ui-primary); opacity: 0.9; }
     .btn kbd {
       font-family: "FT System Mono", ui-monospace, monospace; font-size: 11px; line-height: 16px;
-      padding: 0 5px; border-radius: var(--radius-xs); background: rgba(127, 127, 127, 0.2);
+      padding: 0 5px; border-radius: 4px; border: 1px solid currentColor; opacity: 0.55;
     }
 
-    .panel-foot {
-      display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-100);
-      padding: var(--space-300) var(--space-500); border-top: 1px solid var(--ui-border);
+    /* toggle group */
+    .toggle {
+      display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; padding: 2px;
+      border: 1px solid var(--ui-border); border-radius: var(--radius-md); background: var(--ui-subtle);
     }
-    .panel-foot .segment { grid-column: 1 / -1; }
+    .toggle button {
+      height: 28px; border: 0; border-radius: var(--radius-sm); background: none; cursor: pointer; color: var(--ui-muted);
+    }
+    .toggle button:hover { color: var(--ui-text); }
+    .toggle button[aria-pressed="true"] { background: var(--ui-page); color: var(--ui-text); box-shadow: 0 0 0 1px var(--ui-border), var(--ui-shadow); }
+
+    /* slider: thin track, filled to the value, round thumb */
+    input[type="range"] {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 20px; margin: 0; background: none; cursor: pointer;
+      --p: 50%;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px; border-radius: 4px;
+      background: linear-gradient(to right, var(--ui-text) var(--p), var(--ui-border) var(--p));
+    }
+    input[type="range"]::-moz-range-track { height: 4px; border-radius: 4px; background: var(--ui-border); }
+    input[type="range"]::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--ui-text); }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; margin-top: -6px; border-radius: 50%;
+      background: #fff; border: 1px solid var(--ui-border-strong); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 16px; height: 16px; border-radius: 50%; background: #fff;
+      border: 1px solid var(--ui-border-strong); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+    input[type="range"]:focus-visible { outline: none; }
+    input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+    input[type="range"]:disabled { opacity: 0.4; cursor: default; }
+
+    /* colour presets */
+    .presets { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--space-100); }
+    .preset {
+      height: 30px; padding: 0; border: 1px solid var(--ui-border); border-radius: var(--radius-sm);
+      cursor: pointer; overflow: hidden; display: flex; background: none;
+    }
+    .preset i { flex: 1; }
+    .preset:hover { border-color: var(--ui-text); }
+
+    /* colour fields: swatch inside a text input */
+    .colour-fields { display: grid; gap: var(--space-100); }
+    .colour-field { display: grid; grid-template-columns: 1fr 150px; align-items: center; gap: var(--space-150); }
+    .colour-field[hidden] { display: none; }
+    .input {
+      display: flex; align-items: center; gap: var(--space-100); height: 32px; padding: 0 var(--space-100) 0 5px;
+      border: 1px solid var(--ui-border); border-radius: var(--radius-sm); background: var(--ui-page);
+    }
+    .input:focus-within { border-color: var(--ui-border-strong); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ui-focus) 18%, transparent); }
+    .input input[type="text"] { flex: 1; min-width: 0; border: 0; background: none; outline: none; text-transform: uppercase; }
+    input[type="color"] {
+      width: 22px; height: 22px; padding: 0; border: 0; border-radius: 4px; background: none; cursor: pointer; flex: none;
+      box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 4px; }
+    input[type="color"]::-moz-color-swatch { border: 0; border-radius: 4px; }
+    .colours[data-off="true"] { opacity: 0.4; pointer-events: none; }
+
+    .panel-foot { display: grid; gap: var(--space-100); padding: var(--space-200) var(--space-300); border-top: 1px solid var(--ui-line); }
 
     /* ---------- stage ---------- */
     .stage {
-      position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--ui-stage);
-      display: grid; place-items: center; padding: 48px;
+      position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--ui-subtle);
+      display: grid; place-items: center; padding: 56px;
     }
-    .stage.drop { box-shadow: inset 0 0 0 2px var(--ui-text); }
-    #preview { display: block; touch-action: none; user-select: none; cursor: default; }
+    .stage.drop { box-shadow: inset 0 0 0 2px var(--ui-focus); }
+    #preview { display: block; touch-action: none; user-select: none; outline: 1px solid var(--ui-line); }
     #preview[hidden] { display: none; }
     .empty {
-      display: grid; justify-items: center; gap: var(--space-200); text-align: center;
-      padding: 48px 32px; border: 1px dashed var(--ui-border); border-radius: var(--radius-md); color: var(--ui-muted);
+      display: grid; justify-items: center; gap: var(--space-150); text-align: center; color: var(--ui-muted);
+      padding: 48px 40px; border: 1px dashed var(--ui-border-strong); border-radius: var(--radius-lg); background: var(--ui-page);
     }
     .empty[hidden] { display: none; }
-    .status { position: absolute; left: 0; right: 0; bottom: var(--space-300); text-align: center; color: var(--ui-muted); }
+    .status { position: absolute; left: 0; right: 0; bottom: var(--space-200); text-align: center; color: var(--ui-muted); font-size: 12px; }
 
     @media (max-width: 819px) {
       body { height: auto; }
-      .app { display: flex; flex-direction: column-reverse; height: auto; }
-      .stage { display: block; padding: var(--space-300); }
+      .app { display: flex; flex-direction: column; height: auto; }
+      .header { height: 48px; }
+      .stage { display: block; padding: var(--space-200); order: 1; }
       .empty { padding: 32px 16px; }
-      .status { position: static; margin-top: var(--space-200); }
-      .panel { border-right: 0; border-bottom: 1px solid var(--ui-border); }
-      .panel-head { display: none; }
-      .panel-foot { order: -1; border-top: 0; border-bottom: 1px solid var(--ui-border); }
-      .panel-body { overflow: visible; }
+      .status { position: static; margin-top: var(--space-100); }
+      .panel { order: 2; border-right: 0; }
+      .panel-foot { order: -1; border-top: 0; border-bottom: 1px solid var(--ui-line); padding: var(--space-200); }
+      .panel-body { overflow: visible; padding: 0 var(--space-200); }
+      .colour-field { grid-template-columns: 1fr 140px; }
       .btn kbd { display: none; }
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <aside class="panel" aria-label="Controls">
-      <div class="panel-head">
-        <span class="title">Photo effects</span>
-        <a class="mono" href="/">craighooper.xyz</a>
-      </div>
+    <header class="header">
+      <span><span class="title">Photo effects</span> <span class="crumb">· Lab</span></span>
+      <a class="mono" href="/">craighooper.xyz</a>
+    </header>
 
+    <aside class="panel" aria-label="Controls">
       <div class="panel-body">
-        <div class="group">
+        <section class="section">
+          <h2 class="heading">Photo</h2>
           <div class="row">
             <span class="file-name" id="file-name">No photo yet</span>
-            <button type="button" class="btn btn-sm" id="choose">Choose photo</button>
+            <button type="button" class="btn" id="choose">Choose photo</button>
           </div>
-        </div>
+        </section>
 
-        <div class="group">
-          <div class="label mono group-title"><span>Colour</span></div>
-          <div class="segment" id="mode">
+        <section class="section stack">
+          <h2 class="heading">Colour</h2>
+          <div class="toggle" id="mode">
             <button type="button" data-value="original">Original</button>
             <button type="button" data-value="duo">Duotone</button>
             <button type="button" data-value="tri">Tritone</button>
           </div>
-          <div class="colours" id="colours">
-            <div class="presets" id="presets" style="margin-top: 16px"></div>
-            <div style="margin-top: 16px">
-              <div class="swatch-row">
-                <span class="mono">Shadows</span>
-                <input type="color" id="c-dark" aria-label="Shadow colour" />
-                <input type="text" class="hex mono" id="c-dark-hex" maxlength="7" aria-label="Shadow colour hex" />
-              </div>
-              <div class="swatch-row" id="mid-row">
-                <span class="mono">Midtones</span>
-                <input type="color" id="c-mid" aria-label="Midtone colour" />
-                <input type="text" class="hex mono" id="c-mid-hex" maxlength="7" aria-label="Midtone colour hex" />
-              </div>
-              <div class="swatch-row">
-                <span class="mono">Highlights</span>
-                <input type="color" id="c-light" aria-label="Highlight colour" />
-                <input type="text" class="hex mono" id="c-light-hex" maxlength="7" aria-label="Highlight colour hex" />
-              </div>
+          <div class="colours stack" id="colours">
+            <div class="presets" id="presets"></div>
+            <div class="colour-fields">
+              <label class="colour-field">
+                <span>Shadows</span>
+                <span class="input"><input type="color" id="c-dark" aria-label="Shadow colour" /><input type="text" class="mono" id="c-dark-hex" maxlength="7" aria-label="Shadow colour hex" /></span>
+              </label>
+              <label class="colour-field" id="mid-row">
+                <span>Midtones</span>
+                <span class="input"><input type="color" id="c-mid" aria-label="Midtone colour" /><input type="text" class="mono" id="c-mid-hex" maxlength="7" aria-label="Midtone colour hex" /></span>
+              </label>
+              <label class="colour-field">
+                <span>Highlights</span>
+                <span class="input"><input type="color" id="c-light" aria-label="Highlight colour" /><input type="text" class="mono" id="c-light-hex" maxlength="7" aria-label="Highlight colour hex" /></span>
+              </label>
             </div>
-            <div class="row"><span></span><button type="button" class="btn btn-sm" id="swap">Swap shadows and highlights</button></div>
-            <div class="slider" style="margin-top: 16px">
-              <label class="label mono" for="amount"><span>Strength</span><span id="amount-value"></span></label>
+            <button type="button" class="btn" id="swap" style="width: 100%">Swap shadows and highlights</button>
+            <div class="field">
+              <div class="field-head"><label for="amount">Strength</label><output class="mono" id="amount-value"></output></div>
               <input type="range" id="amount" min="0" max="100" />
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="group">
-          <div class="label mono group-title"><span>Adjust</span></div>
-          <div class="slider">
-            <label class="label mono" for="brightness"><span>Brightness</span><span id="brightness-value"></span></label>
+        <section class="section">
+          <h2 class="heading">Adjust</h2>
+          <div class="field">
+            <div class="field-head"><label for="brightness">Brightness</label><output class="mono" id="brightness-value"></output></div>
             <input type="range" id="brightness" min="-100" max="100" />
           </div>
-          <div class="slider">
-            <label class="label mono" for="contrast"><span>Contrast</span><span id="contrast-value"></span></label>
+          <div class="field">
+            <div class="field-head"><label for="contrast">Contrast</label><output class="mono" id="contrast-value"></output></div>
             <input type="range" id="contrast" min="-100" max="100" />
           </div>
-          <div class="slider">
-            <label class="label mono" for="midtones"><span>Midtones</span><span id="midtones-value"></span></label>
+          <div class="field">
+            <div class="field-head"><label for="midtones">Midtones</label><output class="mono" id="midtones-value"></output></div>
             <input type="range" id="midtones" min="-100" max="100" />
           </div>
-        </div>
+        </section>
 
-        <div class="group">
-          <div class="label mono group-title"><span>Texture</span></div>
-          <div class="slider">
-            <label class="label mono" for="grain"><span>Grain</span><span id="grain-value"></span></label>
+        <section class="section">
+          <h2 class="heading">Texture</h2>
+          <div class="field">
+            <div class="field-head"><label for="grain">Grain</label><output class="mono" id="grain-value"></output></div>
             <input type="range" id="grain" min="0" max="100" />
           </div>
-          <div class="slider">
-            <label class="label mono" for="grainSize"><span>Grain size</span><span id="grainSize-value"></span></label>
+          <div class="field">
+            <div class="field-head"><label for="grainSize">Grain size</label><output class="mono" id="grainSize-value"></output></div>
             <input type="range" id="grainSize" min="1" max="6" />
           </div>
-          <div class="slider">
-            <label class="label mono" for="speckle"><span>Speckle</span><span id="speckle-value"></span></label>
+          <div class="field">
+            <div class="field-head"><label for="speckle">Speckle</label><output class="mono" id="speckle-value"></output></div>
             <input type="range" id="speckle" min="0" max="100" />
           </div>
-          <div class="row">
-            <span class="mono" style="color: var(--ui-muted)">Texture colour</span>
-            <div class="segment mono" id="ink" style="width: 140px">
+          <div class="field row">
+            <span>Texture colour</span>
+            <div class="toggle" id="ink" style="width: 150px">
               <button type="button" data-value="dark">Dark</button>
               <button type="button" data-value="light">Light</button>
             </div>
           </div>
-          <div class="row"><span></span><button type="button" class="btn btn-sm" id="reseed">New texture pattern</button></div>
-        </div>
+          <div class="field">
+            <button type="button" class="btn" id="reseed" style="width: 100%">New texture pattern</button>
+          </div>
+        </section>
 
-        <div class="group">
-          <div class="label mono group-title"><span>Export</span></div>
-          <div class="slider">
-            <label class="label mono" for="quality"><span>JPG quality</span><span id="quality-value"></span></label>
+        <section class="section">
+          <h2 class="heading">Export</h2>
+          <div class="field row">
+            <span>Format</span>
+            <div class="toggle mono" id="format" style="width: 150px">
+              <button type="button" data-value="jpg">JPG</button>
+              <button type="button" data-value="png">PNG</button>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-head"><label for="quality">JPG quality</label><output class="mono" id="quality-value"></output></div>
             <input type="range" id="quality" min="40" max="100" />
           </div>
-          <div class="row"><span></span><button type="button" class="btn btn-sm" id="reset">Reset all</button></div>
-        </div>
+          <div class="field">
+            <button type="button" class="btn" id="reset" style="width: 100%">Reset all settings</button>
+          </div>
+        </section>
       </div>
 
       <div class="panel-foot">
-        <div class="segment mono" id="format">
-          <button type="button" data-value="jpg">JPG</button>
-          <button type="button" data-value="png">PNG</button>
-        </div>
-        <button type="button" class="btn btn-primary" id="download" style="grid-column: 1 / -1" disabled>Download <kbd>D</kbd></button>
+        <button type="button" class="btn btn-primary btn-lg" id="download" disabled>Download <kbd>D</kbd></button>
       </div>
     </aside>
 
@@ -291,6 +330,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=2"></script>
+  <script src="effects.js?v=3"></script>
 </body>
 </html>
