@@ -2,7 +2,7 @@
   Photo effects — a single-photo editor.
 
   Load one photo, then colour it (original, duotone or tritone with any
-  colours), adjust it, and add grain, speckle and contour-line texture.
+  colours), adjust it, and add grain and speckle texture.
   The preview is processed at screen size; Download re-runs the same steps
   on the full-size photo and saves it as a JPG or PNG. Nothing is uploaded:
   the photo stays in the browser.
@@ -28,12 +28,12 @@
     dark: PRESETS[0][0], mid: PRESETS[0][1], light: PRESETS[0][2],
     amount: 100,
     brightness: 0, contrast: 15, midtones: 0,
-    grain: 40, grainSize: 2, speckle: 0, contours: 0, density: 50,
+    grain: 40, grainSize: 2, speckle: 0,
     ink: "dark",
     quality: 92,
     format: "jpg"
   };
-  var SLIDERS = ["amount", "brightness", "contrast", "midtones", "grain", "grainSize", "speckle", "contours", "density", "quality"];
+  var SLIDERS = ["amount", "brightness", "contrast", "midtones", "grain", "grainSize", "speckle", "quality"];
 
   var s = JSON.parse(JSON.stringify(DEFAULTS));
   var textureSeed = 1;
@@ -130,7 +130,6 @@
     var inkHex = s.ink === "dark" ? s.dark : s.light;
     if (s.mode === "original") inkHex = s.ink === "dark" ? "#141414" : "#f2f2f2";
     if (s.speckle > 0) speckle(ctx, W, H, U, inkHex);
-    if (s.contours > 0) contours(ctx, W, H, U, inkHex);
     if (s.grain > 0) grain(ctx, W, H, U);
     return out;
   }
@@ -145,36 +144,6 @@
       var p = Math.max(0, (nv - (0.62 - amt * 0.22)) * 3.2) * amt;
       if (rand() < p) ctx.fillRect(x, y, cell, cell);
     }
-  }
-
-  // Topographic contour lines from a smooth noise field.
-  function contours(ctx, W, H, U, ink) {
-    var fbm = makeNoise(textureSeed * 11 + 3), cell = Math.max(2, 5 * U);
-    var cols = Math.ceil(W / cell) + 1, rows = Math.ceil(H / cell) + 1, freq = 3 / Math.max(W, H);
-    var f = new Float32Array(cols * rows), x, y;
-    for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) f[y * cols + x] = fbm(x * cell * freq, y * cell * freq, 4);
-    var levels = Math.round(8 + s.density / 100 * 34), step = 0.7 / levels;
-    ctx.save();
-    ctx.strokeStyle = ink; ctx.globalAlpha = s.contours / 100; ctx.lineWidth = Math.max(1, 1.5 * U); ctx.lineCap = "round";
-    ctx.beginPath();
-    for (var k = 1; k < levels; k++) {
-      var th = 0.15 + k * step;
-      for (y = 0; y < rows - 1; y++) for (x = 0; x < cols - 1; x++) {
-        var a = f[y * cols + x], b = f[y * cols + x + 1], c = f[(y + 1) * cols + x + 1], d = f[(y + 1) * cols + x];
-        var idx = (a > th ? 8 : 0) | (b > th ? 4 : 0) | (c > th ? 2 : 0) | (d > th ? 1 : 0);
-        if (idx === 0 || idx === 15) continue;
-        var X = x * cell, Y = y * cell;
-        var T = [X + cell * (th - a) / (b - a), Y], R = [X + cell, Y + cell * (th - b) / (c - b)];
-        var B = [X + cell * (th - d) / (c - d), Y + cell], L = [X, Y + cell * (th - a) / (d - a)];
-        var segs = {
-          1: [[L, B]], 2: [[B, R]], 3: [[L, R]], 4: [[T, R]], 5: [[L, T], [B, R]], 6: [[T, B]], 7: [[L, T]],
-          8: [[L, T]], 9: [[T, B]], 10: [[L, B], [T, R]], 11: [[T, R]], 12: [[L, R]], 13: [[B, R]], 14: [[L, B]]
-        }[idx];
-        for (var q = 0; q < segs.length; q++) { ctx.moveTo(segs[q][0][0], segs[q][0][1]); ctx.lineTo(segs[q][1][0], segs[q][1][1]); }
-      }
-    }
-    ctx.stroke();
-    ctx.restore();
   }
 
   // Film grain: light and dark specks, scaled to the photo.
