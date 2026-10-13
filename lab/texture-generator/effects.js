@@ -203,10 +203,16 @@
   // ---------- loading ----------
   function loadFile(file) {
     if (!file || !/^image\//.test(file.type)) { setStatus("That file isn't an image."); return; }
-    var url = URL.createObjectURL(file), img = new Image();
+    loadImage(URL.createObjectURL(file), (file.name || "photo").replace(/\.[^.]+$/, "") || "photo");
+  }
+
+  // Shows a photo in the editor. The current settings carry over, so they
+  // never land on a photo unseen.
+  function loadImage(url, name) {
+    var img = new Image();
     img.onload = function () {
       source = img;
-      fileBase = (file.name || "photo").replace(/\.[^.]+$/, "") || "photo";
+      fileBase = name;
       previewBase = scaled(img, PREVIEW_MAX);
       $("preview").hidden = false;
       $("download").disabled = false;
@@ -435,6 +441,8 @@
     bind();
     syncControls();
     initSquircles();
+    // start with a sample photo from the gallery, so the controls are live straight away
+    loadImage("sample.jpg", "dead-rat");
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncControls);   // re-measure hex fields once the font is in
   });
 })();
