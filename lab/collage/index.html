@@ -124,20 +124,7 @@
     .btn-primary:disabled { opacity: 0.6; }
     .btn-primary:focus-visible { --sq-line: var(--ui-focus); }
 
-    /* toggle group: 8px items inside a 10px container, so the corners stay concentric */
-    .toggle {
-      --r: calc(var(--radius) + 2px); --sq-fill: var(--ui-subtle);
-      display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; padding: 3px;
-    }
-    .toggle button {
-      --sq-line: transparent; --sq-fill: transparent;
-      height: 28px; cursor: pointer; color: var(--ui-muted);
-    }
-    .toggle button:hover { color: var(--ui-text); }
-    .toggle button[aria-pressed="true"] { --sq-line: var(--ui-border); --sq-fill: var(--ui-page); color: var(--ui-text); }
-    .toggle button:focus-visible { --sq-line: var(--ui-focus); }
-
-    /* colour mode: plain text choices, the selected one underlined */
+    /* choices (colour mode, texture colour, format): plain text, the selected one underlined */
     .tabs { display: flex; gap: var(--space-300); }
     .tabs button {
       height: 32px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ui-muted);
@@ -302,9 +289,9 @@
           </div>
           <div class="field row">
             <span>Texture colour</span>
-            <div class="toggle sq" id="ink" style="width: 150px">
-              <button type="button" class="sq" data-value="dark">Dark</button>
-              <button type="button" class="sq" data-value="light">Light</button>
+            <div class="tabs" id="ink">
+              <button type="button" data-value="dark">Dark</button>
+              <button type="button" data-value="light">Light</button>
             </div>
           </div>
           <div class="field">
@@ -316,9 +303,9 @@
           <h2 class="heading">Export</h2>
           <div class="field row">
             <span>Format</span>
-            <div class="toggle sq mono" id="format" style="width: 150px">
-              <button type="button" class="sq" data-value="jpg">JPG</button>
-              <button type="button" class="sq" data-value="png">PNG</button>
+            <div class="tabs" id="format">
+              <button type="button" data-value="jpg">JPG</button>
+              <button type="button" data-value="png">PNG</button>
             </div>
           </div>
           <div class="field">
@@ -346,6 +333,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=7"></script>
+  <script src="effects.js?v=8"></script>
 </body>
 </html>

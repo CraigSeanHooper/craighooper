@@ -352,7 +352,6 @@
 
   function radiusOf(el) {
     if (el.type === "color") return 5;
-    if (el.classList.contains("toggle")) return 10;
     if (el.classList.contains("empty")) return 12;
     return 8;
   }
