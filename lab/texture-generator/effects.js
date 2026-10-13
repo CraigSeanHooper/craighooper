@@ -249,7 +249,9 @@
     });
     $("mid-row").hidden = s.mode !== "tri";
     $("colours").dataset.off = s.mode === "original";
-    $("quality").disabled = s.format === "png";
+    var png = s.format === "png";
+    $("quality").disabled = png; $("quality-value").disabled = png;
+    $("quality-field").dataset.off = png;
   }
 
   function bind() {
