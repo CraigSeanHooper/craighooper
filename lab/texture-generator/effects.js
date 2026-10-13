@@ -241,12 +241,22 @@
   // ---------- controls ----------
   function setStatus(t) { $("status").textContent = t; }
 
-  // sizes a hex field to exactly fit its text, so the box hugs the code
+  // Sizes a field to fit the longest value it can hold, so every box of the
+  // same kind is the same width (the font's digits and letters vary in width,
+  // so fitting each value exactly made the boxes uneven).
   var measurer = document.createElement("canvas").getContext("2d");
+  var widthCache = {};
   function fitText(el) {
-    var cs = getComputedStyle(el);
-    measurer.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
-    el.style.width = Math.ceil(measurer.measureText((el.value || "0").toUpperCase()).width) + 2 + "px";
+    var cs = getComputedStyle(el), font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+    var hexField = /-hex$/.test(el.id), key = font + (hexField ? "hex" : "num");
+    if (!widthCache[key]) {
+      measurer.font = font;
+      var chars = hexField ? "0123456789ABCDEF" : "0123456789", widest = 0;
+      for (var i = 0; i < chars.length; i++) widest = Math.max(widest, measurer.measureText(chars[i]).width);
+      var w = hexField ? measurer.measureText("#").width + widest * 6 : measurer.measureText("-").width + widest * 3;
+      widthCache[key] = Math.ceil(w) + 2;
+    }
+    el.style.width = widthCache[key] + "px";
   }
 
   // fills the slider track up to the thumb
