@@ -27,6 +27,7 @@
       --ui-primary:  #2e2e2e;
       --ui-on-primary: #ffffff;
       --ui-focus:    oklch(0.55 0.2 264);
+      --ui-slider:   #6e6e6e;
       --colour-accent-yellow: #fffbc6;   /* Foundations: --surface-accent */
       --colour-neutral-90: #1a1a1a;      /* Foundations: --text-on-accent */
 
@@ -46,6 +47,7 @@
         --ui-primary:  #ececec;
         --ui-on-primary: #111111;
         --ui-focus:    oklch(0.72 0.15 264);
+        --ui-slider:   #a8a8a8;
       }
       .avatar img { filter: invert(1); }
     }
@@ -141,13 +143,13 @@
       --p: 50%;
     }
     input[type="range"]::-webkit-slider-runnable-track {
-      height: 4px; border-radius: 4px;
-      background: linear-gradient(to right, var(--ui-text) var(--p), var(--ui-border) var(--p));
+      height: 1px;
+      background: linear-gradient(to right, var(--ui-slider) var(--p), var(--ui-border) var(--p));
     }
-    input[type="range"]::-moz-range-track { height: 4px; border-radius: 4px; background: var(--ui-border); }
-    input[type="range"]::-moz-range-progress { height: 4px; border-radius: 4px; background: var(--ui-text); }
+    input[type="range"]::-moz-range-track { height: 1px; background: var(--ui-border); }
+    input[type="range"]::-moz-range-progress { height: 1px; background: var(--ui-slider); }
     input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 16px; height: 16px; margin-top: -6px; border-radius: 50%;
+      -webkit-appearance: none; width: 16px; height: 16px; margin-top: -7.5px; border-radius: 50%;
       background: #fff; border: 1px solid var(--ui-border-strong);
     }
     input[type="range"]::-moz-range-thumb {
