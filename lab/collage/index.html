@@ -112,7 +112,7 @@
     .btn {
       --sq-fill: var(--ui-subtle);
       display: inline-flex; align-items: center; justify-content: center; gap: var(--space-100);
-      height: 32px; padding: 0 var(--space-150); cursor: pointer; white-space: nowrap;
+      height: 40px; padding: 0 var(--space-200); cursor: pointer; white-space: nowrap;
       font-family: "Parabole", "Helvetica Neue", Arial, sans-serif; font-feature-settings: "salt" 1, "ss08" 1;
     }
     .btn:hover { --sq-fill: var(--ui-control); }
@@ -189,14 +189,11 @@
       position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--ui-page);
       display: grid; place-items: center; padding: 24px 56px 56px 32px;
     }
-    .stage.drop .empty { --sq-line: var(--ui-focus); }
+    .stage.drop #choose-3 { --sq-line: var(--ui-focus); }
     #preview { display: block; touch-action: none; user-select: none; }
     #preview[hidden] { display: none; }
-    .empty {
-      --r: 12px; --sq-fill: var(--ui-subtle);
-      display: grid; justify-items: center; gap: var(--space-150); text-align: center; color: var(--ui-muted);
-      padding: 48px 40px;
-    }
+    .empty { display: grid; justify-items: center; gap: var(--space-200); text-align: center; color: var(--ui-muted); }
+    .empty .btn { width: 332px; max-width: 100%; }   /* same width as the sidebar buttons */
     .empty[hidden] { display: none; }
     .status { position: absolute; left: 0; right: 0; bottom: var(--space-200); text-align: center; color: var(--ui-muted); font-size: 12px; }
 
@@ -205,7 +202,7 @@
       .app { display: flex; flex-direction: column; height: auto; }
       .header { height: 56px; padding: 0 var(--space-200); }
       .stage { display: block; padding: 0 var(--space-200); order: 1; }
-      .empty { padding: 32px 16px; }
+      .empty { padding: 48px 0; }
       .status { position: static; margin-top: var(--space-100); }
       .panel { order: 2; }
       .panel-foot { order: -1; padding: var(--space-300) var(--space-200) 0; }
@@ -324,15 +321,15 @@
     </aside>
 
     <main class="stage" id="stage">
-      <div class="empty sq" id="empty">
+      <div class="empty" id="empty">
         <span>Drop a photo here, or paste one</span>
-        <button type="button" class="btn sq" id="choose-3">Choose photo</button>
+        <button type="button" class="btn btn-primary btn-lg sq" id="choose-3">Choose photo</button>
       </div>
       <canvas id="preview" hidden aria-label="Edited photo"></canvas>
       <div class="status mono" id="status" role="status"></div>
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=8"></script>
+  <script src="effects.js?v=9"></script>
 </body>
 </html>
