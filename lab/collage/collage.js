@@ -1,10 +1,10 @@
 /*
-  Collage — generates editorial-style collages from the photo gallery.
+  Collage — arranges photos from the gallery into editorial-style collages.
 
-  Each composition is built from a seed, so the same seed, palette, layout
-  and format always give the same picture. Pieces: two-tone photos, flat
-  blocks, contour maps, speckle texture and circles, with torn edges and
-  film grain over the top. Any piece can be dragged by hand.
+  Only photos are used. Each one is cropped, given levels and contrast, and
+  blended toward a two-tone pair from the chosen palette. Pieces can be
+  dragged by hand. A seed plus the slider values always rebuild the same
+  picture, and the page address carries both so a result can be bookmarked.
 */
 (function () {
   "use strict";
@@ -28,18 +28,34 @@
     "16:9": [2560, 1440]
   };
 
+  // Sliders: key → [default, hash name, what changing it redoes].
+  // "layout" rebuilds the arrangement; "image" repaints the same arrangement
+  // and keeps anything moved by hand; "grain" and "draw" are cheaper still.
+  var SLIDERS = {
+    count:    [6,   "n", "layout"],
+    gap:      [20,  "g", "layout"],
+    margin:   [50,  "m", "layout"],
+    variety:  [50,  "v", "layout"],
+    zoom:     [30,  "z", "image"],
+    contrast: [55,  "k", "image"],
+    tone:     [100, "t", "image"],
+    grain:    [55,  "r", "grain"],
+    shadow:   [20,  "s", "draw"]
+  };
+
   var state = {
     seed: randomSeed(),
     palette: "mesa",
     layout: "grid",
     format: "3:2",
-    grain: 55,
-    density: 50,
-    tears: 50,
     photos: [],        // { title, src, fallback } from the gallery
     ownPhotos: [],     // { title, img } added from this computer
-    cache: {}          // src -> Promise<Image>
+    cache: {},         // src -> Promise<Image>
+    moves: {},         // piece id -> { x, y } set by dragging
+    z: null,           // piece ids in drawing order, once anything is dragged
+    layoutKey: ""
   };
+  Object.keys(SLIDERS).forEach(function (k) { state[k] = SLIDERS[k][0]; });
 
   // ---------- random ----------
   function randomSeed() { return Math.floor(Math.random() * 99999) + 1; }
@@ -53,52 +69,23 @@
   }
   var rnd = Math.random;
   function rr(a, b) { return a + rnd() * (b - a); }
-  function ri(a, b) { return Math.floor(rr(a, b + 1)); }
-  function pick(arr) { return arr[Math.floor(rnd() * arr.length)]; }
-  function chance(p) { return rnd() < p; }
   function shuffle(arr) {
     var a = arr.slice();
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
     return a;
   }
 
-  // ---------- noise ----------
-  function makeNoise(seed) {
-    var r = mulberry32(seed), perm = new Uint8Array(512), vals = new Float32Array(256), i;
-    for (i = 0; i < 256; i++) { perm[i] = i; vals[i] = r(); }
-    for (i = 255; i > 0; i--) { var j = Math.floor(r() * (i + 1)); var t = perm[i]; perm[i] = perm[j]; perm[j] = t; }
-    for (i = 0; i < 256; i++) perm[i + 256] = perm[i];
-    function v(x, y) { return vals[perm[(x & 255) + perm[y & 255]]]; }
-    function s(t) { return t * t * (3 - 2 * t); }
-    function n2(x, y) {
-      var xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
-      var a = v(xi, yi), b = v(xi + 1, yi), c = v(xi, yi + 1), d = v(xi + 1, yi + 1);
-      var u = s(xf), w = s(yf);
-      return a + (b - a) * u + (c - a) * w + (a - b - c + d) * u * w;
-    }
-    return function fbm(x, y, oct) {
-      var sum = 0, amp = 0.5, f = 1, norm = 0;
-      for (var o = 0; o < (oct || 4); o++) { sum += n2(x * f, y * f) * amp; norm += amp; amp *= 0.5; f *= 2; }
-      return sum / norm;
-    };
-  }
-
   // ---------- colour ----------
   function hex(h) { h = h.replace("#", ""); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
   function lum(h) { var c = hex(h); return (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255; }
+  // Two palette colours with enough contrast; darker one first.
   function pairFrom(colours) {
-    // two colours with enough contrast; darker one carries the shadows
     for (var k = 0; k < 30; k++) {
-      var a = pick(colours), b = pick(colours);
+      var a = colours[Math.floor(rnd() * colours.length)], b = colours[Math.floor(rnd() * colours.length)];
       if (Math.abs(lum(a) - lum(b)) > 0.3) return lum(a) < lum(b) ? [a, b] : [b, a];
     }
     var sorted = colours.slice().sort(function (x, y) { return lum(x) - lum(y); });
     return [sorted[0], sorted[sorted.length - 1]];
-  }
-  function contrastWith(colour, colours) {
-    var best = colours[0], d = -1;
-    colours.forEach(function (c) { var dd = Math.abs(lum(c) - lum(colour)); if (dd > d && c !== colour) { d = dd; best = c; } });
-    return best;
   }
 
   // ---------- photos ----------
@@ -136,300 +123,188 @@
       .catch(function () { state.photos = []; });
   }
 
-  // choose the photos one composition needs, then load only those
+  // Choose the photos one composition needs (repeating only when there are
+  // more pieces than photos), then load just those.
   function choosePhotos(n) {
-    var pool = state.ownPhotos.length ? state.ownPhotos.concat(state.photos) : state.photos;
+    var pool = state.ownPhotos.concat(state.photos);
     if (!pool.length) return Promise.resolve([]);
-    var chosen = shuffle(pool).slice(0, n);
-    return Promise.all(chosen.map(function (p) {
-      if (p.img) return Promise.resolve({ title: p.title, img: p.img });
-      return loadImage(p.src, p.fallback).then(function (img) { return { title: p.title, img: img }; }, function () { return null; });
-    })).then(function (list) { return list.filter(Boolean); });
+    var chosen = [];
+    while (chosen.length < n) chosen = chosen.concat(shuffle(pool));
+    return Promise.all(chosen.slice(0, n).map(function (p) {
+      if (p.img) return Promise.resolve(p.img);
+      return loadImage(p.src, p.fallback).catch(function () { return null; });
+    }));
   }
 
-  // ---------- torn edges ----------
-  // Builds the outline of a w×h piece; edges listed in `torn` are ragged.
-  function tornPath(w, h, torn, S, fbm) {
-    var path = new Path2D();
-    var corners = [[0, 0], [w, 0], [w, h], [0, h]];
-    var names = ["top", "right", "bottom", "left"];
-    var off = rr(0, 100);
-    path.moveTo(0, 0);
-    for (var e = 0; e < 4; e++) {
-      var a = corners[e], b = corners[(e + 1) % 4];
-      if (!torn[names[e]]) { path.lineTo(b[0], b[1]); continue; }
-      var len = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      var steps = Math.max(8, Math.floor(len / (3 * S)));
-      // inward normal
-      var nx = -(b[1] - a[1]) / len, ny = (b[0] - a[0]) / len;
-      var amp = rr(6, 16) * S;
-      var bite = chance(0.35) ? { at: rr(0.2, 0.8), width: rr(0.15, 0.4), depth: rr(20, 70) * S } : null;
-      for (var i = 1; i <= steps; i++) {
-        var t = i / steps;
-        var x = a[0] + (b[0] - a[0]) * t, y = a[1] + (b[1] - a[1]) * t;
-        var d = 0;
-        if (i < steps) {
-          d = (fbm(t * len / (90 * S) + off, e * 7.1, 4) - 0.35) * amp * 2 + rr(0, 1.6) * S;
-          if (bite) {
-            var q = (t - bite.at) / (bite.width / 2);
-            if (Math.abs(q) < 1) d += bite.depth * Math.cos(q * Math.PI / 2) * Math.cos(q * Math.PI / 2);
-          }
-          d = Math.max(0, d);
-        }
-        path.lineTo(x + nx * d, y + ny * d);
-      }
-    }
-    path.closePath();
-    return path;
-  }
-
-  // ---------- piece painters (draw into an offscreen canvas) ----------
   function offscreen(w, h) {
     var c = document.createElement("canvas");
     c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h));
     return c;
   }
 
-  function paintPhoto(ctx, w, h, photo, pair, S) {
-    var img = photo.img;
+  // Paints one photo into a w×h piece. `crop` holds random choices made when
+  // the arrangement was built, so image sliders never change the framing.
+  function paintPhoto(w, h, img, crop, pair) {
+    var c = offscreen(w, h), ctx = c.getContext("2d");
     var iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
-    var ar = w / h, zoom = rr(1, 1.8);
+    var ar = c.width / c.height, zoom = 1 + state.zoom / 100 * 2.5;
     var cw = Math.min(iw, ih * ar) / zoom, ch = cw / ar;
-    var sx = rr(0, iw - cw), sy = rr(0, ih - ch);
-    ctx.drawImage(img, sx, sy, cw, ch, 0, 0, w, h);
-    var data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height), px = data.data;
-    // auto-levels from the histogram so every photo reaches both inks
-    var hist = new Uint32Array(256), n = px.length / 4, i, l;
+    ctx.drawImage(img, crop.fx * (iw - cw), crop.fy * (ih - ch), cw, ch, 0, 0, c.width, c.height);
+
+    var data = ctx.getImageData(0, 0, c.width, c.height), px = data.data, i;
+    // levels from the histogram so every photo reaches both inks
+    var hist = new Uint32Array(256), n = px.length / 4;
     for (i = 0; i < px.length; i += 4) hist[(px[i] * 0.2126 + px[i + 1] * 0.7152 + px[i + 2] * 0.0722) | 0]++;
     var lo = 0, hi = 255, acc = 0;
     for (i = 0; i < 256; i++) { acc += hist[i]; if (acc > n * 0.02) { lo = i; break; } }
     acc = 0;
     for (i = 255; i >= 0; i--) { acc += hist[i]; if (acc > n * 0.02) { hi = i; break; } }
-    var range = Math.max(1, hi - lo), dk = hex(pair[0]), lt = hex(pair[1]), g = rr(0.8, 1.25);
+    var range = Math.max(1, hi - lo);
+
+    // contrast: 50 is neutral, lower flattens, higher punches
+    var cv = state.contrast, k = cv <= 50 ? 0.35 + 0.65 * cv / 50 : 1 + (cv - 50) / 50 * 1.6;
+    var t = state.tone / 100, dk = hex(pair[0]), lt = hex(pair[1]), g = crop.gamma;
+    function curve(v) { v = (v - lo) / range; v = (v - 0.5) * k + 0.5; return v < 0 ? 0 : v > 1 ? 1 : v; }
     for (i = 0; i < px.length; i += 4) {
-      l = ((px[i] * 0.2126 + px[i + 1] * 0.7152 + px[i + 2] * 0.0722) - lo) / range;
-      l = Math.min(1, Math.max(0, l + (Math.random() - 0.5) * 0.16));
-      l = Math.pow(l, g);
-      px[i] = dk[0] + (lt[0] - dk[0]) * l;
-      px[i + 1] = dk[1] + (lt[1] - dk[1]) * l;
-      px[i + 2] = dk[2] + (lt[2] - dk[2]) * l;
+      var r = px[i], gr = px[i + 1], b = px[i + 2];
+      var l = curve(r * 0.2126 + gr * 0.7152 + b * 0.0722) + (Math.random() - 0.5) * 0.12;
+      l = Math.pow(l < 0 ? 0 : l > 1 ? 1 : l, g);
+      px[i]     = curve(r) * 255 * (1 - t) + (dk[0] + (lt[0] - dk[0]) * l) * t;
+      px[i + 1] = curve(gr) * 255 * (1 - t) + (dk[1] + (lt[1] - dk[1]) * l) * t;
+      px[i + 2] = curve(b) * 255 * (1 - t) + (dk[2] + (lt[2] - dk[2]) * l) * t;
     }
     ctx.putImageData(data, 0, 0);
-  }
-
-  function contourLines(ctx, w, h, colour, S, fbm, opts) {
-    var cell = 5 * S, cols = Math.ceil(w / cell) + 1, rows = Math.ceil(h / cell) + 1;
-    var sc = rr(0.0015, 0.004) / S, ox = rr(0, 50), oy = rr(0, 50);
-    var f = new Float32Array(cols * rows), x, y;
-    for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) f[y * cols + x] = fbm(x * cell * sc + ox, y * cell * sc + oy, 4);
-    var levels = ri(14, 26), step = 0.7 / levels;
-    ctx.strokeStyle = colour;
-    ctx.lineWidth = rr(1.1, 1.8) * S;
-    ctx.globalAlpha = opts.alpha || 0.9;
-    if (opts.dashed) ctx.setLineDash([6 * S, 4 * S]);
-    ctx.beginPath();
-    for (var k = 1; k < levels; k++) {
-      var t = 0.15 + k * step;
-      for (y = 0; y < rows - 1; y++) for (x = 0; x < cols - 1; x++) {
-        var a = f[y * cols + x], b = f[y * cols + x + 1], c = f[(y + 1) * cols + x + 1], d = f[(y + 1) * cols + x];
-        var idx = (a > t ? 8 : 0) | (b > t ? 4 : 0) | (c > t ? 2 : 0) | (d > t ? 1 : 0);
-        if (idx === 0 || idx === 15) continue;
-        var X = x * cell, Y = y * cell;
-        var top = [X + cell * (t - a) / (b - a), Y], right = [X + cell, Y + cell * (t - b) / (c - b)];
-        var bot = [X + cell * (t - d) / (c - d), Y + cell], left = [X, Y + cell * (t - a) / (d - a)];
-        var segs = {
-          1: [[left, bot]], 2: [[bot, right]], 3: [[left, right]], 4: [[top, right]], 5: [[left, top], [bot, right]],
-          6: [[top, bot]], 7: [[left, top]], 8: [[left, top]], 9: [[top, bot]], 10: [[left, bot], [top, right]],
-          11: [[top, right]], 12: [[left, right]], 13: [[bot, right]], 14: [[left, bot]]
-        }[idx];
-        for (var s = 0; s < segs.length; s++) { ctx.moveTo(segs[s][0][0], segs[s][0][1]); ctx.lineTo(segs[s][1][0], segs[s][1][1]); }
-      }
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.globalAlpha = 1;
-  }
-
-  function paintSpeckle(ctx, w, h, base, dot, S, fbm) {
-    ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
-    var data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height), px = data.data;
-    var W = ctx.canvas.width, sc = rr(0.003, 0.008) / S, ox = rr(0, 80), c = hex(dot), den = rr(0.5, 0.9);
-    for (var i = 0; i < px.length; i += 4) {
-      var p = i / 4, x = p % W, y = (p / W) | 0;
-      var n = fbm(x * sc + ox, y * sc, 5);
-      var prob = Math.max(0, (n - 0.45) * 3) * den;
-      if (Math.random() < prob) { px[i] = c[0]; px[i + 1] = c[1]; px[i + 2] = c[2]; }
-    }
-    ctx.putImageData(data, 0, 0);
+    return c;
   }
 
   // ---------- layouts ----------
-  // Grid: split the frame into blocks, then leave some empty.
-  function gridLayout(W, H, S) {
-    var m = Math.min(W, H) * rr(0.08, 0.13);
-    var unitX = (W - 2 * m) / 12, unitY = (H - 2 * m) / 12;
-    var target = Math.round(6 + state.density / 100 * 10);
-    var rects = [{ x: 0, y: 0, w: 12, h: 12 }];
-    var guard = 0;
-    while (rects.length < target && guard++ < 200) {
-      rects.sort(function (a, b) { return b.w * unitX * b.h * unitY - a.w * unitX * a.h * unitY; });
-      var r = rects[chance(0.7) ? 0 : ri(0, Math.min(2, rects.length - 1))];
-      var vertical = r.w * unitX > r.h * unitY ? chance(0.8) : chance(0.2);
-      var span = vertical ? r.w : r.h;
-      if (span < 2) continue;
-      var cut = ri(1, span - 1);
-      rects.splice(rects.indexOf(r), 1);
-      if (vertical) rects.push({ x: r.x, y: r.y, w: cut, h: r.h }, { x: r.x + cut, y: r.y, w: r.w - cut, h: r.h });
-      else rects.push({ x: r.x, y: r.y, w: r.w, h: cut }, { x: r.x, y: r.y + cut, w: r.w, h: r.h - cut });
+  function frame(W, H) {
+    var base = Math.min(W, H);
+    return { m: state.margin / 100 * base * 0.2, gap: state.gap / 100 * base * 0.06 };
+  }
+
+  // Grid: split the frame into exactly `count` blocks, separated by the gap.
+  // Variety 0 gives even halves along the long side; 100 gives uneven cuts.
+  function gridLayout(W, H) {
+    var f = frame(W, H), v = state.variety / 100;
+    var rects = [{ x: f.m, y: f.m, w: W - 2 * f.m, h: H - 2 * f.m }];
+    while (rects.length < state.count) {
+      rects.sort(function (a, b) { return b.w * b.h - a.w * a.h; });
+      var r = rects.shift();
+      var longSide = r.w > r.h;
+      var vertical = rnd() < 1 - v * 0.3 ? longSide : !longSide;
+      var cut = 0.5 + (rnd() - 0.5) * v * 0.7;
+      if (vertical) rects.push({ x: r.x, y: r.y, w: r.w * cut, h: r.h }, { x: r.x + r.w * cut, y: r.y, w: r.w * (1 - cut), h: r.h });
+      else rects.push({ x: r.x, y: r.y, w: r.w, h: r.h * cut }, { x: r.x, y: r.y + r.h * cut, w: r.w, h: r.h * (1 - cut) });
     }
+    // pull every inner edge in by half the gap; outer edges stay on the margin
+    var right = W - f.m, bottom = H - f.m, half = f.gap / 2, e = 0.5;
     return rects.map(function (r) {
-      return {
-        x: m + r.x * unitX, y: m + r.y * unitY, w: r.w * unitX, h: r.h * unitY,
-        edge: { top: r.y === 0, right: r.x + r.w === 12, bottom: r.y + r.h === 12, left: r.x === 0 }
-      };
+      var l = r.x > f.m + e ? half : 0, t = r.y > f.m + e ? half : 0;
+      var rt = r.x + r.w < right - e ? half : 0, b = r.y + r.h < bottom - e ? half : 0;
+      return { x: r.x + l, y: r.y + t, w: Math.max(1, r.w - l - rt), h: Math.max(1, r.h - t - b) };
     });
   }
 
-  // Scatter: a handful of overlapping rectangles, like pasted scraps.
-  function scatterLayout(W, H, S) {
-    // one piece per cell of a loose grid, jittered so pieces overlap
-    var n = Math.round(4 + state.density / 100 * 6), out = [];
-    var cols = Math.max(2, Math.round(Math.sqrt(n * W / H))), rows = Math.ceil(n / cols);
-    var cw = W * 0.86 / cols, ch = H * 0.86 / rows;
+  // Scatter: one photo per cell of a loose grid, jittered so pieces overlap.
+  // Gap shrinks the pieces; variety loosens sizes and positions.
+  function scatterLayout(W, H) {
+    var f = frame(W, H), v = state.variety / 100, n = state.count, out = [];
+    var aw = W - 2 * f.m, ah = H - 2 * f.m;
+    var cols = Math.max(1, Math.round(Math.sqrt(n * aw / ah))), rows = Math.ceil(n / cols);
+    var cw = aw / cols, ch = ah / rows, scale = 1.3 - state.gap / 100 * 0.75;
     var cells = [];
     for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) cells.push([x, y]);
     shuffle(cells).slice(0, n).forEach(function (c) {
-      var w = cw * rr(0.8, 1.35), h = ch * rr(0.6, 1.2);
-      var cx = W * 0.07 + (c[0] + 0.5) * cw + rr(-0.2, 0.2) * cw, cy = H * 0.07 + (c[1] + 0.5) * ch + rr(-0.2, 0.2) * ch;
-      var px = Math.min(Math.max(cx - w / 2, W * 0.03), W * 0.97 - w), py = Math.min(Math.max(cy - h / 2, H * 0.03), H * 0.97 - h);
-      out.push({ x: px, y: py, w: w, h: h, edge: { top: true, right: true, bottom: true, left: true } });
+      var w = cw * scale * (1 + (rnd() - 0.5) * v * 0.7), h = ch * scale * (1 + (rnd() - 0.5) * v * 0.7);
+      var cx = f.m + (c[0] + 0.5) * cw + (rnd() - 0.5) * v * 0.5 * cw;
+      var cy = f.m + (c[1] + 0.5) * ch + (rnd() - 0.5) * v * 0.5 * ch;
+      out.push({ x: cx - w / 2, y: cy - h / 2, w: w, h: h });
     });
     return out;
   }
 
   // ---------- compose ----------
-  // A composition is a list of pieces, each pre-rendered to its own canvas
-  // with its final shape, plus a position. Dragging only moves positions.
-  var rendering = false, pending = false;
-  var comp = null;     // { W, H, S, paper, shadow, pieces: [{ canvas, x, y }] }
-  var grainLayer = null;
+  // build(): arrangement, crops and photo picks (seed + composition sliders).
+  // paint(): turns those into piece canvases (palette + image sliders).
+  // draw():  places pieces, shadows and grain; cheap enough to run on drag.
+  var plan = null, comp = null, grainLayer = null;
+  var busy = false, queued = false;
 
-  function render() {
-    if (rendering) { pending = true; return; }
-    rendering = true;
+  function layoutKey() {
+    return [state.seed, state.layout, state.format, state.count, state.gap, state.margin, state.variety, state.ownPhotos.length].join("|");
+  }
+
+  function build() {
+    if (busy) { queued = true; return; }
+    busy = true;
+    var size = FORMATS[state.format], W = size[0], H = size[1];
+    var key = layoutKey();
+    if (key !== state.layoutKey) { state.moves = {}; state.z = null; state.layoutKey = key; }
+
     rnd = mulberry32(state.seed);
-    var fbm = makeNoise(state.seed);
-    var size = FORMATS[state.format], W = size[0], H = size[1], S = Math.max(W, H) / 2000;
-    var pal = PALETTES[state.palette];
-    var layout = state.layout === "grid" ? gridLayout(W, H, S) : scatterLayout(W, H, S);
-    var photoCount = Math.min(5, Math.max(2, Math.round(layout.length * (state.layout === "grid" ? 0.35 : 0.5))));
-
-    setStatus("Composing…");
-    choosePhotos(photoCount).then(function (photos) {
-      rnd = mulberry32(state.seed * 7 + 3);
-
-      // biggest blocks get the photos
-      var order = layout.map(function (r, i) { return i; }).sort(function (a, b) { return layout[b].w * layout[b].h - layout[a].w * layout[a].h; });
-      var types = {};
-      var photoSlots = 0;
-      order.forEach(function (i, rank) {
-        var r = layout[i], ar = r.w / r.h;
-        // leave a few of the smaller blocks empty so the paper shows through
-        if (state.layout === "grid" && rank > order.length / 2 && chance(0.3)) { types[i] = "empty"; return; }
-        if (photoSlots < photos.length && (photoSlots < 2 || chance(0.45))) { types[i] = "photo"; photoSlots++; return; }
-        if (ar > 0.75 && ar < 1.35 && chance(0.45)) { types[i] = "circle"; return; }
-        types[i] = pick(["solid", "solid", "contour", "contour", "speckle"]);
-      });
-
-      var pieces = [], tearAmount = state.tears / 100, pi = 0;
-      var others = pal.colours.filter(function (c) { return Math.abs(lum(c) - lum(pal.paper)) > 0.08; });
-      if (!others.length) others = pal.colours;
-      var drawOrder = state.layout === "scatter" ? shuffle(order) : order;
-
-      drawOrder.forEach(function (i) {
-        var r = layout[i], type = types[i];
-        if (type === "empty") return;
-
-        if (type === "circle") {
-          var rad = Math.min(r.w, r.h) / 2 * rr(0.86, 1);
-          var cc = offscreen(rad * 2, rad * 2), cx = cc.getContext("2d"), fill = pick(others);
-          cx.beginPath(); cx.arc(cc.width / 2, cc.height / 2, rad, 0, Math.PI * 2); cx.clip();
-          cx.fillStyle = fill; cx.fillRect(0, 0, cc.width, cc.height);
-          if (chance(0.45)) contourLines(cx, cc.width, cc.height, contrastWith(fill, pal.colours), S, fbm, { alpha: 0.85 });
-          pieces.push({ canvas: cc, x: r.x + r.w / 2 - rad, y: r.y + r.h / 2 - rad });
-          return;
-        }
-
-        // rectangular pieces, optionally torn
-        var flat = offscreen(r.w, r.h), fc = flat.getContext("2d");
-        if (type === "photo") {
-          paintPhoto(fc, flat.width, flat.height, photos[pi++], pairFrom(pal.colours), S);
-        } else if (type === "contour") {
-          var base = chance(0.3) ? pal.paper : pick(others);
-          fc.fillStyle = base; fc.fillRect(0, 0, flat.width, flat.height);
-          contourLines(fc, flat.width, flat.height, contrastWith(base, pal.colours), S, fbm, { dashed: chance(0.3) });
-        } else if (type === "speckle") {
-          var sp = pairFrom(pal.colours);
-          paintSpeckle(fc, flat.width, flat.height, sp[1], sp[0], S, fbm);
-        } else {
-          fc.fillStyle = pick(others); fc.fillRect(0, 0, flat.width, flat.height);
-        }
-
-        var torn = {};
-        ["top", "right", "bottom", "left"].forEach(function (e) {
-          var p = r.edge[e] ? 0.55 : 0.08;
-          if (state.layout === "scatter") p = 0.3;
-          if (chance(p * tearAmount * 1.6)) torn[e] = true;
-        });
-        var piece = offscreen(r.w, r.h), pc = piece.getContext("2d");
-        pc.clip(tornPath(piece.width, piece.height, torn, S, fbm));
-        pc.drawImage(flat, 0, 0);
-        pieces.push({ canvas: piece, x: r.x, y: r.y });
-
-        // scatter mode: tick rules beside some pieces
-        if (state.layout === "scatter" && chance(0.4)) {
-          var tc = contrastWith(pal.paper, pal.colours), lines = ri(5, 10), len = rr(40, 140) * S, gap = 14 * S;
-          var tick = offscreen(len + 4 * S, lines * gap + 4 * S), tx = tick.getContext("2d");
-          tx.strokeStyle = tc; tx.globalAlpha = 0.7; tx.lineWidth = 1.5 * S;
-          tx.setLineDash(chance(0.5) ? [] : [len * 0.6, 4 * S, len * 0.1, 4 * S]);
-          for (var q = 0; q < lines; q++) { tx.beginPath(); tx.moveTo(0, 2 * S + q * gap); tx.lineTo(len * rr(0.5, 1), 2 * S + q * gap); tx.stroke(); }
-          pieces.push({ canvas: tick, x: chance(0.5) ? r.x - len - 10 * S : r.x + r.w + 10 * S, y: r.y + rr(0, r.h * 0.5), flat: true });
-        }
-      });
-
-      comp = { W: W, H: H, S: S, paper: pal.paper, shadow: state.layout === "scatter", pieces: pieces };
-      var canvas = document.getElementById("collage");
-      canvas.width = W; canvas.height = H;
-      makeGrain();
-      draw();
-      document.getElementById("seed").textContent = state.seed;
-      setStatus(photos.length ? "Drag pieces to move them" : "No photos loaded — add your own below.");
-      writeHash();
-      rendering = false;
-      if (pending) { pending = false; render(); }
+    var rects = state.layout === "grid" ? gridLayout(W, H) : scatterLayout(W, H);
+    rnd = mulberry32(state.seed * 31 + 7);
+    var crops = rects.map(function () {
+      return { fx: rnd(), fy: rnd(), gamma: rr(0.85, 1.2), pairSeed: (rnd() * 1e9) | 0 };
     });
+
+    setStatus("Loading photos…");
+    rnd = mulberry32(state.seed * 13 + 1);
+    choosePhotos(rects.length).then(function (imgs) {
+      plan = { W: W, H: H, S: Math.max(W, H) / 2000, rects: rects, crops: crops, imgs: imgs };
+      busy = false;
+      if (queued) { queued = false; build(); return; }
+      paint();
+    });
+  }
+
+  function paint() {
+    if (!plan || busy) return;
+    var pal = PALETTES[state.palette], pieces = [];
+    plan.rects.forEach(function (r, id) {
+      var img = plan.imgs[id];
+      if (!img) return;
+      rnd = mulberry32(plan.crops[id].pairSeed);
+      var canvas = paintPhoto(r.w, r.h, img, plan.crops[id], pairFrom(pal.colours));
+      var moved = state.moves[id];
+      pieces.push({ id: id, canvas: canvas, x: moved ? moved.x : r.x, y: moved ? moved.y : r.y });
+    });
+    if (state.z) pieces.sort(function (a, b) { return state.z.indexOf(a.id) - state.z.indexOf(b.id); });
+    comp = { W: plan.W, H: plan.H, S: plan.S, paper: pal.paper, pieces: pieces };
+
+    var canvas = document.getElementById("collage");
+    if (canvas.width !== plan.W || canvas.height !== plan.H) { canvas.width = plan.W; canvas.height = plan.H; }
+    if (!grainLayer || grainLayer.width !== plan.W || grainLayer.height !== plan.H) makeGrain();
+    draw();
+    document.getElementById("seed").textContent = state.seed;
+    setStatus(pieces.length ? "Drag photos to move them" : "No photos loaded — add your own.");
+    writeHash();
   }
 
   function draw() {
     if (!comp) return;
-    var ctx = document.getElementById("collage").getContext("2d");
+    var ctx = document.getElementById("collage").getContext("2d"), sh = state.shadow / 100, S = comp.S;
     ctx.fillStyle = comp.paper; ctx.fillRect(0, 0, comp.W, comp.H);
     comp.pieces.forEach(function (p) {
       ctx.save();
-      if (comp.shadow && !p.flat) { ctx.shadowColor = "rgba(0,0,0,0.25)"; ctx.shadowBlur = 10 * comp.S; ctx.shadowOffsetY = 3 * comp.S; }
-      if (p === dragging) { ctx.shadowColor = "rgba(0,0,0,0.35)"; ctx.shadowBlur = 24 * comp.S; ctx.shadowOffsetY = 8 * comp.S; }
+      var depth = sh + (p === dragging ? 0.4 : 0);
+      if (depth > 0) {
+        ctx.shadowColor = "rgba(0,0,0," + Math.min(0.6, 0.15 + depth * 0.3) + ")";
+        ctx.shadowBlur = depth * 36 * S; ctx.shadowOffsetY = depth * 12 * S;
+      }
       ctx.drawImage(p.canvas, Math.round(p.x), Math.round(p.y));
       ctx.restore();
     });
     if (grainLayer) ctx.drawImage(grainLayer, 0, 0);
   }
 
-  // Grain sits on its own layer: light and dark specks, drawn over everything.
+  // Grain sits on its own layer: light and dark specks over everything.
   function makeGrain() {
     var amt = state.grain / 100;
-    if (!comp || amt <= 0) { grainLayer = null; return; }
-    grainLayer = offscreen(comp.W, comp.H);
-    var g = grainLayer.getContext("2d"), data = g.createImageData(comp.W, comp.H), px = data.data, k = amt * 60;
+    if (!plan || amt <= 0) { grainLayer = null; return; }
+    grainLayer = offscreen(plan.W, plan.H);
+    var g = grainLayer.getContext("2d"), data = g.createImageData(plan.W, plan.H), px = data.data, k = amt * 60;
     for (var i = 0; i < px.length; i += 4) {
       var n = (Math.random() - 0.5) * k, v = n > 0 ? 255 : 0;
       px[i] = v; px[i + 1] = v; px[i + 2] = v; px[i + 3] = Math.abs(n) * 2;
@@ -447,9 +322,8 @@
   function pieceAt(pt) {
     if (!comp) return null;
     for (var i = comp.pieces.length - 1; i >= 0; i--) {
-      var p = comp.pieces[i], lx = Math.floor(pt.x - p.x), ly = Math.floor(pt.y - p.y);
-      if (lx < 0 || ly < 0 || lx >= p.canvas.width || ly >= p.canvas.height) continue;
-      if (p.canvas.getContext("2d").getImageData(lx, ly, 1, 1).data[3] > 10) return p;
+      var p = comp.pieces[i];
+      if (pt.x >= p.x && pt.y >= p.y && pt.x < p.x + p.canvas.width && pt.y < p.y + p.canvas.height) return p;
     }
     return null;
   }
@@ -462,6 +336,7 @@
       e.preventDefault();
       dragging = p; grab = { x: pt.x - p.x, y: pt.y - p.y };
       comp.pieces.splice(comp.pieces.indexOf(p), 1); comp.pieces.push(p);  // bring to front
+      state.z = comp.pieces.map(function (q) { return q.id; });
       c.setPointerCapture(e.pointerId);
       c.classList.add("dragging");
       draw();
@@ -470,6 +345,7 @@
       var pt = toCanvas(e);
       if (!dragging) { c.style.cursor = pieceAt(pt) ? "grab" : "default"; return; }
       dragging.x = pt.x - grab.x; dragging.y = pt.y - grab.y;
+      state.moves[dragging.id] = { x: dragging.x, y: dragging.y };
       draw();
     });
     function end() { if (!dragging) return; dragging = null; c.classList.remove("dragging"); draw(); }
@@ -482,6 +358,7 @@
 
   function writeHash() {
     var h = "seed=" + state.seed + "&p=" + state.palette + "&l=" + state.layout + "&f=" + state.format;
+    Object.keys(SLIDERS).forEach(function (k) { h += "&" + SLIDERS[k][1] + "=" + state[k]; });
     history.replaceState(null, "", location.pathname + location.search + "#" + h);
   }
   function readHash() {
@@ -490,6 +367,10 @@
     if (PALETTES[h.get("p")]) state.palette = h.get("p");
     if (h.get("l") === "grid" || h.get("l") === "scatter") state.layout = h.get("l");
     if (FORMATS[h.get("f")]) state.format = h.get("f");
+    Object.keys(SLIDERS).forEach(function (k) {
+      var v = h.get(SLIDERS[k][1]);
+      if (v !== null && v !== "" && !isNaN(+v)) state[k] = +v;
+    });
   }
 
   function buildPalettes() {
@@ -504,7 +385,7 @@
       btn.addEventListener("click", function () {
         state.palette = key;
         wrap.querySelectorAll(".palette").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.key === key); });
-        render();
+        paint();
       });
       wrap.appendChild(btn);
     });
@@ -518,18 +399,23 @@
         state[key] = b.dataset.value;
         group.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); });
         if (key === "format") sizeStage();
-        render();
+        build();
       });
     });
   }
 
-  function bindSlider(id, key) {
-    var el = document.getElementById(id), out = document.getElementById(id + "-value"), t;
+  function bindSlider(key) {
+    var el = document.getElementById(key), out = document.getElementById(key + "-value"), t, kind = SLIDERS[key][2];
     el.value = state[key]; out.textContent = state[key];
     el.addEventListener("input", function () {
       state[key] = +el.value; out.textContent = el.value;
+      if (kind === "draw") { draw(); writeHash(); return; }
       clearTimeout(t);
-      t = setTimeout(key === "grain" ? function () { makeGrain(); draw(); } : render, 150);
+      t = setTimeout(function () {
+        if (kind === "layout") build();
+        else if (kind === "image") paint();
+        else { makeGrain(); draw(); writeHash(); }
+      }, kind === "grain" ? 60 : 140);
     });
   }
 
@@ -546,7 +432,7 @@
     canvas.style.height = Math.floor(f[1] * s) + "px";
   }
 
-  function generate() { state.seed = randomSeed(); render(); }
+  function generate() { state.seed = randomSeed(); build(); }
 
   function download() {
     var canvas = document.getElementById("collage");
@@ -568,14 +454,14 @@
     Promise.all(list.map(function (f) {
       return new Promise(function (resolve) {
         var img = new Image();
-        img.onload = function () { resolve({ title: f.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "), img: img }); };
+        img.onload = function () { resolve({ title: f.name, img: img }); };
         img.onerror = function () { resolve(null); };
         img.src = URL.createObjectURL(f);
       });
     })).then(function (added) {
       state.ownPhotos = state.ownPhotos.concat(added.filter(Boolean));
       updateCount();
-      render();
+      build();
     });
   }
 
@@ -591,14 +477,12 @@
     buildPalettes();
     bindSegment("layout", "layout");
     bindSegment("format", "format");
-    bindSlider("grain", "grain");
-    bindSlider("density", "density");
-    bindSlider("tears", "tears");
+    Object.keys(SLIDERS).forEach(bindSlider);
     sizeStage();
     window.addEventListener("resize", sizeStage);
+    bindDrag();
     document.getElementById("generate").addEventListener("click", generate);
     document.getElementById("download").addEventListener("click", download);
-    bindDrag();
     var file = document.getElementById("file");
     document.getElementById("add").addEventListener("click", function () { file.click(); });
     file.addEventListener("change", function () { addOwn(file.files); file.value = ""; });
@@ -608,7 +492,7 @@
       if (e.key === "d") { e.preventDefault(); download(); }
     });
     setStatus("Loading photos…");
-    fetchGallery().then(function () { updateCount(); render(); });
+    fetchGallery().then(function () { updateCount(); build(); });
   }
 
   document.addEventListener("DOMContentLoaded", init);
