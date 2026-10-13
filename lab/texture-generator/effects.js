@@ -232,18 +232,18 @@
 
   // sizes a hex field to exactly fit its text, so the box hugs the code
   var measurer = document.createElement("canvas").getContext("2d");
-  function fitHex(el) {
+  function fitText(el) {
     var cs = getComputedStyle(el);
     measurer.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
-    el.style.width = Math.ceil(measurer.measureText((el.value || "#000000").toUpperCase()).width) + 2 + "px";
+    el.style.width = Math.ceil(measurer.measureText((el.value || "0").toUpperCase()).width) + 2 + "px";
   }
 
   // fills the slider track up to the thumb
   function fill(el) { el.style.setProperty("--p", ((el.value - el.min) / (el.max - el.min) * 100) + "%"); }
 
   function syncControls() {
-    SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").textContent = s[k]; fill($(k)); });
-    ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitHex($("c-" + k + "-hex")); });
+    SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").value = s[k]; fitText($(k + "-value")); fill($(k)); });
+    ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitText($("c-" + k + "-hex")); });
     ["mode", "ink", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.value === s[id]); });
     });
@@ -255,8 +255,29 @@
   function bind() {
     SLIDERS.forEach(function (k) {
       $(k).addEventListener("input", function () {
-        s[k] = +$(k).value; $(k + "-value").textContent = s[k]; fill($(k));
+        s[k] = +$(k).value; $(k + "-value").value = s[k]; fitText($(k + "-value")); fill($(k));
         if (k !== "quality") update();
+      });
+      // the number box: type a value and press Enter (or click away); arrow keys nudge by 1, Shift by 10
+      var box = $(k + "-value"), slider = $(k);
+      function commit(v) {
+        var min = +slider.min, max = +slider.max;
+        v = Math.round(+v);
+        if (isNaN(v)) v = s[k];
+        v = Math.min(max, Math.max(min, v));
+        s[k] = v; slider.value = v; box.value = v; fitText(box); fill(slider);
+        if (k !== "quality") update();
+      }
+      box.addEventListener("input", function () { box.value = box.value.replace(/[^0-9-]/g, ""); fitText(box); });
+      box.addEventListener("change", function () { commit(box.value); });
+      box.addEventListener("focus", function () { box.select(); });
+      box.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { commit(box.value); box.blur(); }
+        else if (e.key === "Escape") { box.value = s[k]; fitText(box); box.blur(); }
+        else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+          e.preventDefault();
+          commit(s[k] + (e.key === "ArrowUp" ? 1 : -1) * (e.shiftKey ? 10 : 1));
+        }
       });
     });
     ["mode", "ink", "format"].forEach(function (id) {
@@ -265,8 +286,8 @@
       });
     });
     ["dark", "mid", "light"].forEach(function (k) {
-      $("c-" + k).addEventListener("input", function () { s[k] = $("c-" + k).value; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitHex($("c-" + k + "-hex")); update(); });
-      $("c-" + k + "-hex").addEventListener("input", function () { fitHex($("c-" + k + "-hex")); });
+      $("c-" + k).addEventListener("input", function () { s[k] = $("c-" + k).value; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitText($("c-" + k + "-hex")); update(); });
+      $("c-" + k + "-hex").addEventListener("input", function () { fitText($("c-" + k + "-hex")); });
       $("c-" + k + "-hex").addEventListener("change", function () {
         var v = $("c-" + k + "-hex").value.trim();
         if (v[0] !== "#") v = "#" + v;

@@ -101,8 +101,7 @@
     .heading { color: var(--ui-muted); margin: 0 0 var(--space-150); font-size: 12px; line-height: 18px; font-weight: 400; }
 
     .field + .field { margin-top: var(--space-200); }
-    .field-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
-    .field-head output { color: var(--ui-muted); }   /* proportional figures: tabular ones look spaced out in Melange */
+    .field-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-100); }
     .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-150); }
     .stack > * + * { margin-top: var(--space-200); }
 
@@ -171,6 +170,8 @@
     .input { display: inline-flex; align-items: center; gap: var(--space-100); height: 32px; padding: 0 10px 0 5px; }   /* hugs its contents; effects.js sizes the text field to the hex code */
     .input:focus-within { --sq-line: var(--ui-focus); }
     .input input[type="text"] { width: 7ch; padding: 0; border: 0; background: none; outline: none; text-transform: uppercase; }
+    .input.num { padding: 0 10px; }
+    .input.num input { text-align: right; }
     input[type="color"] {
       --r: 5px;
       width: 22px; height: 22px; padding: 0; border: 0; background: none; cursor: pointer; flex: none;
@@ -242,7 +243,7 @@
             </div>
             <button type="button" class="btn sq" id="swap" style="width: 100%">Swap shadows and highlights</button>
             <div class="field">
-              <div class="field-head"><label for="amount">Strength</label><output class="mono" id="amount-value"></output></div>
+              <div class="field-head"><label for="amount">Strength</label><span class="input sq num"><input type="text" inputmode="numeric" id="amount-value" aria-label="Strength value" /></span></div>
               <input type="range" id="amount" min="0" max="100" />
             </div>
           </div>
@@ -251,15 +252,15 @@
         <section class="section">
           <h2 class="heading">Adjust</h2>
           <div class="field">
-            <div class="field-head"><label for="brightness">Brightness</label><output class="mono" id="brightness-value"></output></div>
+            <div class="field-head"><label for="brightness">Brightness</label><span class="input sq num"><input type="text" inputmode="numeric" id="brightness-value" aria-label="Brightness value" /></span></div>
             <input type="range" id="brightness" min="-100" max="100" />
           </div>
           <div class="field">
-            <div class="field-head"><label for="contrast">Contrast</label><output class="mono" id="contrast-value"></output></div>
+            <div class="field-head"><label for="contrast">Contrast</label><span class="input sq num"><input type="text" inputmode="numeric" id="contrast-value" aria-label="Contrast value" /></span></div>
             <input type="range" id="contrast" min="-100" max="100" />
           </div>
           <div class="field">
-            <div class="field-head"><label for="midtones">Midtones</label><output class="mono" id="midtones-value"></output></div>
+            <div class="field-head"><label for="midtones">Midtones</label><span class="input sq num"><input type="text" inputmode="numeric" id="midtones-value" aria-label="Midtones value" /></span></div>
             <input type="range" id="midtones" min="-100" max="100" />
           </div>
         </section>
@@ -267,15 +268,15 @@
         <section class="section">
           <h2 class="heading">Texture</h2>
           <div class="field">
-            <div class="field-head"><label for="grain">Grain</label><output class="mono" id="grain-value"></output></div>
+            <div class="field-head"><label for="grain">Grain</label><span class="input sq num"><input type="text" inputmode="numeric" id="grain-value" aria-label="Grain value" /></span></div>
             <input type="range" id="grain" min="0" max="100" />
           </div>
           <div class="field">
-            <div class="field-head"><label for="grainSize">Grain size</label><output class="mono" id="grainSize-value"></output></div>
+            <div class="field-head"><label for="grainSize">Grain size</label><span class="input sq num"><input type="text" inputmode="numeric" id="grainSize-value" aria-label="Grain size value" /></span></div>
             <input type="range" id="grainSize" min="1" max="6" />
           </div>
           <div class="field">
-            <div class="field-head"><label for="speckle">Speckle</label><output class="mono" id="speckle-value"></output></div>
+            <div class="field-head"><label for="speckle">Speckle</label><span class="input sq num"><input type="text" inputmode="numeric" id="speckle-value" aria-label="Speckle value" /></span></div>
             <input type="range" id="speckle" min="0" max="100" />
           </div>
           <div class="field row">
@@ -300,7 +301,7 @@
             </div>
           </div>
           <div class="field">
-            <div class="field-head"><label for="quality">JPG quality</label><output class="mono" id="quality-value"></output></div>
+            <div class="field-head"><label for="quality">JPG quality</label><span class="input sq num"><input type="text" inputmode="numeric" id="quality-value" aria-label="JPG quality value" /></span></div>
             <input type="range" id="quality" min="40" max="100" />
           </div>
           <div class="field">
@@ -320,6 +321,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=11"></script>
+  <script src="effects.js?v=12"></script>
 </body>
 </html>
