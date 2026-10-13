@@ -3,8 +3,8 @@
 
   Each composition is built from a seed, so the same seed, palette, layout
   and format always give the same picture. Pieces: two-tone photos, flat
-  blocks, contour maps, speckle texture, circles, diamonds and labels,
-  with torn edges and film grain over the top.
+  blocks, contour maps, speckle texture and circles, with torn edges and
+  film grain over the top. Any piece can be dragged by hand.
 */
 (function () {
   "use strict";
@@ -263,19 +263,6 @@
     ctx.putImageData(data, 0, 0);
   }
 
-  function paintLabel(ctx, w, h, text, colour, S) {
-    var words = text.toUpperCase().split(/\s+/).filter(Boolean).slice(0, 4);
-    if (!words.length) return;
-    var size = Math.min(26 * S, w / 9), track = size * 0.14, pad = Math.min(w, h) * 0.08 + 8 * S;
-    ctx.fillStyle = colour;
-    ctx.font = "400 " + size + "px 'FT System Blank', 'Helvetica Neue', Arial, sans-serif";
-    ctx.textBaseline = "top";
-    words.forEach(function (word, li) {
-      var x = pad;
-      for (var k = 0; k < word.length; k++) { ctx.fillText(word[k], x, pad + li * size * 1.3); x += ctx.measureText(word[k]).width + track; }
-    });
-  }
-
   // ---------- layouts ----------
   // Grid: split the frame into blocks, then leave some empty.
   function gridLayout(W, H, S) {
@@ -321,7 +308,11 @@
   }
 
   // ---------- compose ----------
+  // A composition is a list of pieces, each pre-rendered to its own canvas
+  // with its final shape, plus a position. Dragging only moves positions.
   var rendering = false, pending = false;
+  var comp = null;     // { W, H, S, paper, shadow, pieces: [{ canvas, x, y }] }
+  var grainLayer = null;
 
   function render() {
     if (rendering) { pending = true; return; }
@@ -336,10 +327,6 @@
     setStatus("Composing…");
     choosePhotos(photoCount).then(function (photos) {
       rnd = mulberry32(state.seed * 7 + 3);
-      var canvas = document.getElementById("collage");
-      canvas.width = W; canvas.height = H;
-      var ctx = canvas.getContext("2d");
-      ctx.fillStyle = pal.paper; ctx.fillRect(0, 0, W, H);
 
       // biggest blocks get the photos
       var order = layout.map(function (r, i) { return i; }).sort(function (a, b) { return layout[b].w * layout[b].h - layout[a].w * layout[a].h; });
@@ -351,57 +338,41 @@
         if (state.layout === "grid" && rank > order.length / 2 && chance(0.3)) { types[i] = "empty"; return; }
         if (photoSlots < photos.length && (photoSlots < 2 || chance(0.45))) { types[i] = "photo"; photoSlots++; return; }
         if (ar > 0.75 && ar < 1.35 && chance(0.45)) { types[i] = "circle"; return; }
-        if (ar > 2.6 && chance(0.4)) { types[i] = "diamonds"; return; }
-        types[i] = pick(["solid", "solid", "contour", "contour", "speckle", "label"]);
+        types[i] = pick(["solid", "solid", "contour", "contour", "speckle"]);
       });
 
-      var tearAmount = state.tears / 100, pi = 0;
+      var pieces = [], tearAmount = state.tears / 100, pi = 0;
+      var others = pal.colours.filter(function (c) { return Math.abs(lum(c) - lum(pal.paper)) > 0.08; });
+      if (!others.length) others = pal.colours;
       var drawOrder = state.layout === "scatter" ? shuffle(order) : order;
+
       drawOrder.forEach(function (i) {
         var r = layout[i], type = types[i];
         if (type === "empty") return;
-        var others = pal.colours.filter(function (c) { return Math.abs(lum(c) - lum(pal.paper)) > 0.08; });
-        if (!others.length) others = pal.colours;
 
         if (type === "circle") {
           var rad = Math.min(r.w, r.h) / 2 * rr(0.86, 1);
           var cc = offscreen(rad * 2, rad * 2), cx = cc.getContext("2d"), fill = pick(others);
+          cx.beginPath(); cx.arc(cc.width / 2, cc.height / 2, rad, 0, Math.PI * 2); cx.clip();
           cx.fillStyle = fill; cx.fillRect(0, 0, cc.width, cc.height);
           if (chance(0.45)) contourLines(cx, cc.width, cc.height, contrastWith(fill, pal.colours), S, fbm, { alpha: 0.85 });
-          ctx.save();
-          ctx.beginPath(); ctx.arc(r.x + r.w / 2, r.y + r.h / 2, rad, 0, Math.PI * 2); ctx.clip();
-          ctx.drawImage(cc, r.x + r.w / 2 - rad, r.y + r.h / 2 - rad);
-          ctx.restore();
-          return;
-        }
-        if (type === "diamonds") {
-          var count = ri(3, 5), dsz = Math.min(r.h * 0.9, r.w / count), col = pick(others);
-          ctx.fillStyle = col;
-          for (var k = 0; k < count; k++) {
-            var dx = r.x + dsz / 2 + k * dsz, dy = r.y + r.h / 2;
-            ctx.beginPath(); ctx.moveTo(dx, dy - dsz / 2); ctx.lineTo(dx + dsz / 2, dy); ctx.lineTo(dx, dy + dsz / 2); ctx.lineTo(dx - dsz / 2, dy); ctx.closePath(); ctx.fill();
-          }
+          pieces.push({ canvas: cc, x: r.x + r.w / 2 - rad, y: r.y + r.h / 2 - rad });
           return;
         }
 
         // rectangular pieces, optionally torn
-        var piece = offscreen(r.w, r.h), pc = piece.getContext("2d");
+        var flat = offscreen(r.w, r.h), fc = flat.getContext("2d");
         if (type === "photo") {
-          paintPhoto(pc, piece.width, piece.height, photos[pi++], pairFrom(pal.colours), S);
+          paintPhoto(fc, flat.width, flat.height, photos[pi++], pairFrom(pal.colours), S);
         } else if (type === "contour") {
           var base = chance(0.3) ? pal.paper : pick(others);
-          pc.fillStyle = base; pc.fillRect(0, 0, piece.width, piece.height);
-          contourLines(pc, piece.width, piece.height, contrastWith(base, pal.colours), S, fbm, { dashed: chance(0.3) });
+          fc.fillStyle = base; fc.fillRect(0, 0, flat.width, flat.height);
+          contourLines(fc, flat.width, flat.height, contrastWith(base, pal.colours), S, fbm, { dashed: chance(0.3) });
         } else if (type === "speckle") {
           var sp = pairFrom(pal.colours);
-          paintSpeckle(pc, piece.width, piece.height, sp[1], sp[0], S, fbm);
+          paintSpeckle(fc, flat.width, flat.height, sp[1], sp[0], S, fbm);
         } else {
-          var b = pick(others);
-          pc.fillStyle = b; pc.fillRect(0, 0, piece.width, piece.height);
-          if (type === "label") {
-            var title = photos.length ? pick(photos).title : "";
-            if (title && title.toLowerCase() !== "untitled") paintLabel(pc, piece.width, piece.height, title, contrastWith(b, pal.colours), S);
-          }
+          fc.fillStyle = pick(others); fc.fillRect(0, 0, flat.width, flat.height);
         }
 
         var torn = {};
@@ -410,43 +381,100 @@
           if (state.layout === "scatter") p = 0.3;
           if (chance(p * tearAmount * 1.6)) torn[e] = true;
         });
-        ctx.save();
-        ctx.translate(r.x, r.y);
-        if (state.layout === "scatter") {
-          ctx.shadowColor = "rgba(0,0,0,0.25)"; ctx.shadowBlur = 10 * S; ctx.shadowOffsetY = 3 * S;
-        }
-        ctx.clip(tornPath(piece.width, piece.height, torn, S, fbm));
-        ctx.drawImage(piece, 0, 0);
-        ctx.restore();
+        var piece = offscreen(r.w, r.h), pc = piece.getContext("2d");
+        pc.clip(tornPath(piece.width, piece.height, torn, S, fbm));
+        pc.drawImage(flat, 0, 0);
+        pieces.push({ canvas: piece, x: r.x, y: r.y });
 
         // scatter mode: tick rules beside some pieces
         if (state.layout === "scatter" && chance(0.4)) {
-          var tc = contrastWith(pal.paper, pal.colours), lines = ri(5, 10), len = rr(40, 140) * S;
-          var lx = chance(0.5) ? r.x - len - 10 * S : r.x + r.w + 10 * S, ly = r.y + rr(0, r.h * 0.5);
-          ctx.strokeStyle = tc; ctx.globalAlpha = 0.7; ctx.lineWidth = 1.5 * S;
-          ctx.setLineDash(chance(0.5) ? [] : [len * 0.6, 4 * S, len * 0.1, 4 * S]);
-          for (var q = 0; q < lines; q++) { ctx.beginPath(); ctx.moveTo(lx, ly + q * 14 * S); ctx.lineTo(lx + len * rr(0.5, 1), ly + q * 14 * S); ctx.stroke(); }
-          ctx.setLineDash([]); ctx.globalAlpha = 1;
+          var tc = contrastWith(pal.paper, pal.colours), lines = ri(5, 10), len = rr(40, 140) * S, gap = 14 * S;
+          var tick = offscreen(len + 4 * S, lines * gap + 4 * S), tx = tick.getContext("2d");
+          tx.strokeStyle = tc; tx.globalAlpha = 0.7; tx.lineWidth = 1.5 * S;
+          tx.setLineDash(chance(0.5) ? [] : [len * 0.6, 4 * S, len * 0.1, 4 * S]);
+          for (var q = 0; q < lines; q++) { tx.beginPath(); tx.moveTo(0, 2 * S + q * gap); tx.lineTo(len * rr(0.5, 1), 2 * S + q * gap); tx.stroke(); }
+          pieces.push({ canvas: tick, x: chance(0.5) ? r.x - len - 10 * S : r.x + r.w + 10 * S, y: r.y + rr(0, r.h * 0.5), flat: true });
         }
       });
 
-      applyGrain(ctx, W, H, state.grain / 100);
+      comp = { W: W, H: H, S: S, paper: pal.paper, shadow: state.layout === "scatter", pieces: pieces };
+      var canvas = document.getElementById("collage");
+      canvas.width = W; canvas.height = H;
+      makeGrain();
+      draw();
       document.getElementById("seed").textContent = state.seed;
-      setStatus(photos.length ? "" : "No photos loaded — add your own below.");
+      setStatus(photos.length ? "Drag pieces to move them" : "No photos loaded — add your own below.");
       writeHash();
       rendering = false;
       if (pending) { pending = false; render(); }
     });
   }
 
-  function applyGrain(ctx, W, H, amt) {
-    if (amt <= 0) return;
-    var data = ctx.getImageData(0, 0, W, H), px = data.data, k = amt * 60;
+  function draw() {
+    if (!comp) return;
+    var ctx = document.getElementById("collage").getContext("2d");
+    ctx.fillStyle = comp.paper; ctx.fillRect(0, 0, comp.W, comp.H);
+    comp.pieces.forEach(function (p) {
+      ctx.save();
+      if (comp.shadow && !p.flat) { ctx.shadowColor = "rgba(0,0,0,0.25)"; ctx.shadowBlur = 10 * comp.S; ctx.shadowOffsetY = 3 * comp.S; }
+      if (p === dragging) { ctx.shadowColor = "rgba(0,0,0,0.35)"; ctx.shadowBlur = 24 * comp.S; ctx.shadowOffsetY = 8 * comp.S; }
+      ctx.drawImage(p.canvas, Math.round(p.x), Math.round(p.y));
+      ctx.restore();
+    });
+    if (grainLayer) ctx.drawImage(grainLayer, 0, 0);
+  }
+
+  // Grain sits on its own layer: light and dark specks, drawn over everything.
+  function makeGrain() {
+    var amt = state.grain / 100;
+    if (!comp || amt <= 0) { grainLayer = null; return; }
+    grainLayer = offscreen(comp.W, comp.H);
+    var g = grainLayer.getContext("2d"), data = g.createImageData(comp.W, comp.H), px = data.data, k = amt * 60;
     for (var i = 0; i < px.length; i += 4) {
-      var n = (Math.random() - 0.5) * k;
-      px[i] += n; px[i + 1] += n; px[i + 2] += n;
+      var n = (Math.random() - 0.5) * k, v = n > 0 ? 255 : 0;
+      px[i] = v; px[i + 1] = v; px[i + 2] = v; px[i + 3] = Math.abs(n) * 2;
     }
-    ctx.putImageData(data, 0, 0);
+    g.putImageData(data, 0, 0);
+  }
+
+  // ---------- dragging ----------
+  var dragging = null, grab = null;
+
+  function toCanvas(e) {
+    var c = document.getElementById("collage"), b = c.getBoundingClientRect();
+    return { x: (e.clientX - b.left) * c.width / b.width, y: (e.clientY - b.top) * c.height / b.height };
+  }
+  function pieceAt(pt) {
+    if (!comp) return null;
+    for (var i = comp.pieces.length - 1; i >= 0; i--) {
+      var p = comp.pieces[i], lx = Math.floor(pt.x - p.x), ly = Math.floor(pt.y - p.y);
+      if (lx < 0 || ly < 0 || lx >= p.canvas.width || ly >= p.canvas.height) continue;
+      if (p.canvas.getContext("2d").getImageData(lx, ly, 1, 1).data[3] > 10) return p;
+    }
+    return null;
+  }
+
+  function bindDrag() {
+    var c = document.getElementById("collage");
+    c.addEventListener("pointerdown", function (e) {
+      var pt = toCanvas(e), p = pieceAt(pt);
+      if (!p) return;
+      e.preventDefault();
+      dragging = p; grab = { x: pt.x - p.x, y: pt.y - p.y };
+      comp.pieces.splice(comp.pieces.indexOf(p), 1); comp.pieces.push(p);  // bring to front
+      c.setPointerCapture(e.pointerId);
+      c.classList.add("dragging");
+      draw();
+    });
+    c.addEventListener("pointermove", function (e) {
+      var pt = toCanvas(e);
+      if (!dragging) { c.style.cursor = pieceAt(pt) ? "grab" : "default"; return; }
+      dragging.x = pt.x - grab.x; dragging.y = pt.y - grab.y;
+      draw();
+    });
+    function end() { if (!dragging) return; dragging = null; c.classList.remove("dragging"); draw(); }
+    c.addEventListener("pointerup", end);
+    c.addEventListener("pointercancel", end);
   }
 
   // ---------- UI ----------
@@ -500,7 +528,8 @@
     el.value = state[key]; out.textContent = state[key];
     el.addEventListener("input", function () {
       state[key] = +el.value; out.textContent = el.value;
-      clearTimeout(t); t = setTimeout(render, 150);
+      clearTimeout(t);
+      t = setTimeout(key === "grain" ? function () { makeGrain(); draw(); } : render, 150);
     });
   }
 
@@ -569,7 +598,7 @@
     window.addEventListener("resize", sizeStage);
     document.getElementById("generate").addEventListener("click", generate);
     document.getElementById("download").addEventListener("click", download);
-    document.getElementById("collage").addEventListener("click", generate);
+    bindDrag();
     var file = document.getElementById("file");
     document.getElementById("add").addEventListener("click", function () { file.click(); });
     file.addEventListener("change", function () { addOwn(file.files); file.value = ""; });
@@ -579,8 +608,7 @@
       if (e.key === "d") { e.preventDefault(); download(); }
     });
     setStatus("Loading photos…");
-    var fontReady = document.fonts ? document.fonts.load("400 20px 'FT System Blank'").catch(function () {}) : Promise.resolve();
-    Promise.all([fetchGallery(), fontReady]).then(function () { updateCount(); render(); });
+    fetchGallery().then(function () { updateCount(); render(); });
   }
 
   document.addEventListener("DOMContentLoaded", init);
