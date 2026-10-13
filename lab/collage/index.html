@@ -12,6 +12,7 @@
   <meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)" />
   <style>
     @font-face { font-family: "KMR Melange Grotesk"; src: url("/assets/fonts/KMRMelangeGrotesk-Book.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: "Parabole"; src: url("/assets/fonts/Parabole-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
     @font-face { font-family: "KMR Melange Grotesk"; src: url("/assets/fonts/KMRMelangeGrotesk-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
 
     /* Look and feel referenced from base-ui.com; not yet in Foundations. */
@@ -106,14 +107,13 @@
     .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-150); }
     .stack > * + * { margin-top: var(--space-200); }
 
-    .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; color: var(--ui-muted); }
-    .file-name.has-file { color: var(--ui-text); }
 
     /* buttons */
     .btn {
       --sq-fill: var(--ui-subtle);
       display: inline-flex; align-items: center; justify-content: center; gap: var(--space-100);
       height: 32px; padding: 0 var(--space-150); cursor: pointer; white-space: nowrap;
+      font-family: "Parabole", "Helvetica Neue", Arial, sans-serif; font-feature-settings: "salt" 1, "ss08" 1;
     }
     .btn:hover { --sq-fill: var(--ui-control); }
     .btn:active { --sq-fill: var(--ui-hover); }
@@ -136,6 +136,16 @@
     .toggle button:hover { color: var(--ui-text); }
     .toggle button[aria-pressed="true"] { --sq-line: var(--ui-border); --sq-fill: var(--ui-page); color: var(--ui-text); }
     .toggle button:focus-visible { --sq-line: var(--ui-focus); }
+
+    /* colour mode: plain text choices, the selected one underlined */
+    .tabs { display: flex; gap: var(--space-300); }
+    .tabs button {
+      height: 32px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ui-muted);
+      text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 1px; text-underline-offset: 6px;
+    }
+    .tabs button:hover { color: var(--ui-text); }
+    .tabs button[aria-pressed="true"] { color: var(--ui-text); text-decoration-color: currentColor; }
+    .tabs button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; border-radius: 4px; }
 
     /* slider: thin track, filled to the value, round thumb */
     input[type="range"] {
@@ -226,19 +236,15 @@
     <aside class="panel" aria-label="Controls">
       <div class="panel-body">
         <section class="section">
-          <h2 class="heading">Photo</h2>
-          <div class="row">
-            <span class="file-name" id="file-name">No photo yet</span>
-            <button type="button" class="btn sq" id="choose">Choose photo</button>
-          </div>
+          <button type="button" class="btn btn-primary btn-lg sq" id="choose" style="width: 100%">Choose photo</button>
         </section>
 
         <section class="section stack">
           <h2 class="heading">Colour</h2>
-          <div class="toggle sq" id="mode">
-            <button type="button" class="sq" data-value="original">Original</button>
-            <button type="button" class="sq" data-value="duo">Duotone</button>
-            <button type="button" class="sq" data-value="tri">Tritone</button>
+          <div class="tabs" id="mode">
+            <button type="button" data-value="original">Original</button>
+            <button type="button" data-value="duo">Duotone</button>
+            <button type="button" data-value="tri">Tritone</button>
           </div>
           <div class="colours stack" id="colours">
             <div class="presets" id="presets"></div>
@@ -326,7 +332,7 @@
       </div>
 
       <div class="panel-foot">
-        <button type="button" class="btn btn-primary btn-lg sq" id="download" disabled>Download</button>
+        <button type="button" class="btn btn-primary btn-lg sq" id="download" style="width: 100%" disabled>Download</button>
       </div>
     </aside>
 
@@ -340,6 +346,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=6"></script>
+  <script src="effects.js?v=7"></script>
 </body>
 </html>

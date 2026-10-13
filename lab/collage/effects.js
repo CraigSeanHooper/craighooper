@@ -197,9 +197,6 @@
       source = img;
       fileBase = (file.name || "photo").replace(/\.[^.]+$/, "") || "photo";
       previewBase = scaled(img, PREVIEW_MAX);
-      $("file-name").textContent = file.name || "Pasted image";
-      $("file-name").title = file.name || "";
-      $("file-name").classList.add("has-file");
       $("empty").hidden = true;
       $("preview").hidden = false;
       $("download").disabled = false;
