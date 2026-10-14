@@ -174,8 +174,8 @@
     ctx.save(); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
 
-  // Speckle: round specks of mixed sizes, gathered in drifts like dust or ink
-  // spatter. Mostly fine dots, with the odd larger, slightly irregular blot.
+  // Speckle: small round specks, gathered in drifts like dust or ink spatter.
+  // (Larger blots were tried and removed: Craig prefers only the small ones.)
   function speckle(ctx, W, H, U, ink) {
     var fbm = makeNoise(textureSeed * 3 + 1), rand = mulberry32(textureSeed * 7 + 5);
     var amt = s.speckle / 100, freq = 5 / Math.max(W, H);
@@ -187,19 +187,10 @@
       // drifts: keep a speck only where the cluster noise is high enough
       var c = fbm(x * freq, y * freq, 4);
       if (rand() > Math.pow(Math.max(0, (c - 0.3) / 0.7), 1.3) * (0.4 + amt * 0.6)) continue;
-      var size = rand(), r = U * (0.45 + 1.1 * size * size * size);
-      if (rand() < 0.012) r *= 3 + rand() * 3;             // occasional larger blot
+      var size = rand(), r = U * (0.45 + 0.5 * size * size * size);   // small specks only
       ctx.globalAlpha = 0.65 + rand() * 0.35;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, TAU);
-      if (r > 1.8 * U) {                                      // blots get a lumpy edge
-        for (var k = 0; k < 3; k++) {
-          var a2 = rand() * TAU, d = r * (0.4 + rand() * 0.5), r2 = r * (0.45 + rand() * 0.35);
-          var bx = x + Math.cos(a2) * d, by = y + Math.sin(a2) * d;
-          ctx.moveTo(bx + r2, by);
-          ctx.arc(bx, by, r2, 0, TAU);
-        }
-      }
       ctx.fill();
     }
     ctx.restore();
