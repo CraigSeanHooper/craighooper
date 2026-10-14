@@ -40,17 +40,15 @@
     amount: 100,
     brightness: 0, contrast: 15, midtones: 0,
     grain: 40, grainSize: 2, speckle: 0, paper: 0,
-    screen: "none", dotSize: 10, angle: 45, ditherSize: 2,
     misregister: 0, vignette: 0,
-    ink: "dark",
     quality: 92,
     format: "jpg"
   };
-  var SLIDERS = ["amount", "brightness", "contrast", "midtones", "dotSize", "angle", "ditherSize", "misregister", "vignette",
+  var SLIDERS = ["amount", "brightness", "contrast", "midtones", "misregister", "vignette",
                  "grain", "grainSize", "speckle", "paper", "quality"];
 
   var s = JSON.parse(JSON.stringify(DEFAULTS));
-  var textureSeed = 1;
+  var textureSeed = 1;   // fixed, so textures look the same every time
   var source = null;     // the loaded Image
   var fileBase = "photo";
   var previewBase = null; // source scaled to preview size
@@ -126,16 +124,10 @@
 
     var t = s.mode === "original" ? 0 : s.amount / 100;
     var dk = hex(s.dark), md = hex(s.mid), lt = hex(s.light), tri = s.mode === "tri";
-    var screen = makeScreen(U);
-    var x = 0, y = 0;
     for (i = 0; i < px.length; i += 4) {
       var r = px[i], g = px[i + 1], b = px[i + 2];
       var l = lut[(r * 0.2126 + g * 0.7152 + b * 0.0722) | 0], cr, cg, cb;
       var or = lut[r], og = lut[g], ob = lut[b];
-      if (screen) {
-        // halftone or dither: each value becomes ink-or-paper; colour channels get their own screen angle
-        l = screen(l, x, y, 0); or = screen(or, x, y, 1); og = screen(og, x, y, 2); ob = screen(ob, x, y, 3);
-      }
       if (tri) {
         if (l < 0.5) { var a = l * 2; cr = dk[0] + (md[0] - dk[0]) * a; cg = dk[1] + (md[1] - dk[1]) * a; cb = dk[2] + (md[2] - dk[2]) * a; }
         else { var c = (l - 0.5) * 2; cr = md[0] + (lt[0] - md[0]) * c; cg = md[1] + (lt[1] - md[1]) * c; cb = md[2] + (lt[2] - md[2]) * c; }
@@ -145,7 +137,6 @@
       px[i]     = or * 255 * (1 - t) + cr * t;
       px[i + 1] = og * 255 * (1 - t) + cg * t;
       px[i + 2] = ob * 255 * (1 - t) + cb * t;
-      if (++x === W) { x = 0; y++; }
     }
     ctx.putImageData(data, 0, 0);
 
@@ -153,45 +144,13 @@
     if (s.paper > 0) paper(ctx, W, H, U);
     if (s.vignette > 0) vignette(ctx, W, H, s.mode === "original" ? "#000000" : s.dark);
 
-    var inkHex = s.ink === "dark" ? s.dark : s.light;
-    if (s.mode === "original") inkHex = s.ink === "dark" ? "#141414" : "#f2f2f2";
-    if (s.speckle > 0) speckle(ctx, W, H, U, inkHex);
+    // speckle is printed in the shadow colour (near-black in Original mode)
+    if (s.speckle > 0) speckle(ctx, W, H, U, s.mode === "original" ? "#141414" : s.dark);
     if (s.grain > 0) grain(ctx, W, H, U);
     return out;
   }
 
   // ---------- print effects ----------
-  // Returns a function that turns a lightness (0–1) into ink-or-paper at a pixel,
-  // or null when no screen is chosen. Sizes scale with the photo.
-  var BAYER = [0,32,8,40,2,34,10,42,48,16,56,24,50,18,58,26,12,44,4,36,14,46,6,38,60,28,52,20,62,30,54,22,
-               3,35,11,43,1,33,9,41,51,19,59,27,49,17,57,25,15,47,7,39,13,45,5,37,63,31,55,23,61,29,53,21];
-  function makeScreen(U) {
-    if (s.screen === "halftone") {
-      var cell = Math.max(3, s.dotSize * U), soft = 2.2 / cell;
-      // channel 0 is the tone; 1–3 are red, green, blue, each at its own angle like CMY plates
-      var rots = [0, 15, 75, 0].map(function (off, ch) {
-        var a = (s.angle + (ch === 0 ? 0 : off)) * Math.PI / 180;
-        return [Math.cos(a) / cell, Math.sin(a) / cell];
-      });
-      return function (v, x, y, ch) {
-        var cs = rots[ch], u = x * cs[0] + y * cs[1], w = -x * cs[1] + y * cs[0];
-        u -= Math.floor(u) + 0.5; w -= Math.floor(w) + 0.5;
-        var spot = 3.1416 * (u * u + w * w);          // round dot; its area grows with the ink amount
-        var ink = (1 - v) - spot;
-        ink = ink <= -soft ? 0 : ink >= soft ? 1 : (ink + soft) / (2 * soft);
-        return 1 - ink;
-      };
-    }
-    if (s.screen === "dither") {
-      var size = Math.max(1, Math.round(s.ditherSize * U));
-      return function (v, x, y) {
-        var bx = ((x / size) | 0) & 7, by = ((y / size) | 0) & 7;
-        return v > (BAYER[by * 8 + bx] + 0.5) / 64 ? 1 : 0;
-      };
-    }
-    return null;
-  }
-
   // Slips the red and blue channels apart, like plates printed slightly out of line.
   function misregister(ctx, W, H, U) {
     var d = Math.round(s.misregister / 100 * 14 * U);
@@ -233,34 +192,73 @@
     ctx.save(); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
 
-  // Clusters of fine dots, like ink spatter or a rough print.
+  // Speckle: round specks of mixed sizes, gathered in drifts like dust or ink
+  // spatter. Mostly fine dots, with the odd larger, slightly irregular blot.
   function speckle(ctx, W, H, U, ink) {
     var fbm = makeNoise(textureSeed * 3 + 1), rand = mulberry32(textureSeed * 7 + 5);
-    var cell = Math.max(1, Math.round(1.6 * U)), amt = s.speckle / 100, freq = 6 / Math.max(W, H);
-    ctx.fillStyle = ink;
-    for (var y = 0; y < H; y += cell) for (var x = 0; x < W; x += cell) {
-      var nv = fbm(x * freq, y * freq, 5);
-      var p = Math.max(0, (nv - (0.62 - amt * 0.22)) * 3.2) * amt;
-      if (rand() < p) ctx.fillRect(x, y, cell, cell);
-    }
-  }
-
-  // Film grain: light and dark specks, scaled to the photo. Seeded, so the
-  // pattern holds still while sliders move and changes on "New texture pattern".
-  function grain(ctx, W, H, U) {
-    var rand = mulberry32(textureSeed * 17 + 9);
-    var size = Math.max(1, s.grainSize * 0.8 * U), gw = Math.ceil(W / size), gh = Math.ceil(H / size);
-    var g = canvasOf(gw, gh), gc = g.getContext("2d"), d = gc.createImageData(gw, gh), p = d.data, k = s.grain / 100 * 70;
-    for (var i = 0; i < p.length; i += 4) {
-      var nv = (rand() - 0.5) * k, v = nv > 0 ? 255 : 0;
-      p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = Math.abs(nv) * 2;
-    }
-    gc.putImageData(d, 0, 0);
+    var amt = s.speckle / 100, freq = 5 / Math.max(W, H);
+    var tries = Math.round(W * H / (U * U) * 0.07 * amt), TAU = Math.PI * 2;
     ctx.save();
-    ctx.imageSmoothingEnabled = size > 1.5;
-    ctx.drawImage(g, 0, 0, gw * size, gh * size);
+    ctx.fillStyle = ink;
+    for (var n = 0; n < tries; n++) {
+      var x = rand() * W, y = rand() * H;
+      // drifts: keep a speck only where the cluster noise is high enough
+      var c = fbm(x * freq, y * freq, 4);
+      if (rand() > Math.pow(Math.max(0, (c - 0.3) / 0.7), 1.3) * (0.4 + amt * 0.6)) continue;
+      var size = rand(), r = U * (0.45 + 1.1 * size * size * size);
+      if (rand() < 0.012) r *= 3 + rand() * 3;             // occasional larger blot
+      ctx.globalAlpha = 0.65 + rand() * 0.35;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, TAU);
+      if (r > 1.8 * U) {                                      // blots get a lumpy edge
+        for (var k = 0; k < 3; k++) {
+          var a2 = rand() * TAU, d = r * (0.4 + rand() * 0.5), r2 = r * (0.45 + rand() * 0.35);
+          var bx = x + Math.cos(a2) * d, by = y + Math.sin(a2) * d;
+          ctx.moveTo(bx + r2, by);
+          ctx.arc(bx, by, r2, 0, TAU);
+        }
+      }
+      ctx.fill();
+    }
     ctx.restore();
   }
+
+  // Film grain: soft, clumped, monochrome noise. Two layers of bell-curve
+  // noise (fine plus a coarser clump), smoothly scaled up, then added to the
+  // image strongest in the midtones and gentler in deep shadows and highlights,
+  // the way real film grain sits. Seeded, so it holds still while sliders move.
+  function grain(ctx, W, H, U) {
+    var rand = mulberry32(textureSeed * 17 + 9);
+    function layer(cell) {
+      var gw = Math.ceil(W / cell) + 1, gh = Math.ceil(H / cell) + 1;
+      var c = canvasOf(gw, gh), cx = c.getContext("2d"), d = cx.createImageData(gw, gh), p = d.data;
+      for (var i = 0; i < p.length; i += 4) {
+        var v = (rand() + rand() + rand() - 1.5) * 0.6667;    // roughly bell-shaped, −1 to 1
+        v = 128 + v * 127;
+        p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = 255;
+      }
+      cx.putImageData(d, 0, 0);
+      return c;
+    }
+    var cell = Math.max(0.75, s.grainSize * 0.55 * U);
+    var field = canvasOf(W, H), fc = field.getContext("2d");
+    fc.imageSmoothingEnabled = true; fc.imageSmoothingQuality = "high";
+    var fine = layer(cell), coarse = layer(cell * 2.6);
+    fc.drawImage(fine, 0, 0, fine.width * cell, fine.height * cell);
+    fc.globalAlpha = 0.45;
+    fc.drawImage(coarse, 0, 0, coarse.width * cell * 2.6, coarse.height * cell * 2.6);
+    var g = fc.getImageData(0, 0, W, H).data;
+
+    var img = ctx.getImageData(0, 0, W, H), p = img.data, k = s.grain / 100 * 0.42 * 255;
+    for (var i = 0; i < p.length; i += 4) {
+      var l = (p[i] * 0.2126 + p[i + 1] * 0.7152 + p[i + 2] * 0.0722) / 255;
+      var weight = 0.35 + 2.6 * l * (1 - l);                  // most visible in the midtones
+      var n = (g[i] - 128) / 128 * k * weight;
+      p[i] += n; p[i + 1] += n; p[i + 2] += n;
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
 
   // ---------- preview ----------
   var queued = false;
@@ -359,12 +357,10 @@
   function syncControls() {
     SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").value = s[k]; fitText($(k + "-value")); fill($(k)); });
     ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitText($("c-" + k + "-hex")); });
-    ["mode", "screen", "ink", "format"].forEach(function (id) {
+    ["mode", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.value === s[id]); });
     });
     $("mid-row").hidden = s.mode !== "tri";
-    $("halftone-fields").hidden = s.screen !== "halftone";
-    $("dither-fields").hidden = s.screen !== "dither";
     var set = s.mode === "tri" ? PRESETS : DUO_PRESETS;
     $("presets").querySelectorAll(".preset").forEach(function (b, i) {
       b.setAttribute("aria-label", "Use colours " + set[i].join(", "));
@@ -404,7 +400,7 @@
         }
       });
     });
-    ["mode", "screen", "ink", "format"].forEach(function (id) {
+    ["mode", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) {
         b.addEventListener("click", function () { s[id] = b.dataset.value; syncControls(); if (id !== "format") update(); });
       });
@@ -433,7 +429,6 @@
       $("presets").appendChild(b);
     });
     $("swap").addEventListener("click", function () { var t = s.dark; s.dark = s.light; s.light = t; syncControls(); update(); });
-    $("reseed").addEventListener("click", function () { textureSeed = Math.floor(Math.random() * 1e6) + 1; update(); });
     $("reset").addEventListener("click", function () { var f = s.format; s = JSON.parse(JSON.stringify(DEFAULTS)); s.format = f; syncControls(); update(); });
 
     var file = $("file");
