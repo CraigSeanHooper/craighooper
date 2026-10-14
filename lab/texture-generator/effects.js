@@ -223,41 +223,26 @@
     ctx.restore();
   }
 
-  // Film grain: soft, clumped, monochrome noise. Two layers of bell-curve
-  // noise (fine plus a coarser clump), smoothly scaled up, then added to the
-  // image strongest in the midtones and gentler in deep shadows and highlights,
-  // the way real film grain sits. Seeded, so it holds still while sliders move.
+  // Film grain: light and dark specks, scaled to the photo. Seeded, so the
+  // pattern holds still while sliders move. (Two "improved" versions, soft
+  // clumped grain and crisp blurred grain, were tried on 14 October and both
+  // looked worse to Craig. This is the original; keep it.)
   function grain(ctx, W, H, U) {
     var rand = mulberry32(textureSeed * 17 + 9);
-    function layer(cell) {
-      var gw = Math.ceil(W / cell) + 1, gh = Math.ceil(H / cell) + 1;
-      var c = canvasOf(gw, gh), cx = c.getContext("2d"), d = cx.createImageData(gw, gh), p = d.data;
-      for (var i = 0; i < p.length; i += 4) {
-        var v = (rand() + rand() + rand() - 1.5) * 0.6667;    // roughly bell-shaped, −1 to 1
-        v = 128 + v * 127;
-        p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = 255;
-      }
-      cx.putImageData(d, 0, 0);
-      return c;
-    }
-    var cell = Math.max(0.75, s.grainSize * 0.55 * U);
-    var field = canvasOf(W, H), fc = field.getContext("2d");
-    fc.imageSmoothingEnabled = true; fc.imageSmoothingQuality = "high";
-    var fine = layer(cell), coarse = layer(cell * 2.6);
-    fc.drawImage(fine, 0, 0, fine.width * cell, fine.height * cell);
-    fc.globalAlpha = 0.45;
-    fc.drawImage(coarse, 0, 0, coarse.width * cell * 2.6, coarse.height * cell * 2.6);
-    var g = fc.getImageData(0, 0, W, H).data;
-
-    var img = ctx.getImageData(0, 0, W, H), p = img.data, k = s.grain / 100 * 0.42 * 255;
+    var size = Math.max(1, s.grainSize * 0.8 * U), gw = Math.ceil(W / size), gh = Math.ceil(H / size);
+    var g = canvasOf(gw, gh), gc = g.getContext("2d"), d = gc.createImageData(gw, gh), p = d.data, k = s.grain / 100 * 70;
     for (var i = 0; i < p.length; i += 4) {
-      var l = (p[i] * 0.2126 + p[i + 1] * 0.7152 + p[i + 2] * 0.0722) / 255;
-      var weight = 0.35 + 2.6 * l * (1 - l);                  // most visible in the midtones
-      var n = (g[i] - 128) / 128 * k * weight;
-      p[i] += n; p[i + 1] += n; p[i + 2] += n;
+      var nv = (rand() - 0.5) * k, v = nv > 0 ? 255 : 0;
+      p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = Math.abs(nv) * 2;
     }
-    ctx.putImageData(img, 0, 0);
+    gc.putImageData(d, 0, 0);
+    ctx.save();
+    ctx.imageSmoothingEnabled = size > 1.5;
+    ctx.drawImage(g, 0, 0, gw * size, gh * size);
+    ctx.restore();
   }
+
+
 
 
   // ---------- preview ----------
