@@ -100,7 +100,8 @@
     .section + .section { margin-top: var(--space-500); }
     .heading { color: var(--ui-muted); margin: 0 0 var(--space-150); font-size: 12px; line-height: 18px; font-weight: 400; }
 
-    .field + .field { margin-top: var(--space-200); }
+    .field + .field, .field + div > .field:first-child, div + .field { margin-top: var(--space-200); }
+    #halftone-fields > .field + .field, #dither-fields > .field + .field { margin-top: var(--space-200); }
     .field-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-100); }
     .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-150); }
     .stack > * + * { margin-top: var(--space-200); }
@@ -267,6 +268,42 @@
         </section>
 
         <section class="section">
+          <h2 class="heading">Effects</h2>
+          <div class="field row">
+            <span>Screen</span>
+            <div class="tabs" id="screen">
+              <button type="button" data-value="none">None</button>
+              <button type="button" data-value="halftone">Halftone</button>
+              <button type="button" data-value="dither">Dither</button>
+            </div>
+          </div>
+          <div id="halftone-fields">
+          <div class="field">
+            <div class="field-head"><label for="dotSize">Dot size</label><span class="input sq num"><input type="text" inputmode="numeric" id="dotSize-value" aria-label="Dot size value" /></span></div>
+            <input type="range" id="dotSize" min="3" max="40" />
+          </div>
+          <div class="field">
+            <div class="field-head"><label for="angle">Angle</label><span class="input sq num"><input type="text" inputmode="numeric" id="angle-value" aria-label="Angle value" /></span></div>
+            <input type="range" id="angle" min="0" max="90" />
+          </div>
+          </div>
+          <div id="dither-fields">
+          <div class="field">
+            <div class="field-head"><label for="ditherSize">Dither size</label><span class="input sq num"><input type="text" inputmode="numeric" id="ditherSize-value" aria-label="Dither size value" /></span></div>
+            <input type="range" id="ditherSize" min="1" max="8" />
+          </div>
+          </div>
+          <div class="field">
+            <div class="field-head"><label for="misregister">Misregistration</label><span class="input sq num"><input type="text" inputmode="numeric" id="misregister-value" aria-label="Misregistration value" /></span></div>
+            <input type="range" id="misregister" min="0" max="100" />
+          </div>
+          <div class="field">
+            <div class="field-head"><label for="vignette">Vignette</label><span class="input sq num"><input type="text" inputmode="numeric" id="vignette-value" aria-label="Vignette value" /></span></div>
+            <input type="range" id="vignette" min="0" max="100" />
+          </div>
+        </section>
+
+        <section class="section">
           <h2 class="heading">Texture</h2>
           <div class="field">
             <div class="field-head"><label for="grain">Grain</label><span class="input sq num"><input type="text" inputmode="numeric" id="grain-value" aria-label="Grain value" /></span></div>
@@ -279,6 +316,10 @@
           <div class="field">
             <div class="field-head"><label for="speckle">Speckle</label><span class="input sq num"><input type="text" inputmode="numeric" id="speckle-value" aria-label="Speckle value" /></span></div>
             <input type="range" id="speckle" min="0" max="100" />
+          </div>
+          <div class="field">
+            <div class="field-head"><label for="paper">Paper</label><span class="input sq num"><input type="text" inputmode="numeric" id="paper-value" aria-label="Paper value" /></span></div>
+            <input type="range" id="paper" min="0" max="100" />
           </div>
           <div class="field row">
             <span>Texture colour</span>
@@ -322,6 +363,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=17"></script>
+  <script src="effects.js?v=18"></script>
 </body>
 </html>

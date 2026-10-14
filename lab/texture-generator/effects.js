@@ -39,12 +39,15 @@
     dark: DUO_PRESETS[0][0], mid: PRESETS[0][1], light: DUO_PRESETS[0][1],
     amount: 100,
     brightness: 0, contrast: 15, midtones: 0,
-    grain: 40, grainSize: 2, speckle: 0,
+    grain: 40, grainSize: 2, speckle: 0, paper: 0,
+    screen: "none", dotSize: 10, angle: 45, ditherSize: 2,
+    misregister: 0, vignette: 0,
     ink: "dark",
     quality: 92,
     format: "jpg"
   };
-  var SLIDERS = ["amount", "brightness", "contrast", "midtones", "grain", "grainSize", "speckle", "quality"];
+  var SLIDERS = ["amount", "brightness", "contrast", "midtones", "dotSize", "angle", "ditherSize", "misregister", "vignette",
+                 "grain", "grainSize", "speckle", "paper", "quality"];
 
   var s = JSON.parse(JSON.stringify(DEFAULTS));
   var textureSeed = 1;
@@ -123,26 +126,111 @@
 
     var t = s.mode === "original" ? 0 : s.amount / 100;
     var dk = hex(s.dark), md = hex(s.mid), lt = hex(s.light), tri = s.mode === "tri";
+    var screen = makeScreen(U);
+    var x = 0, y = 0;
     for (i = 0; i < px.length; i += 4) {
       var r = px[i], g = px[i + 1], b = px[i + 2];
       var l = lut[(r * 0.2126 + g * 0.7152 + b * 0.0722) | 0], cr, cg, cb;
+      var or = lut[r], og = lut[g], ob = lut[b];
+      if (screen) {
+        // halftone or dither: each value becomes ink-or-paper; colour channels get their own screen angle
+        l = screen(l, x, y, 0); or = screen(or, x, y, 1); og = screen(og, x, y, 2); ob = screen(ob, x, y, 3);
+      }
       if (tri) {
         if (l < 0.5) { var a = l * 2; cr = dk[0] + (md[0] - dk[0]) * a; cg = dk[1] + (md[1] - dk[1]) * a; cb = dk[2] + (md[2] - dk[2]) * a; }
         else { var c = (l - 0.5) * 2; cr = md[0] + (lt[0] - md[0]) * c; cg = md[1] + (lt[1] - md[1]) * c; cb = md[2] + (lt[2] - md[2]) * c; }
       } else {
         cr = dk[0] + (lt[0] - dk[0]) * l; cg = dk[1] + (lt[1] - dk[1]) * l; cb = dk[2] + (lt[2] - dk[2]) * l;
       }
-      px[i]     = lut[r] * 255 * (1 - t) + cr * t;
-      px[i + 1] = lut[g] * 255 * (1 - t) + cg * t;
-      px[i + 2] = lut[b] * 255 * (1 - t) + cb * t;
+      px[i]     = or * 255 * (1 - t) + cr * t;
+      px[i + 1] = og * 255 * (1 - t) + cg * t;
+      px[i + 2] = ob * 255 * (1 - t) + cb * t;
+      if (++x === W) { x = 0; y++; }
     }
     ctx.putImageData(data, 0, 0);
+
+    if (s.misregister > 0) misregister(ctx, W, H, U);
+    if (s.paper > 0) paper(ctx, W, H, U);
+    if (s.vignette > 0) vignette(ctx, W, H, s.mode === "original" ? "#000000" : s.dark);
 
     var inkHex = s.ink === "dark" ? s.dark : s.light;
     if (s.mode === "original") inkHex = s.ink === "dark" ? "#141414" : "#f2f2f2";
     if (s.speckle > 0) speckle(ctx, W, H, U, inkHex);
     if (s.grain > 0) grain(ctx, W, H, U);
     return out;
+  }
+
+  // ---------- print effects ----------
+  // Returns a function that turns a lightness (0–1) into ink-or-paper at a pixel,
+  // or null when no screen is chosen. Sizes scale with the photo.
+  var BAYER = [0,32,8,40,2,34,10,42,48,16,56,24,50,18,58,26,12,44,4,36,14,46,6,38,60,28,52,20,62,30,54,22,
+               3,35,11,43,1,33,9,41,51,19,59,27,49,17,57,25,15,47,7,39,13,45,5,37,63,31,55,23,61,29,53,21];
+  function makeScreen(U) {
+    if (s.screen === "halftone") {
+      var cell = Math.max(3, s.dotSize * U), soft = 2.2 / cell;
+      // channel 0 is the tone; 1–3 are red, green, blue, each at its own angle like CMY plates
+      var rots = [0, 15, 75, 0].map(function (off, ch) {
+        var a = (s.angle + (ch === 0 ? 0 : off)) * Math.PI / 180;
+        return [Math.cos(a) / cell, Math.sin(a) / cell];
+      });
+      return function (v, x, y, ch) {
+        var cs = rots[ch], u = x * cs[0] + y * cs[1], w = -x * cs[1] + y * cs[0];
+        u -= Math.floor(u) + 0.5; w -= Math.floor(w) + 0.5;
+        var spot = 3.1416 * (u * u + w * w);          // round dot; its area grows with the ink amount
+        var ink = (1 - v) - spot;
+        ink = ink <= -soft ? 0 : ink >= soft ? 1 : (ink + soft) / (2 * soft);
+        return 1 - ink;
+      };
+    }
+    if (s.screen === "dither") {
+      var size = Math.max(1, Math.round(s.ditherSize * U));
+      return function (v, x, y) {
+        var bx = ((x / size) | 0) & 7, by = ((y / size) | 0) & 7;
+        return v > (BAYER[by * 8 + bx] + 0.5) / 64 ? 1 : 0;
+      };
+    }
+    return null;
+  }
+
+  // Slips the red and blue channels apart, like plates printed slightly out of line.
+  function misregister(ctx, W, H, U) {
+    var d = Math.round(s.misregister / 100 * 14 * U);
+    if (d < 1) return;
+    var img = ctx.getImageData(0, 0, W, H), src = new Uint8ClampedArray(img.data), p = img.data;
+    for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
+      var i = (y * W + x) * 4;
+      var xr = Math.min(W - 1, x + d), yr = Math.min(H - 1, y + (d >> 1));
+      var xb = Math.max(0, x - d), yb = Math.max(0, y - (d >> 1));
+      p[i] = src[(yr * W + xr) * 4];
+      p[i + 2] = src[(yb * W + xb) * 4 + 2];
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  // Soft, uneven paper: a blotchy light-and-dark mottle at two scales.
+  function paper(ctx, W, H, U) {
+    var fbm = makeNoise(textureSeed * 5 + 2), step = Math.max(1, 3 * U);
+    var pw = Math.ceil(W / step), ph = Math.ceil(H / step), freq = 22 / Math.max(pw, ph);
+    var c = canvasOf(pw, ph), cx = c.getContext("2d"), d = cx.createImageData(pw, ph), p = d.data, k = s.paper / 100;
+    for (var y = 0; y < ph; y++) for (var x = 0; x < pw; x++) {
+      var n = fbm(x * freq, y * freq, 5) * 0.65 + fbm(x * freq * 6, y * freq * 6, 3) * 0.35 - 0.5;
+      var i = (y * pw + x) * 4, v = n > 0 ? 255 : 0;
+      p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = Math.min(255, Math.abs(n) * 360 * k);
+    }
+    cx.putImageData(d, 0, 0);
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(c, 0, 0, pw * step, ph * step);
+    ctx.restore();
+  }
+
+  // Darkens the edges toward the shadow colour.
+  function vignette(ctx, W, H, colour) {
+    var c = hex(colour), r = Math.sqrt(W * W + H * H) / 2, k = s.vignette / 100;
+    var g = ctx.createRadialGradient(W / 2, H / 2, r * (0.75 - k * 0.45), W / 2, H / 2, r);
+    g.addColorStop(0, "rgba(" + c + ",0)");
+    g.addColorStop(1, "rgba(" + c + "," + (0.25 + k * 0.6).toFixed(3) + ")");
+    ctx.save(); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
 
   // Clusters of fine dots, like ink spatter or a rough print.
@@ -271,10 +359,12 @@
   function syncControls() {
     SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").value = s[k]; fitText($(k + "-value")); fill($(k)); });
     ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitText($("c-" + k + "-hex")); });
-    ["mode", "ink", "format"].forEach(function (id) {
+    ["mode", "screen", "ink", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.value === s[id]); });
     });
     $("mid-row").hidden = s.mode !== "tri";
+    $("halftone-fields").hidden = s.screen !== "halftone";
+    $("dither-fields").hidden = s.screen !== "dither";
     var set = s.mode === "tri" ? PRESETS : DUO_PRESETS;
     $("presets").querySelectorAll(".preset").forEach(function (b, i) {
       b.setAttribute("aria-label", "Use colours " + set[i].join(", "));
@@ -314,7 +404,7 @@
         }
       });
     });
-    ["mode", "ink", "format"].forEach(function (id) {
+    ["mode", "screen", "ink", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) {
         b.addEventListener("click", function () { s[id] = b.dataset.value; syncControls(); if (id !== "format") update(); });
       });
