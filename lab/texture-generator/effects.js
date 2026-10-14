@@ -150,20 +150,31 @@
   }
 
   // ---------- print effects ----------
-  // Slips the red and blue channels apart, like plates printed slightly out of line.
+  // Slips the red and blue channels apart, like plates printed slightly out of
+  // line, but softly: each shifted channel is spread across several offsets and
+  // only partly mixed in, so the colour fringes fade rather than end in a hard line.
   function misregister(ctx, W, H, U) {
-    var d = Math.round(s.misregister / 100 * 14 * U);
-    if (d < 1) return;
+    var d = s.misregister / 100 * 8 * U;
+    if (d < 0.5) return;
     var img = ctx.getImageData(0, 0, W, H), src = new Uint8ClampedArray(img.data), p = img.data;
+    var taps = [0.25, 0.5, 0.75, 1], mix = 0.6;
+    function at(x, y, c) {
+      x = x < 0 ? 0 : x > W - 1 ? W - 1 : x | 0; y = y < 0 ? 0 : y > H - 1 ? H - 1 : y | 0;
+      return src[(y * W + x) * 4 + c];
+    }
     for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
-      var i = (y * W + x) * 4;
-      var xr = Math.min(W - 1, x + d), yr = Math.min(H - 1, y + (d >> 1));
-      var xb = Math.max(0, x - d), yb = Math.max(0, y - (d >> 1));
-      p[i] = src[(yr * W + xr) * 4];
-      p[i + 2] = src[(yb * W + xb) * 4 + 2];
+      var i = (y * W + x) * 4, r = 0, b = 0;
+      for (var t = 0; t < 4; t++) {
+        var o = d * taps[t];
+        r += at(x + o, y + o * 0.5, 0);
+        b += at(x - o, y - o * 0.5, 2);
+      }
+      p[i] = src[i] * (1 - mix) + r / 4 * mix;
+      p[i + 2] = src[i + 2] * (1 - mix) + b / 4 * mix;
     }
     ctx.putImageData(img, 0, 0);
   }
+
 
   // Darkens the edges toward the shadow colour.
   function vignette(ctx, W, H, colour) {
