@@ -156,12 +156,16 @@
     input[type="range"]:disabled { cursor: default; }
 
     /* colour presets: the chips are clipped to the inner shape, so the line shows round them */
-    .presets { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--space-100); }
-    .preset { height: 32px; padding: 0; cursor: pointer; }
-    .preset::before { display: none; }
-    .preset .chips { position: absolute; inset: 1px; display: flex; clip-path: var(--sq-inner, inset(0 round calc(var(--r) - 1px))); }
+    .presets { display: flex; justify-content: space-between; }
+    /* colour presets: plain circles, no outline, split into the preset's colours */
+    .preset {
+      width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; overflow: hidden;
+      background: none; cursor: pointer; transition: transform 0.12s ease;
+    }
+    .preset .chips { display: flex; width: 100%; height: 100%; }
     .preset .chips i { flex: 1; }
-    .preset:hover { --sq-line: var(--ui-text); }
+    .preset:hover { transform: scale(1.08); }
+    .preset:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
 
     /* colour fields: swatch inside a text input */
     .colour-fields { display: grid; gap: var(--space-100); }
@@ -328,6 +332,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=20"></script>
+  <script src="effects.js?v=21"></script>
 </body>
 </html>

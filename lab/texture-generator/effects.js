@@ -419,7 +419,7 @@
     // one row of preset buttons; their chips are redrawn for the current mode in syncControls
     PRESETS.forEach(function (p, i) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "preset sq";
+      b.type = "button"; b.className = "preset";
       b.innerHTML = '<span class="chips"></span>';
       b.addEventListener("click", function () {
         if (s.mode === "tri") { s.dark = PRESETS[i][0]; s.mid = PRESETS[i][1]; s.light = PRESETS[i][2]; }
