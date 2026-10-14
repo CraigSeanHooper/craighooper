@@ -39,13 +39,13 @@
     dark: DUO_PRESETS[0][0], mid: PRESETS[0][1], light: DUO_PRESETS[0][1],
     amount: 100,
     brightness: 0, contrast: 15, midtones: 0,
-    grain: 40, grainSize: 2, speckle: 0, paper: 0,
+    grain: 40, grainSize: 2, speckle: 0,
     misregister: 0, vignette: 0,
     quality: 92,
     format: "jpg"
   };
   var SLIDERS = ["amount", "brightness", "contrast", "midtones", "misregister", "vignette",
-                 "grain", "grainSize", "speckle", "paper", "quality"];
+                 "grain", "grainSize", "speckle", "quality"];
 
   var s = JSON.parse(JSON.stringify(DEFAULTS));
   var textureSeed = 1;   // fixed, so textures look the same every time
@@ -141,7 +141,6 @@
     ctx.putImageData(data, 0, 0);
 
     if (s.misregister > 0) misregister(ctx, W, H, U);
-    if (s.paper > 0) paper(ctx, W, H, U);
     if (s.vignette > 0) vignette(ctx, W, H, s.mode === "original" ? "#000000" : s.dark);
 
     // speckle is printed in the shadow colour (near-black in Original mode)
@@ -164,23 +163,6 @@
       p[i + 2] = src[(yb * W + xb) * 4 + 2];
     }
     ctx.putImageData(img, 0, 0);
-  }
-
-  // Soft, uneven paper: a blotchy light-and-dark mottle at two scales.
-  function paper(ctx, W, H, U) {
-    var fbm = makeNoise(textureSeed * 5 + 2), step = Math.max(1, 3 * U);
-    var pw = Math.ceil(W / step), ph = Math.ceil(H / step), freq = 22 / Math.max(pw, ph);
-    var c = canvasOf(pw, ph), cx = c.getContext("2d"), d = cx.createImageData(pw, ph), p = d.data, k = s.paper / 100;
-    for (var y = 0; y < ph; y++) for (var x = 0; x < pw; x++) {
-      var n = fbm(x * freq, y * freq, 5) * 0.65 + fbm(x * freq * 6, y * freq * 6, 3) * 0.35 - 0.5;
-      var i = (y * pw + x) * 4, v = n > 0 ? 255 : 0;
-      p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = Math.min(255, Math.abs(n) * 360 * k);
-    }
-    cx.putImageData(d, 0, 0);
-    ctx.save();
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(c, 0, 0, pw * step, ph * step);
-    ctx.restore();
   }
 
   // Darkens the edges toward the shadow colour.
