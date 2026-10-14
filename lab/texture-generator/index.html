@@ -132,15 +132,15 @@
     .btn-primary:disabled { opacity: 0.6; }
     .btn-primary:focus-visible { --sq-line: var(--ui-focus); }
 
-    /* choices (colour mode, format): plain text, the selected one sits in a light grey capsule */
+    /* choices (colour mode, format): plain text, the selected one sits in a light grey 8px squircle */
     .tabs { display: flex; gap: var(--space-50); }
     .tabs button {
-      height: 32px; padding: 0 var(--space-150); border: 0; border-radius: 999px;
-      background: none; cursor: pointer; color: var(--ui-muted);
+      --sq-line: transparent; --sq-fill: transparent;
+      height: 32px; padding: 0 var(--space-150); cursor: pointer; color: var(--ui-muted);
     }
     .tabs button:hover { color: var(--ui-text); }
-    .tabs button[aria-pressed="true"] { color: var(--ui-text); background: var(--ui-tab-selected); }
-    .tabs button:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+    .tabs button[aria-pressed="true"] { color: var(--ui-text); --sq-line: var(--ui-tab-selected); --sq-fill: var(--ui-tab-selected); }
+    .tabs button:focus-visible { --sq-line: var(--ui-focus); }
 
     /* slider: 6px rounded track filled to the value, capsule handle (like the iOS toggle) */
     input[type="range"] {
@@ -236,9 +236,9 @@
         <section class="section stack">
           <h2 class="heading">Colour</h2>
           <div class="tabs" id="mode">
-            <button type="button" data-value="original">Original</button>
-            <button type="button" data-value="duo">Duotone</button>
-            <button type="button" data-value="tri">Tritone</button>
+            <button type="button" class="sq" data-value="original">Original</button>
+            <button type="button" class="sq" data-value="duo">Duotone</button>
+            <button type="button" class="sq" data-value="tri">Tritone</button>
           </div>
           <div class="colours stack" id="colours">
             <div class="presets" id="presets"></div>
@@ -313,8 +313,8 @@
           <div class="field row">
             <span>Format</span>
             <div class="tabs" id="format">
-              <button type="button" data-value="jpg">JPG</button>
-              <button type="button" data-value="png">PNG</button>
+              <button type="button" class="sq" data-value="jpg">JPG</button>
+              <button type="button" class="sq" data-value="png">PNG</button>
             </div>
           </div>
           <div class="field" id="quality-field">
