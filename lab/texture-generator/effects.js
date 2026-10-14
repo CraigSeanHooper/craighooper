@@ -151,13 +151,15 @@
 
   // ---------- print effects ----------
   // Slips the red and blue channels apart, like plates printed slightly out of
-  // line, but softly: each shifted channel is spread across several offsets and
-  // only partly mixed in, so the colour fringes fade rather than end in a hard line.
+  // line. Each shifted channel is spread across a few nearby offsets and mostly
+  // (85%) mixed in: a clearly visible offset whose fringe edges fade instead of
+  // ending in a hard line. (A full hard shift was too harsh; a wide spread at
+  // 60% and 8px was too faint.)
   function misregister(ctx, W, H, U) {
-    var d = s.misregister / 100 * 8 * U;
+    var d = s.misregister / 100 * 14 * U;
     if (d < 0.5) return;
     var img = ctx.getImageData(0, 0, W, H), src = new Uint8ClampedArray(img.data), p = img.data;
-    var taps = [0.25, 0.5, 0.75, 1], mix = 0.6;
+    var taps = [0.55, 0.7, 0.85, 1], mix = 0.85;
     function at(x, y, c) {
       x = x < 0 ? 0 : x > W - 1 ? W - 1 : x | 0; y = y < 0 ? 0 : y > H - 1 ? H - 1 : y | 0;
       return src[(y * W + x) * 4 + c];
