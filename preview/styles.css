@@ -17,7 +17,7 @@
   --font-weight-semibold: 600;
 
   --space-50: 4px; --space-100: 8px; --space-200: 12px; --space-300: 16px;
-  --space-400: 20px; --space-500: 24px;
+  --space-400: 20px; --space-500: 24px; --space-600: 32px;
   --radius-full: 64px;
 
   --font-size-24: 24px; --font-size-40: 40px; --font-size-48: 48px; --font-size-64: 64px;
@@ -82,8 +82,8 @@ h1, p { margin: 0; font-weight: inherit; }
   gap: var(--space-300);
 }
 .photo { display: block; width: 288px; height: 192px; object-fit: cover; 
-  /* 24px above the photo: the copy gap (16) plus 8 */
-  margin-top: calc(var(--space-500) - var(--space-300)); }
+  /* 32px above the photo: the copy gap (16) plus 16 */
+  margin-top: calc(var(--space-600) - var(--space-300)); }
 
 /* avatar — top left */
 .avatar-wrap {
@@ -132,7 +132,7 @@ h1, p { margin: 0; font-weight: inherit; }
   }
   .display-1 { font-size: var(--font-size-40); line-height: var(--line-height-40); }
   .display-2 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .photo { width: 192px; height: 128px; margin-top: calc(var(--space-300) - var(--space-100)); } /* 16px above the photo */
+  .photo { width: 192px; height: 128px; margin-top: calc(var(--space-500) - var(--space-100)); } /* 24px above the photo */
 }
 
 /* ---------------- Load-in animation (matches the live homepage) ---------------- */
