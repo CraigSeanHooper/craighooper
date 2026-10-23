@@ -81,7 +81,9 @@ h1, p { margin: 0; font-weight: inherit; }
   align-items: flex-start;
   gap: var(--space-300);
 }
-.photo { display: block; width: 288px; height: 192px; object-fit: cover; }
+.photo { display: block; width: 288px; height: 192px; object-fit: cover; 
+  /* 24px above the photo: the copy gap (16) plus 8 */
+  margin-top: calc(var(--space-500) - var(--space-300)); }
 
 /* avatar — top left */
 .avatar-wrap {
@@ -130,7 +132,7 @@ h1, p { margin: 0; font-weight: inherit; }
   }
   .display-1 { font-size: var(--font-size-40); line-height: var(--line-height-40); }
   .display-2 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .photo { width: 192px; height: 128px; }
+  .photo { width: 192px; height: 128px; margin-top: calc(var(--space-300) - var(--space-100)); } /* 16px above the photo */
 }
 
 /* ---------------- Load-in animation (matches the live homepage) ---------------- */
