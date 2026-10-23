@@ -399,7 +399,6 @@
       });
       $("presets").appendChild(b);
     });
-    $("swap").addEventListener("click", function () { var t = s.dark; s.dark = s.light; s.light = t; syncControls(); update(); });
     $("reset").addEventListener("click", function () { var f = s.format; s = JSON.parse(JSON.stringify(DEFAULTS)); s.format = f; syncControls(); update(); });
 
     var file = $("file");
