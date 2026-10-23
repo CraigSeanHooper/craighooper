@@ -178,8 +178,9 @@
     .preset:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
 
     /* colour fields: swatch inside a text input */
-    .colour-fields { display: grid; gap: var(--space-100); }
-    .colour-field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: var(--space-150); }
+    /* colour fields: label, then its hex box 12px after the longest label, so the boxes line up */
+    .colour-fields { display: grid; grid-template-columns: max-content max-content; align-items: center; column-gap: var(--space-150); row-gap: var(--space-100); }
+    .colour-field { display: contents; }
     .colour-field[hidden] { display: none; }
     .input { display: inline-flex; align-items: center; gap: var(--space-100); height: 32px; padding: 0 10px 0 5px; }   /* hugs its contents; effects.js sizes the text field to the hex code */
     .input:focus-within { --sq-line: var(--ui-focus); }
