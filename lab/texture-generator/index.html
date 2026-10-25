@@ -34,6 +34,8 @@
       --colour-neutral-10: #f5f5f5;      /* Foundations */
       --colour-neutral-80: #333333;      /* Foundations */
       --border-subtle: #cccccc;          /* Foundations: --border-subtle (neutral-20) */
+      /* Foundations effect style shadow/sm-up: shadow/sm flipped to cast straight up */
+      --shadow-sm-up: 0 -1px 3px rgba(0, 0, 0, 0.08), 0 -5px 7px rgba(0, 0, 0, 0.06), 0 -12px 9px rgba(0, 0, 0, 0.04), 0 -22px 11px rgba(0, 0, 0, 0.01);
       --ui-tab-selected: var(--colour-neutral-10);
 
       --space-50: 4px; --space-100: 8px; --space-150: 12px; --space-200: 16px; --space-300: 24px; --space-400: 32px; --space-500: 40px;
@@ -200,7 +202,11 @@
     .colours[data-off="true"] { opacity: 0.4; pointer-events: none; }
     #quality-field[data-off="true"] { opacity: 0.4; pointer-events: none; }   /* PNG has no quality setting */
 
-    .panel-foot { display: grid; padding: var(--space-200) var(--space-300) var(--space-300); }
+    .panel-foot {
+      display: grid; padding: var(--space-200) var(--space-300) var(--space-300);
+      position: relative; z-index: 1; background: var(--ui-page);
+      box-shadow: var(--shadow-sm-up);   /* lifts Download above the controls scrolling behind it */
+    }
 
     /* ---------- stage ---------- */
     .stage {
@@ -221,7 +227,7 @@
       .stage { display: block; padding: 0 var(--space-200); order: 1; }
       .status { position: static; margin-top: var(--space-100); }
       .panel { order: 2; }
-      .panel-foot { order: -1; padding: var(--space-300) var(--space-200) 0; }
+      .panel-foot { order: -1; padding: var(--space-300) var(--space-200) 0; box-shadow: none; }
       .panel-body { overflow: visible; padding: var(--space-500) var(--space-200) var(--space-400); }
     }
   </style>
