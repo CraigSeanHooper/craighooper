@@ -29,8 +29,9 @@
       --ui-on-primary: #ffffff;
       --ui-focus:    oklch(0.55 0.2 264);
       --ui-slider:   #6e6e6e;
-      --colour-accent-yellow: #fffbc6;   /* Foundations: --surface-accent */
-      --colour-neutral-90: #1a1a1a;      /* Foundations: --text-on-accent */
+      --surface-action: #b85536;         /* Foundations: surface/action (colour/clay/50) */
+      --surface-action-hover: #a1472b;   /* Foundations: surface/action-hover (colour/clay/60) */
+      --text-on-action: #ffffff;         /* Foundations: text/on-action (colour/neutral/0) */
       --colour-neutral-10: #e6e6e6;      /* Foundations: colour/neutral/10 */
       --colour-neutral-80: #333333;      /* Foundations */
       --border-subtle: #e6e6e6;          /* Foundations: border/subtle (colour/neutral/10) */
@@ -125,8 +126,8 @@
     .btn:active { --sq-fill: var(--ui-hover); }
     .btn:disabled { opacity: 0.45; cursor: default; }
     .btn-lg { height: 40px; padding: 0 var(--space-200); }
-    .btn-primary { --sq-line: var(--colour-accent-yellow); --sq-fill: var(--colour-accent-yellow); color: var(--colour-neutral-90); }
-    .btn-primary:hover { --sq-fill: var(--colour-accent-yellow); filter: brightness(0.97); }
+    .btn-primary { --sq-line: var(--surface-action); --sq-fill: var(--surface-action); color: var(--text-on-action); }
+    .btn-primary:hover { --sq-line: var(--surface-action-hover); --sq-fill: var(--surface-action-hover); }
     .btn-primary:disabled { opacity: 0.6; }
     .btn-primary:focus-visible { --sq-line: var(--ui-focus); }
 
