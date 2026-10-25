@@ -109,12 +109,11 @@
             });
           }
 
-          // Icons: Twitter and Instagram take their links from the CMS "Social Links" list (matched by label).
-          if (Array.isArray(data.social)) {
-            data.social.forEach(function (item) {
-              if (!item || !item.label || !item.url) return;
-              var a = document.querySelector('[data-social="' + item.label.trim().toLowerCase() + '"]');
-              if (a) a.href = item.url;
+          // Twitter and Instagram icon links come from the CMS "Social Links" fields.
+          if (data.social) {
+            ['twitter', 'instagram'].forEach(function (key) {
+              var a = document.querySelector('[data-social="' + key + '"]');
+              if (a && data.social[key]) a.href = data.social[key];
             });
           }
 

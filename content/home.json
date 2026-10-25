@@ -1,31 +1,11 @@
 {
-  "pill": {
-    "show": false,
-    "status": "Available",
-    "text": "Available for freelance",
-    "radius": "Small"
-  },
   "headline": "Working on digital modernization for Canadian Blood Services",
   "bio": [
     "I began building interfaces at the outset of the web, and at each evolution over the past 25 years, I have adapted my skillset to match. I work on design systems and component libraries, with the aim of promoting consistency and a shared process."
   ],
   "email": "craigseanhooper@gmail.com",
-  "social": [
-    {
-      "label": "Twitter",
-      "url": "https://x.com/craigseanhooper"
-    },
-    {
-      "label": "Instagram",
-      "url": "https://www.instagram.com/craighooper"
-    },
-    {
-      "label": "Cosmos",
-      "url": "https://www.cosmos.so/craighooper"
-    },
-    {
-      "label": "Linkedin",
-      "url": "https://www.linkedin.com/in/craigseanhooper/"
-    }
-  ]
+  "social": {
+    "twitter": "https://x.com/craigseanhooper",
+    "instagram": "https://www.instagram.com/craighooper"
+  }
 }
