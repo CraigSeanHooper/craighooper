@@ -228,7 +228,8 @@
       .stage { display: block; padding: 0 var(--space-200); order: 1; }
       .status { position: static; margin-top: var(--space-100); }
       .panel { order: 2; }
-      .panel-foot { order: -1; padding: var(--space-300) var(--space-200) 0; box-shadow: none; }
+      /* Download sits at the end of the controls and sticks to the bottom of the screen, as on desktop */
+      .panel-foot { position: sticky; bottom: 0; padding: var(--space-300) var(--space-200) calc(var(--space-300) + env(safe-area-inset-bottom)); }
       .panel-body { overflow: visible; padding: var(--space-500) var(--space-200) var(--space-400); }
     }
   </style>
