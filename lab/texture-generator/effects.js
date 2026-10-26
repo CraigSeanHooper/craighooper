@@ -417,10 +417,21 @@
 
     // press and hold the photo to compare with the original
     var pv = $("preview");
-    pv.addEventListener("pointerdown", function (e) { showOriginal = true; pv.setPointerCapture(e.pointerId); update(); });
-    function release() { if (!showOriginal) return; showOriginal = false; update(); }
+    // On touch screens the compare waits for a short hold, so a swipe over the photo still scrolls the page.
+    var holdTimer = null, holdX = 0, holdY = 0;
+    function show() { holdTimer = null; showOriginal = true; update(); }
+    pv.addEventListener("pointerdown", function (e) {
+      if (e.pointerType === "mouse") { pv.setPointerCapture(e.pointerId); show(); return; }
+      holdX = e.clientX; holdY = e.clientY; clearTimeout(holdTimer); holdTimer = setTimeout(show, 250);
+    });
+    pv.addEventListener("pointermove", function (e) {
+      if (holdTimer && Math.hypot(e.clientX - holdX, e.clientY - holdY) > 8) { clearTimeout(holdTimer); holdTimer = null; }
+    });
+    function release() { clearTimeout(holdTimer); holdTimer = null; if (!showOriginal) return; showOriginal = false; update(); }
     pv.addEventListener("pointerup", release);
     pv.addEventListener("pointercancel", release);
+    pv.addEventListener("pointerleave", release);
+    pv.addEventListener("contextmenu", function (e) { e.preventDefault(); });
 
     document.addEventListener("keydown", function (e) {
       if (e.target.tagName === "INPUT" || e.metaKey || e.ctrlKey || e.altKey) return;
