@@ -38,8 +38,8 @@
     mode: "duo",
     dark: DUO_PRESETS[0][0], mid: PRESETS[0][1], light: DUO_PRESETS[0][1],
     amount: 100,
-    brightness: 0, contrast: 15, midtones: 0,
-    grain: 40, grainSize: 2, speckle: 0,
+    brightness: 0, contrast: 16, midtones: 0,
+    grain: 40, grainSize: 4, speckle: 0,
     misregister: 0, vignette: 0,
     quality: 92,
     format: "jpg"
