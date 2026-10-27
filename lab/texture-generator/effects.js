@@ -15,22 +15,22 @@
 
   // Two-colour sets for Duotone: a deep shadow and a lighter tint of the same hue.
   var DUO_PRESETS = [
-    ["#2b2418", "#e9b45a"],  // ochre
-    ["#0f1d3d", "#7fa8f0"],  // cobalt
-    ["#1f2a0c", "#b9d36a"],  // moss
-    ["#2a1a14", "#f08a5d"],  // rust
-    ["#2a1f22", "#f0b8b8"],  // rose
-    ["#1e2633", "#b8c4d8"],  // slate
+    ["#1c1204", "#f2a71b"],  // ochre
+    ["#070b3a", "#5b84ff"],  // ultramarine
+    ["#170838", "#a98bff"],  // violet
+    ["#2b0828", "#f07ad8"],  // plum
+    ["#0f2405", "#a6d93a"],  // moss
+    ["#2a0904", "#ff6a2b"],  // vermilion
     ["#000000", "#ffffff"]   // black and white
   ];
   // Three-colour sets for Tritone: shadow, midtone, highlight.
   var PRESETS = [
-    ["#2e291f", "#a8701f", "#e9dfc4"],  // ochre
-    ["#14213d", "#4a7fd8", "#e2ddcb"],  // cobalt
-    ["#2f3a10", "#6f8f2a", "#dbe8b4"],  // moss
-    ["#2e2929", "#d75a2e", "#f2e8da"],  // rust
-    ["#2c2a26", "#e0a3a3", "#f4e6df"],  // rose
-    ["#2c3442", "#7d8aa3", "#e6e8ec"],  // slate
+    ["#1c1204", "#c27c0e", "#f6e3b4"],  // ochre
+    ["#070b3a", "#2f5cf0", "#dfe6ff"],  // ultramarine
+    ["#170838", "#7a4cf0", "#ece2ff"],  // violet
+    ["#2b0828", "#b4309e", "#fbe0f2"],  // plum
+    ["#0f2405", "#5f9a12", "#e6f3c2"],  // moss
+    ["#2a0904", "#e2441a", "#fde4d4"],  // vermilion
     ["#000000", "#808080", "#ffffff"]   // black and white
   ];
 
