@@ -125,7 +125,7 @@
     .btn:hover { --sq-fill: var(--ui-control); }
     .btn:active { --sq-fill: var(--ui-hover); }
     .btn:disabled { opacity: 0.45; cursor: default; }
-    .btn-lg { height: 40px; padding: 0 var(--space-200); }
+    .btn-lg { height: auto; padding: var(--space-200); line-height: 22px; }   /* 16px top and bottom on desktop */
     .btn-primary { --sq-line: var(--surface-action); --sq-fill: var(--surface-action); color: var(--text-on-action); }
     .btn-primary:hover { --sq-line: var(--surface-action-hover); --sq-fill: var(--surface-action-hover); }
     .btn-primary:disabled { opacity: 0.6; }
@@ -229,6 +229,7 @@
       .status { position: static; margin-top: var(--space-100); }
       .panel { order: 2; }
       /* Download sits at the end of the controls and sticks to the bottom of the screen, as on desktop */
+      .btn-lg { padding: var(--space-150) var(--space-200); }   /* 12px top and bottom on mobile */
       .panel-foot { position: sticky; bottom: 0; padding: var(--space-300) var(--space-200) calc(var(--space-300) + env(safe-area-inset-bottom)); }
       .panel-body { overflow: visible; padding: var(--space-500) var(--space-200) var(--space-400); }
     }
@@ -334,7 +335,7 @@
             <input type="range" id="quality" min="40" max="100" />
           </div>
           <div class="field">
-            <button type="button" class="btn sq" id="reset" style="width: 100%">Reset all settings</button>
+            <button type="button" class="btn btn-lg sq" id="reset" style="width: 100%">Reset all settings</button>
           </div>
         </section>
       </div>
