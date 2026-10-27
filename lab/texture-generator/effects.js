@@ -41,7 +41,7 @@
     brightness: 0, contrast: 16, midtones: 0,
     grain: 40, grainSize: 4, speckle: 0,
     misregister: 0, vignette: 0,
-    quality: 92,
+    quality: 100,
     format: "jpg"
   };
   var SLIDERS = ["amount", "brightness", "contrast", "midtones", "misregister", "vignette",
