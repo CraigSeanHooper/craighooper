@@ -69,11 +69,12 @@
   --glow-mid:           var(--colour-violet-10);
   --glow-edge:          var(--colour-violet-5);
 
+  /* shadow/xs, as a filter so it follows the smooth shape */
   --shadow-xs:
-    0 1px 3px rgba(0, 0, 0, 0.048),
-    2px 3px 6px rgba(0, 0, 0, 0.036),
-    4px 7px 8px rgba(0, 0, 0, 0.024),
-    8px 13px 10px rgba(0, 0, 0, 0.006);
+    drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.048))
+    drop-shadow(2px 3px 3px rgba(0, 0, 0, 0.036))
+    drop-shadow(4px 7px 4px rgba(0, 0, 0, 0.024))
+    drop-shadow(8px 13px 5px rgba(0, 0, 0, 0.006));
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -176,24 +177,44 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
   gap: var(--space-200);
 }
 
+/* ---------------- smooth corners ---------------- */
+/* smooth-corners.js draws the shape, its outside strokes and its shadow in an SVG
+   behind the content, so nothing outside the shape gets cut off. */
+[data-smooth] { position: relative; isolation: isolate; }
+.smooth {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: -1;
+  pointer-events: none;
+}
+.smooth .shape { fill: transparent; }
+.smooth .edge,
+.smooth .ring { fill: none; }
+.smooth .ring {
+  stroke: var(--border-focus);
+  stroke-width: var(--stroke-md);
+  visibility: hidden;
+}
+
 /* ---------------- breakpoint-selector / breakpoint-toggle ---------------- */
 .selector { display: flex; gap: var(--space-200); }
 .toggle {
+  --corner: var(--radius-sm);
   display: grid;
   place-items: center;
   padding: var(--space-50);   /* sized by its padding around the 24 icon */
-  border-radius: var(--radius-sm);
   color: var(--icon-primary);
 }
-.toggle svg { display: block; width: 24px; height: 24px; }
-.toggle[aria-checked="true"] { background: var(--control-fill-open); }
+.toggle > svg:not(.smooth) { display: block; width: 24px; height: 24px; }
+.toggle[aria-checked="true"] .shape { fill: var(--control-fill-open); }
 @media (hover: hover) {
-  .toggle[aria-checked="false"]:hover { background: var(--control-fill-hover); }
+  .toggle[aria-checked="false"]:hover .shape { fill: var(--control-fill-hover); }
 }
-.toggle:focus-visible {
-  outline: var(--stroke-md) solid var(--border-focus);
-  outline-offset: 0;
-}
+.toggle:focus-visible { outline: none; }
+.toggle:focus-visible .ring { visibility: visible; }
 
 /* ---------------- input ---------------- */
 .field {
@@ -204,12 +225,13 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
   justify-content: space-between;
   gap: var(--space-0);
   padding: var(--space-200) var(--space-200) var(--space-200) var(--space-300);
-  background: var(--control-fill-field);
-  border-radius: var(--radius-sm);
-  outline: var(--stroke-sm) solid var(--border-subtle);   /* stroke outside the edge */
-  box-shadow: var(--shadow-xs);
+  --corner: var(--radius-sm);
 }
-.field:focus-within { outline: var(--stroke-md) solid var(--border-focus); }
+.field > .smooth { filter: var(--shadow-xs); }
+.field .shape { fill: var(--control-fill-field); }
+.field .edge { stroke: var(--border-subtle); stroke-width: var(--stroke-sm); }
+.field:focus-within .edge { visibility: hidden; }
+.field:focus-within .ring { visibility: visible; }
 .field input {
   flex: 1;
   min-width: 0;
