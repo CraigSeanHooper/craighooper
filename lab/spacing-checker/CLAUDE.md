@@ -101,6 +101,10 @@ Writer-only control tokens are kept in a `writer/control/fill/` group. The spaci
 - The toggles have no pressed state, because the switch to selected is the feedback.
 - Spec chips show the gap as a number (e.g. "40"), filled with `spec/fill`, which points to `colour/accent/red` (#EF4444) in both Light and Dark so it reads on any page. Chip text is `text/on-dark`. Chip padding is `space/50` top and bottom and `space/100` at the sides, with `radius/xs` corners.
 
+- Build decisions (2 November). The `/ loaded` screens are skeletons; the `/ specs on` screens are the real design. Specs starts on after a page loads. Clicking the arrow in the URL field and pressing Enter both load the page. The loading line creeps forward while waiting, then runs to the end once the page has loaded and the specs are measured.
+- Sizes with no token (2 November): the marker line stays 1px and the switch track width stays 36, both typed in. End caps stay 9px wide, typed in, so they centre exactly on the 1px line (8px was tried and reverted on 2 November: it sits half a pixel off). The switch knob and track heights use the 12 and 16 tokens.
+- Hover states (2 November): the URL field has no hover, by design (like the Claude app's chat input). The Specs switch has no hover in release 1, because Foundations has no hover colour token for it; revisit later. Only the unselected breakpoint toggles have a hover.
+
 - Dark mode review (1 November): error screens' page area is bound to `surface/page`. Every `mock page` frame is pinned to Light mode, because a real website keeps its own colours whatever mode the tool is in. Dark copies of 13 screens, each named with "(dark)", sit in a row below the Light screens on the Spacer page.
 
 ## Release 1 scope (agreed 29 October, updated 31 October 2026)
