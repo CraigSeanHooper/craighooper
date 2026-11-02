@@ -61,9 +61,11 @@ for pushing. Set up 2 November 2026.
 - Commit as `Claude <noreply@anthropic.com>` (set per commit, not globally).
 - Pull again right before pushing, then push.
 - **Confirm it's live before saying so.** A push is not a deploy. Check the live page
-  (add a `?v=` query to dodge caches). If Netlify's build fails with "Host key
+  (add a `?v=` query to dodge caches, for your own checks only). If Netlify's build fails with "Host key
   verification failed", the fix is Netlify → Deploys → Trigger deploy → Clear cache and
   deploy site; if it repeats, relink the repo in Netlify.
+- **Give Craig plain addresses**, like craighooper.xyz/lab/spacing-checker/, never with
+  `?v=` on the end. If he may be seeing an old copy, tell him to press Cmd + Shift + R.
 - The previous version is always in GitHub's history, so any publish can be undone.
 - **Never ask Craig to type in the terminal.** Run commands yourself; at most send him to a
   web page or a Finder window.
