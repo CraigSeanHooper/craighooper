@@ -209,9 +209,9 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
   color: var(--icon-primary);
 }
 .toggle > svg:not(.smooth) { display: block; width: 24px; height: 24px; }
-.toggle[aria-checked="true"] .shape { fill: var(--control-fill-open); }
+.toggle[aria-pressed="true"] .shape { fill: var(--control-fill-open); }
 @media (hover: hover) {
-  .toggle[aria-checked="false"]:hover .shape { fill: var(--control-fill-hover); }
+  .toggle[aria-pressed="false"]:hover .shape { fill: var(--control-fill-hover); }
 }
 .toggle:focus-visible { outline: none; }
 .toggle:focus-visible .ring { visibility: visible; }
@@ -228,10 +228,10 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
   --corner: var(--radius-sm);
 }
 .field > .smooth { filter: var(--shadow-xs); }
-.field .shape { fill: var(--control-fill-field); }
-.field .edge { stroke: var(--border-subtle); stroke-width: var(--stroke-sm); }
-.field:focus-within .edge { visibility: hidden; }
-.field:focus-within .ring { visibility: visible; }
+.field > .smooth .shape { fill: var(--control-fill-field); }
+.field > .smooth .edge { stroke: var(--border-subtle); stroke-width: var(--stroke-sm); }
+.field:has(input:focus) > .smooth .edge { visibility: hidden; }
+.field:has(input:focus) > .smooth .ring { visibility: visible; }
 .field input {
   flex: 1;
   min-width: 0;
@@ -243,6 +243,7 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
   outline: none;
 }
 .field input::placeholder { color: var(--text-muted); opacity: 1; }
-.go { display: block; color: var(--icon-muted); }
-.go svg { display: block; width: 24px; height: 24px; }
+.go { --corner: var(--radius-sm); display: block; color: var(--icon-muted); }
+.go > svg:not(.smooth) { display: block; width: 24px; height: 24px; }
 .go:focus-visible { outline: none; }
+.go:focus-visible .ring { visibility: visible; }
