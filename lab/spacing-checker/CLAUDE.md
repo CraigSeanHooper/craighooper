@@ -50,9 +50,9 @@ Screens:
 
 Components:
 
-- `breakpoint-toggle`, a single icon button. Its properties are Device (Desktop, Tablet, Phone), Selected (True, False) and State (Default, Hover, Focus). Only unselected toggles have a Hover state.
+- `breakpoint-toggle`, a single icon button, 32×32: the 24 icon plus `space/50` padding all round, hugging its contents (changed from a fixed 30 wide on 2 November, so the selector is now 120 wide). Its properties are Device (Desktop, Tablet, Phone), Selected (True, False) and State (Default, Hover, Focus). Only unselected toggles have a Hover state.
 - `breakpoint-selector`, the row of three toggles, `space/200` apart. Its one property is Active (None, Desktop, Tablet, Phone).
-- `input`, the URL field, now a component set (31 October). Properties: State (Default, Focus) and Filled (False, True), plus Label, Show Label and Show Icon. Focus adds the focus ring (`border/focus` at `stroke/md`, outside the edge, matching the toggles). Filled=True shows typed text in `text/primary` instead of the `text/muted` placeholder; the address in the control strip on every loaded screen uses Filled=True. Fill is `control/fill/field`, outline `border/subtle`, effect style `shadow/sm`.
+- `input`, the URL field, now a component set (31 October). Properties: State (Default, Focus) and Filled (False, True), plus Label, Show Label and Show Icon. Focus adds the focus ring (`border/focus` at `stroke/md`, outside the edge, matching the toggles). Filled=True shows typed text in `text/primary` instead of the `text/muted` placeholder; the address in the control strip on every loaded screen uses Filled=True. Fill is `control/fill/field`, outline `border/subtle`, effect style `shadow/sm`. On the landing screen the input instance overrides this to `shadow/xs`, and the build follows the screen (2 November).
 - `overlay-switch`, a labelled switch ("Specs") that shows or hides the spec overlay. Its properties are On (True, False) and State (Default, Focus). The track is 36×16 with `space/25` padding and `radius/full`; the knob is a 16×12 capsule in `control/fill/field`. The label is `text/secondary`, `space/100` from the track.
 - `control-strip`, the compact floating bar shown once a page loads, like Figma's bottom toolbar. It hugs its contents (selector, width, input, gap count and overlay switch, `space/400` apart) and has `radius/lg` corners. Padding is `space/100` top and bottom and `space/400` at the sides. Effect style `shadow/xs`, no stroke (31 October). The selector and the switch are exposed nested instances, so Active and On are set on each instance.
   - **Width** (added 31 October): the width being measured, right after the breakpoint toggles, in `body/sm/lg` and `text/secondary`, as a plain number. Properties: Width (text) and Show Width (Boolean, on by default). It reads the live window width on Desktop, 768 on Tablet and 390 on Phone, and is hidden on the error screen. Placing it beside the gap count, or as a sticky label at the page's top-right, were both considered and rejected: the first mixes two readouts, the second covers part of the page being checked.
@@ -80,7 +80,7 @@ All values come from Foundations (fileKey `ToLD1LsCFuUnQQQySDPCOI`).
 - `spec/fill` is the spec chip fill (`colour/accent/red`, #EF4444, in both modes); chip text is `text/on-dark`.
 - `border/focus` is the focus ring (neutral/90 in Light, neutral/10 in Dark), at `stroke/md` (2px), outside the edge.
 - `progress/fill` is the loading line and the loader's arc: neutral/50 in both modes (changed 1 November). The line sits over the website being checked, which keeps its own colours, so it uses one mid-grey that reads on white and dark websites alike. `progress/track` is `colour/transparent` (a new Foundations primitive) in both modes, so there's no visible track. The loader in the bar shares both tokens.
-- Effect styles: `shadow/xs` on the control strip, `shadow/sm` on the input.
+- Effect styles: `shadow/xs` on the control strip, `shadow/sm` on the input component (but `shadow/xs` on the landing screen's input, an override the build follows).
 
 Foundations has no disabled tokens. None are needed for release 1.
 

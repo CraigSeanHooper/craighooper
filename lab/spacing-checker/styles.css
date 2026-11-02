@@ -181,8 +181,7 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
 .toggle {
   display: grid;
   place-items: center;
-  width: 30px;   /* fixed in the Figma component; no token. The 24 icon overhangs the sides evenly. */
-  padding: var(--space-50) var(--space-0);
+  padding: var(--space-50);   /* sized by its padding around the 24 icon */
   border-radius: var(--radius-sm);
   color: var(--icon-primary);
 }
