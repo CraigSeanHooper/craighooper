@@ -1,3 +1,7 @@
 # Old address for the texture generator
 /lab/collage     /lab/texture-generator/  301
 /lab/collage/*   /lab/texture-generator/  301
+
+# Claude's instruction files stay in the repo but aren't served
+/CLAUDE.md                       /404.html  404!
+/lab/spacing-checker/CLAUDE.md   /404.html  404!
