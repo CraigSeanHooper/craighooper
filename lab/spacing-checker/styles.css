@@ -18,6 +18,7 @@
   --colour-neutral-5:  #f2f2f2;
   --colour-neutral-10: #e6e6e6;
   --colour-neutral-20: #cccccc;
+  --colour-neutral-30: #b3b3b3;
   --colour-neutral-50: #808080;
   --colour-neutral-70: #4d4d4d;
   --colour-neutral-80: #333333;
@@ -102,6 +103,7 @@
     --border-focus:       var(--colour-neutral-10);
     --control-switch-track-off: var(--colour-neutral-70);
     --control-switch-track-on:  var(--colour-neutral-10);
+    --progress-fill:      var(--colour-neutral-30);
     --glow-centre:        var(--colour-violet-80);
     --glow-mid:           var(--colour-violet-90);
     --glow-edge:          var(--colour-violet-95);
@@ -267,9 +269,9 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
 
 /* ---------------- loading screen ---------------- */
 .tool { place-items: stretch; }
-/* Stands in for the website being checked, which keeps its own colours, so it stays
-   Light in both modes (like the mock pages in Figma). Blank until the specs are ready. */
-.page { background: var(--colour-neutral-0); }
+/* Blank until the specs are ready, so it follows the mode like the error screens.
+   (A loaded website keeps its own colours.) */
+.page { background: var(--surface-page); }
 
 /* Loading line along the top. Its track is progress/track, which is transparent, so only
    the fill is drawn. No height token; it's a 2px line, so it uses stroke/md. */
