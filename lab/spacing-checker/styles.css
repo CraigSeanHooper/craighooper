@@ -20,6 +20,7 @@
   --colour-neutral-20: #cccccc;
   --colour-neutral-30: #b3b3b3;
   --colour-neutral-50: #808080;
+  --colour-neutral-60: #666666;
   --colour-neutral-70: #4d4d4d;
   --colour-neutral-80: #333333;
   --colour-neutral-90: #1a1a1a;
@@ -51,6 +52,7 @@
   --space-300: var(--scale-base-16);
   --space-400: var(--scale-base-20);
 
+  --radius-xs: var(--scale-base-4);
   --radius-sm: var(--scale-base-8);
   --radius-lg: var(--scale-base-16);
   --radius-full: var(--scale-base-64);
@@ -71,8 +73,9 @@
   --icon-primary:       var(--colour-neutral-90);
   --icon-muted:         var(--colour-neutral-50);
   --control-fill-field: var(--colour-neutral-0);
-  --control-fill-open:  var(--colour-neutral-20);
-  --control-fill-hover: var(--colour-neutral-10);
+  --control-segment-track:    var(--colour-neutral-10);
+  --control-segment-selected: var(--colour-neutral-0);
+  --control-segment-hover:    var(--colour-neutral-5);
   --border-subtle:      var(--colour-neutral-10);
   --border-focus:       var(--colour-neutral-90);
   --control-switch-track-off: var(--colour-neutral-20);
@@ -97,8 +100,9 @@
     --text-secondary:     var(--colour-neutral-20);
     --icon-primary:       var(--colour-neutral-10);
     --control-fill-field: var(--colour-neutral-90);
-    --control-fill-open:  var(--colour-neutral-50);
-    --control-fill-hover: var(--colour-neutral-70);
+    --control-segment-track:    var(--colour-neutral-70);
+    --control-segment-selected: var(--colour-neutral-50);
+    --control-segment-hover:    var(--colour-neutral-60);
     --border-subtle:      var(--colour-neutral-80);
     --border-focus:       var(--colour-neutral-10);
     --control-switch-track-off: var(--colour-neutral-70);
@@ -219,18 +223,24 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
 }
 
 /* ---------------- breakpoint-selector / breakpoint-toggle ---------------- */
-.selector { display: flex; gap: var(--space-200); }
-.toggle {
+.selector {
   --corner: var(--radius-sm);
+  display: flex;
+  gap: var(--space-100);
+  padding: var(--space-50);
+}
+.selector > .smooth .shape { fill: var(--control-segment-track); }
+.toggle {
+  --corner: var(--radius-xs);   /* track corner minus its padding */
   display: grid;
   place-items: center;
   padding: var(--space-50);   /* sized by its padding around the 24 icon */
   color: var(--icon-primary);
 }
 .toggle > svg:not(.smooth) { display: block; width: 24px; height: 24px; }
-.toggle[aria-pressed="true"] .shape { fill: var(--control-fill-open); }
+.toggle[aria-pressed="true"] .shape { fill: var(--control-segment-selected); }
 @media (hover: hover) {
-  .toggle[aria-pressed="false"]:hover .shape { fill: var(--control-fill-hover); }
+  .toggle[aria-pressed="false"]:hover .shape { fill: var(--control-segment-hover); }
 }
 .toggle:focus-visible { outline: none; }
 .toggle:focus-visible .ring { visibility: visible; }
