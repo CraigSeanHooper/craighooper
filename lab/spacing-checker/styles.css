@@ -15,6 +15,7 @@
 /* ---------------- PRIMITIVES ---------------- */
 :root {
   --colour-neutral-0:  #ffffff;
+  --colour-neutral-5:  #f2f2f2;
   --colour-neutral-10: #e6e6e6;
   --colour-neutral-20: #cccccc;
   --colour-neutral-50: #808080;
@@ -30,7 +31,8 @@
   --colour-violet-95: #110721;
 
   --scale-base-0: 0px; --scale-base-1: 1px; --scale-base-2: 2px; --scale-base-4: 4px;
-  --scale-base-8: 8px; --scale-base-12: 12px; --scale-base-16: 16px;
+  --scale-base-8: 8px; --scale-base-12: 12px; --scale-base-16: 16px; --scale-base-20: 20px;
+  --scale-base-64: 64px;
 
   --font-family-parabole: "Parabole", "Helvetica Neue", Arial, sans-serif;
   --font-family-exposure: "Exposure", "Helvetica Neue", Arial, sans-serif;
@@ -41,11 +43,16 @@
 /* ---------------- SEMANTIC ---------------- */
 :root {
   --space-0:   var(--scale-base-0);
+  --space-25:  var(--scale-base-2);
   --space-50:  var(--scale-base-4);
+  --space-100: var(--scale-base-8);
   --space-200: var(--scale-base-12);
   --space-300: var(--scale-base-16);
+  --space-400: var(--scale-base-20);
 
   --radius-sm: var(--scale-base-8);
+  --radius-lg: var(--scale-base-16);
+  --radius-full: var(--scale-base-64);
   --stroke-sm: var(--scale-base-1);
   --stroke-md: var(--scale-base-2);
 
@@ -56,7 +63,9 @@
   --font-style-body:  var(--font-weight-regular);
 
   --surface-page:       var(--colour-neutral-0);
+  --surface-chrome:     var(--colour-neutral-5);
   --text-primary:       var(--colour-neutral-90);
+  --text-secondary:     var(--colour-neutral-70);
   --text-muted:         var(--colour-neutral-50);
   --icon-primary:       var(--colour-neutral-90);
   --icon-muted:         var(--colour-neutral-50);
@@ -65,6 +74,9 @@
   --control-fill-hover: var(--colour-neutral-10);
   --border-subtle:      var(--colour-neutral-10);
   --border-focus:       var(--colour-neutral-90);
+  --control-switch-track-off: var(--colour-neutral-20);
+  --control-switch-track-on:  var(--colour-neutral-90);
+  --progress-fill:      var(--colour-neutral-50);
   --glow-centre:        var(--colour-violet-20);
   --glow-mid:           var(--colour-violet-10);
   --glow-edge:          var(--colour-violet-5);
@@ -79,13 +91,17 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --surface-page:       var(--colour-neutral-90);
+    --surface-chrome:     var(--colour-neutral-80);
     --text-primary:       var(--colour-neutral-10);
+    --text-secondary:     var(--colour-neutral-20);
     --icon-primary:       var(--colour-neutral-10);
     --control-fill-field: var(--colour-neutral-90);
     --control-fill-open:  var(--colour-neutral-50);
     --control-fill-hover: var(--colour-neutral-70);
     --border-subtle:      var(--colour-neutral-80);
     --border-focus:       var(--colour-neutral-10);
+    --control-switch-track-off: var(--colour-neutral-70);
+    --control-switch-track-on:  var(--colour-neutral-10);
     --glow-centre:        var(--colour-violet-80);
     --glow-mid:           var(--colour-violet-90);
     --glow-edge:          var(--colour-violet-95);
@@ -102,6 +118,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 h1, p { margin: 0; }
+[hidden] { display: none !important; }
 button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
 
 /* ---------------- TEXT STYLES ---------------- */
@@ -134,7 +151,7 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
 }
 .small-screen { display: none; }
 @media (max-width: 1023px) {
-  .landing { display: none; }
+  .landing, .tool { display: none; }
   .small-screen { display: grid; }
 }
 
@@ -227,7 +244,7 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
   padding: var(--space-200) var(--space-200) var(--space-200) var(--space-300);
   --corner: var(--radius-sm);
 }
-.field > .smooth { filter: var(--shadow-xs); }
+.landing .field > .smooth { filter: var(--shadow-xs); }
 .field > .smooth .shape { fill: var(--control-fill-field); }
 .field > .smooth .edge { stroke: var(--border-subtle); stroke-width: var(--stroke-sm); }
 .field:has(input:focus) > .smooth .edge { visibility: hidden; }
@@ -247,3 +264,75 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
 .go > svg:not(.smooth) { display: block; width: 24px; height: 24px; }
 .go:focus-visible { outline: none; }
 .go:focus-visible .ring { visibility: visible; }
+
+/* ---------------- loading screen ---------------- */
+.tool { place-items: stretch; }
+/* Stands in for the website being checked, which keeps its own colours, so it stays
+   Light in both modes (like the mock pages in Figma). Blank until the specs are ready. */
+.page { background: var(--colour-neutral-0); }
+
+/* Loading line along the top. Its track is progress/track, which is transparent, so only
+   the fill is drawn. No height token; it's a 2px line, so it uses stroke/md. */
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: var(--stroke-md);
+  background: var(--progress-fill);
+}
+.progress.creep {
+  width: 90%;
+  transition: width 20s cubic-bezier(0.1, 0.7, 0.2, 1);
+}
+
+/* ---------------- control-strip ---------------- */
+.bar-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--space-200) var(--space-200);
+  pointer-events: none;
+}
+.strip {
+  --corner: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-400);
+  padding: var(--space-100) var(--space-400);
+  pointer-events: auto;
+}
+.strip > .smooth { filter: var(--shadow-xs); }
+.strip > .smooth .shape { fill: var(--surface-chrome); }
+.strip .field { width: 370px; }   /* same width as on the landing screen */
+.width { color: var(--text-secondary); }
+
+/* ---------------- overlay-switch ---------------- */
+.switch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+  color: var(--text-secondary);
+}
+.track {
+  display: flex;
+  width: 36px;   /* no token, typed in (decided 2 November) */
+  padding: var(--space-25);
+  border-radius: var(--radius-full);
+  background: var(--control-switch-track-off);
+}
+.knob {
+  width: var(--scale-base-16);
+  height: var(--scale-base-12);
+  border-radius: var(--radius-full);
+  background: var(--control-fill-field);
+}
+.switch[aria-checked="true"] .track {
+  justify-content: flex-end;
+  background: var(--control-switch-track-on);
+}
+.switch:focus-visible { outline: none; }
+.switch:focus-visible .track { box-shadow: 0 0 0 var(--stroke-md) var(--border-focus); }

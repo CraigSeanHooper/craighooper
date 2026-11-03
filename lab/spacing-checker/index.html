@@ -58,13 +58,42 @@
     </div>
   </main>
 
+  <!-- After an address is entered: Figma "canvas - desktop / loading" (4577:222) -->
+  <div class="screen tool" hidden>
+    <div class="page"></div>
+    <div class="progress" aria-hidden="true"></div>
+
+    <div class="bar-area">
+      <div class="strip" data-smooth="">
+        <!-- the breakpoint selector is copied in here from the landing screen -->
+        <span class="width body-sm" aria-label="Width being measured"></span>
+
+        <form class="field" data-smooth="edge ring" autocomplete="off">
+          <input class="body-sm" type="text" name="url" inputmode="url" spellcheck="false"
+                 placeholder="You know what to do..." aria-label="Page address" />
+          <button class="go" data-smooth="ring" type="submit" aria-label="Check spacing">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M13.75 6.75L19.25 12L13.75 17.25"/>
+              <path d="M19 12H4.75"/>
+            </svg>
+          </button>
+        </form>
+
+        <button class="switch" type="button" role="switch" aria-checked="true">
+          <span class="body-sm">Specs</span>
+          <span class="track" aria-hidden="true"><span class="knob"></span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Under 1024 wide: Figma "canvas - desktop - message" (4567:213) -->
   <div class="screen small-screen">
     <div class="glow" aria-hidden="true"></div>
     <p class="spacer-heading">Not optimized for phones or small screens</p>
   </div>
 
-  <script src="smooth-corners.js"></script>
   <script src="script.js"></script>
+  <script src="smooth-corners.js"></script>
 </body>
 </html>
