@@ -10,6 +10,8 @@ craighooper.xyz/lab/spacing-checker/. The site-wide rules in the repo root's `CL
 
 A browser tool for inspecting a page's spacing. You enter a URL and choose a breakpoint (desktop, tablet or phone). Release 1 measures the vertical gaps between a page's main sections; comparing against Figma and the Foundations spacing scale comes later.
 
+**Light only** (decided 7 November). The tool has no Dark mode: the Dark screens were removed from the Spacer page, and the build stays light whatever the visitor's system setting (`color-scheme: light`, one white `theme-color`). Don't add Dark values or Dark screens back.
+
 ## Purpose and build plan
 
 The tool is for checking external webpages: any public site, not Craig's own. Checking only craighooper.xyz pages would be of little use, since Claude builds those pages.
@@ -64,22 +66,22 @@ Components:
 
 ## Tokens
 
-All values come from Foundations (fileKey `ToLD1LsCFuUnQQQySDPCOI`).
+All values come from Foundations (fileKey `ToLD1LsCFuUnQQQySDPCOI`). The tool uses only the Light values.
 
-- `surface/chrome` is the control strip background (neutral/5 in Light, neutral/80 in Dark; Dark changed from neutral/95 on 1 November so the bar stands out on dark websites, where its shadow disappears).
-- `surface/backdrop` is the area either side of the tablet and phone page (neutral/20 in Light, neutral/80 in Dark).
-- `surface/page` is the landing screen background (neutral/0 Light, neutral/90 Dark).
-- `surface/raised` fills the mock page sections (neutral/5 Light, neutral/95 Dark).
-- `control/fill/field` is the text input fill on any surface (neutral/0 in Light, neutral/90 in Dark).
-- `control/fill/open` was the selected toggle fill until 2 November (neutral/20 Light, neutral/50 Dark); the toggles now use `control/segment/selected`.
-- `control/segment/track`, `control/segment/selected` and `control/segment/hover` (added 2 November) colour the breakpoint selector. Track: neutral/10 Light, neutral/70 Dark. Selected: neutral/0 Light (a white toggle on the grey track, like Apple's segmented controls), neutral/50 Dark. Hover: neutral/5 Light, neutral/60 Dark. They're separate from the general `control/fill/open` and `control/fill/hover`, which other controls use and which were left alone. (A pale track with a grey selected toggle was rejected: the track would vanish on the bar, which is neutral/5.)
-- `border/subtle` is the input's outline (neutral/10 Light, neutral/80 Dark).
-- `control/switch/track-off` and `control/switch/track-on` are the switch track (off: neutral/20 Light, neutral/70 Dark; on: neutral/90 Light, neutral/10 Dark).
-- `text/primary` (neutral/90 Light, neutral/10 Dark), `text/secondary` (neutral/70 Light, neutral/20 Dark) and `text/muted` (neutral/50 both).
-- `glow/centre`, `glow/mid` and `glow/edge` are the glow's gradient stops, fixed at 100%, 70% and 0% opacity within the gradient. Light: violet/20, violet/10, violet/5 (a deeper colour at low opacity gives the centre depth while staying faint). Dark: violet/80, violet/90, violet/95 (switched from clay on 31 October). Primitives such as violet are hidden from Figma's pickers (scopes off), so they're always used through semantic tokens like these.
-- `spec/fill` is the spec chip fill (`colour/accent/red`, #EF4444, in both modes); chip text is `text/on-dark`.
-- `border/focus` is the focus ring (neutral/90 in Light, neutral/10 in Dark), at `stroke/md` (2px), outside the edge.
-- `progress/fill` is the loading line and the loader's arc: neutral/50 in Light, neutral/30 in Dark (Dark lightened from neutral/50 on 2 November, once the blank loading page started following the mode, so the line stands out on the dark page). `progress/track` is `colour/transparent` (a new Foundations primitive) in both modes, so there's no visible track. The loader in the bar shares both tokens.
+- `surface/chrome` is the control strip background (neutral/5).
+- `surface/backdrop` is the area either side of the tablet and phone page (neutral/20).
+- `surface/page` is the landing screen background (neutral/0).
+- `surface/raised` fills the mock page sections (neutral/5).
+- `control/fill/field` is the text input fill on any surface (neutral/0).
+- `control/fill/open` was the selected toggle fill until 2 November (neutral/20); the toggles now use `control/segment/selected`.
+- `control/segment/track`, `control/segment/selected` and `control/segment/hover` (added 2 November) colour the breakpoint selector. Track: neutral/10. Selected: neutral/0 (a white toggle on the grey track, like Apple's segmented controls). Hover: neutral/5. They're separate from the general `control/fill/open` and `control/fill/hover`, which other controls use and which were left alone. (A pale track with a grey selected toggle was rejected: the track would vanish on the bar, which is neutral/5.)
+- `border/subtle` is the input's outline (neutral/10).
+- `control/switch/track-off` and `control/switch/track-on` are the switch track (off: neutral/20; on: neutral/90).
+- `text/primary` (neutral/90), `text/secondary` (neutral/70) and `text/muted` (neutral/50).
+- `glow/centre`, `glow/mid` and `glow/edge` are the glow's gradient stops, fixed at 100%, 70% and 0% opacity within the gradient. violet/20, violet/10, violet/5 (a deeper colour at low opacity gives the centre depth while staying faint). Primitives such as violet are hidden from Figma's pickers (scopes off), so they're always used through semantic tokens like these.
+- `spec/fill` is the spec chip fill (`colour/accent/red`, #EF4444); chip text is `text/on-dark`.
+- `border/focus` is the focus ring (neutral/90), at `stroke/md` (2px), outside the edge.
+- `progress/fill` is the loading line and the loader's arc: neutral/50. `progress/track` is `colour/transparent` (a new Foundations primitive), so there's no visible track. The loader in the bar shares both tokens.
 - Effect styles: `shadow/xs` on the control strip, `shadow/sm` on the input component (but `shadow/xs` on the landing screen's input, an override the build follows).
 
 Foundations has no disabled tokens. None are needed for release 1.
@@ -99,16 +101,16 @@ Writer-only control tokens are kept in a `writer/control/fill/` group. The spaci
 - The landing screen shows Desktop selected by default (Active=Desktop). The None variant exists but isn't used there.
 - On the landing screen, the breakpoint toggles only choose the breakpoint: the selected toggle changes, nothing else on the screen moves, and nothing loads. When a URL is then entered, the page opens at the chosen breakpoint.
 - The toggles have no pressed state, because the switch to selected is the feedback.
-- Spec chips show the gap as a number (e.g. "40"), filled with `spec/fill`, which points to `colour/accent/red` (#EF4444) in both Light and Dark so it reads on any page. Chip text is `text/on-dark`. Chip padding is `space/50` top and bottom and `space/100` at the sides, with `radius/xs` corners.
+- Spec chips show the gap as a number (e.g. "40"), filled with `spec/fill`, which points to `colour/accent/red` (#EF4444) so it reads on any page. Chip text is `text/on-dark`. Chip padding is `space/50` top and bottom and `space/100` at the sides, with `radius/xs` corners.
 
 - Build decisions (2 November). The `/ loaded` screens are skeletons; the `/ specs on` screens are the real design. Specs starts on after a page loads. Clicking the arrow in the URL field and pressing Enter both load the page. The loading line creeps forward while waiting, then runs to the end once the page has loaded and the specs are measured.
 - Sizes with no token (2 November): the marker line stays 1px and the switch track width stays 36, both typed in. End caps stay 9px wide, typed in, so they centre exactly on the 1px line (8px was tried and reverted on 2 November: it sits half a pixel off). The switch knob and track heights use the 12 and 16 tokens.
 - Corner smoothing (2 November): the toggles, URL field, control strip and spec chips have corner smoothing at max (100%) in Figma; the switch is fully round, so it doesn't apply. The build matches it with `smooth-corners.js`, which draws each shape, its outside strokes, focus ring and shadow in an SVG behind the content. Don't use the site's `assets/squircle.js` here: it trims the element to the shape and would cut off outlines, shadows and focus rings. Mark new smoothed parts with `data-smooth` and a `--corner` radius token; shadows go on the SVG as `drop-shadow` filters (blur halved to match Figma).
 - Hover states (2 November): the URL field has no hover, by design (like the Claude app's chat input). The Specs switch has no hover in release 1, because Foundations has no hover colour token for it; revisit later. Only the unselected breakpoint toggles have a hover (`control/segment/hover`).
-- Loading screen build (2 November): entering an address on the landing screen switches to the loading screen, with the address in the bar. While loading, the blank page area follows the mode (`surface/page`, decided 2 November), like the error screens, so dark mode doesn't flash white; in Figma the `page (desktop)` frame on both loading screens is bound to it. A loaded website keeps its own colours. The loading line uses `stroke/md` for its 2px height (no size token fits); in Figma the line and its track are bound to `stroke/md` too, on the loading and re-measuring screens in Light and Dark. Until measuring is built, it creeps to about 90% and stops there. The bar's breakpoint selector stays in step with the landing one, and the width readout follows the window on Desktop.
+- Loading screen build (2 November): entering an address on the landing screen switches to the loading screen, with the address in the bar. While loading, the blank page area is `surface/page`, like the error screens; in Figma the `page (desktop)` frame on both loading screens is bound to it. A loaded website keeps its own colours. The loading line uses `stroke/md` for its 2px height (no size token fits); in Figma the line and its track are bound to `stroke/md` too, on the loading and re-measuring screens. Until measuring is built, it creeps to about 90% and stops there. The bar's breakpoint selector stays in step with the landing one, and the width readout follows the window on Desktop.
 - Keyboard (2 November): Tab moves through each breakpoint toggle in turn, then the URL field, then the arrow button. Enter or Space picks a toggle. The arrow button gets its own focus ring (`border/focus` at `stroke/md`, `radius/sm`), which Figma doesn't show yet; the field's ring shows only while typing.
 
-- Dark mode review (1 November): error screens' page area is bound to `surface/page`. Every `mock page` frame is pinned to Light mode, because a real website keeps its own colours whatever mode the tool is in. Dark copies of 13 screens, each named with "(dark)", sit in a row below the Light screens on the Spacer page.
+- Error screens' page area is bound to `surface/page`. A loaded website always keeps its own colours.
 
 ## Release 1 scope (agreed 29 October, updated 31 October 2026)
 
@@ -169,11 +171,11 @@ Decision: the chip stays centred on the line and overlaps the sections either si
 
 ## Build plan (agreed 2 November)
 
-1. Screens without measuring: landing, small-screen message, control strip and its parts, loading line, both error screens, Light and Dark. Check each against its Figma frame.
+1. Screens without measuring: landing, small-screen message, control strip and its parts, loading line, both error screens. Check each against its Figma frame.
 2. Test pages: one per decided case (4px and 8px gaps, side-by-side sections, an overlapping card, a full-height hero, a late-loading image, internal and external links, no gaps).
 3. Measuring: find sections, measure gaps, draw `gap-marker`s, gap count, Specs switch.
 4. Page changes: re-measure on resize and when the page shifts, the `loader`, the bar animating its width, in-site links.
-5. Final check against Figma at all three breakpoints, both modes, reduced motion on.
+5. Final check against Figma at all three breakpoints, reduced motion on.
 
 Version 2 (Netlify function, any public site) comes after.
 

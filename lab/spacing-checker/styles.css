@@ -23,19 +23,13 @@
   --colour-neutral-5:  #f2f2f2;
   --colour-neutral-10: #e6e6e6;
   --colour-neutral-20: #cccccc;
-  --colour-neutral-30: #b3b3b3;
   --colour-neutral-50: #808080;
-  --colour-neutral-60: #666666;
   --colour-neutral-70: #4d4d4d;
-  --colour-neutral-80: #333333;
   --colour-neutral-90: #1a1a1a;
 
   --colour-violet-5:  #f3effe;
   --colour-violet-10: #ebe4ff;
   --colour-violet-20: #d9caff;
-  --colour-violet-80: #47217b;
-  --colour-violet-90: #22103e;
-  --colour-violet-95: #110721;
 
   --scale-base-0: 0px; --scale-base-1: 1px; --scale-base-2: 2px; --scale-base-4: 4px;
   --scale-base-8: 8px; --scale-base-12: 12px; --scale-base-16: 16px; --scale-base-20: 20px;
@@ -99,31 +93,10 @@
     drop-shadow(4px 7px 4px rgba(0, 0, 0, 0.024))
     drop-shadow(8px 13px 5px rgba(0, 0, 0, 0.006));
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --surface-page:       var(--colour-neutral-90);
-    --surface-chrome:     var(--colour-neutral-80);
-    --text-primary:       var(--colour-neutral-10);
-    --text-secondary:     var(--colour-neutral-20);
-    --icon-primary:       var(--colour-neutral-10);
-    --control-fill-field: var(--colour-neutral-90);
-    --control-segment-track:    var(--colour-neutral-70);
-    --control-segment-selected: var(--colour-neutral-50);
-    --control-segment-hover:    var(--colour-neutral-60);
-    --border-subtle:      var(--colour-neutral-80);
-    --border-focus:       var(--colour-neutral-10);
-    --control-switch-track-off: var(--colour-neutral-70);
-    --control-switch-track-on:  var(--colour-neutral-10);
-    --progress-fill:      var(--colour-neutral-30);
-    --glow-centre:        var(--colour-violet-80);
-    --glow-mid:           var(--colour-violet-90);
-    --glow-edge:          var(--colour-violet-95);
-  }
-}
 
 /* ---------------- BASE ---------------- */
 * { box-sizing: border-box; }
-html { color-scheme: light dark; background: var(--surface-page); }
+html { color-scheme: light; background: var(--surface-page); }   /* Light only */
 body {
   margin: 0;
   min-height: 100vh;
