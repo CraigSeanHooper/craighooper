@@ -114,7 +114,8 @@ What ships on the homepage and 404 is one face: **KMR Melange Grotesk SemiBold**
 | `display-1/lg` · `/sm` | 64 / 60 | 40 / 40 | Headline, 404 "Go home" |
 | `display-2/lg` · `/sm` | 48 / 48 | 24 / 26 | Bio |
 
-Parabole Regular is the body face for lab tools such as the spacing checker. Switching a
+Parabole Regular is the body face for some lab pages (`hero-grid`, `infinite`). The spacing
+checker uses Inter instead (since 7 November; see its own `CLAUDE.md`). Switching a
 typeface is a token change plus a woff2 in `assets/fonts/`.
 
 ## Working with type in Figma (important)

@@ -7,9 +7,14 @@
   font-weight: 425; font-style: normal; font-display: swap;
 }
 @font-face {
-  font-family: "Parabole";
-  src: url("/assets/fonts/Parabole-Regular.woff2") format("woff2");
+  font-family: "Inter";
+  src: url("/assets/fonts/Inter-Regular.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("/assets/fonts/Inter-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;
 }
 
 /* ---------------- PRIMITIVES ---------------- */
@@ -36,9 +41,10 @@
   --scale-base-8: 8px; --scale-base-12: 12px; --scale-base-16: 16px; --scale-base-20: 20px;
   --scale-base-64: 64px;
 
-  --font-family-parabole: "Parabole", "Helvetica Neue", Arial, sans-serif;
+  --font-family-inter:    "Inter", "Helvetica Neue", Arial, sans-serif;
   --font-family-exposure: "Exposure", "Helvetica Neue", Arial, sans-serif;
   --font-weight-regular: 400;
+  --font-weight-semibold: 600;
   --font-weight-exposure: 425;   /* Exposure's single cut */
 }
 
@@ -59,11 +65,12 @@
   --stroke-sm: var(--scale-base-1);
   --stroke-md: var(--scale-base-2);
 
-  --font-size-14: 14px; --font-size-32: 32px;
-  --line-height-20: 20px; --line-height-34: 34px;
+  --font-size-12: 12px; --font-size-14: 14px; --font-size-32: 32px;
+  --line-height-18: 18px; --line-height-20: 20px; --line-height-34: 34px;
   --letter-spacing-body: 0; --letter-spacing-heading: -0.5px;
-  --font-family-body: var(--font-family-parabole);
+  --font-family-body: var(--font-family-inter);
   --font-style-body:  var(--font-weight-regular);
+  --font-style-body-semibold: var(--font-weight-semibold);
 
   --surface-page:       var(--colour-neutral-0);
   --surface-chrome:     var(--colour-neutral-5);
@@ -128,8 +135,10 @@ h1, p { margin: 0; }
 button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
 
 /* ---------------- TEXT STYLES ---------------- */
-/* spacer/heading: local to the Lab file, sizes from Foundations */
-.spacer-heading {
+/* Local "interface" styles in the Lab file, sizes from Foundations.
+   Standard Inter: no stylistic alternates. */
+/* interface/heading */
+.interface-heading {
   font-family: var(--font-family-exposure);
   font-weight: var(--font-weight-exposure);
   font-size: var(--font-size-32);
@@ -138,13 +147,30 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
   color: var(--text-primary);
   text-align: center;
 }
-/* body/sm/lg */
-.body-sm {
+/* interface/body/sm/lg */
+.interface-body-sm {
   font-family: var(--font-family-body);
   font-weight: var(--font-style-body);
   font-size: var(--font-size-14);
   line-height: var(--line-height-20);
   letter-spacing: var(--letter-spacing-body);
+}
+/* interface/body-semibold/xs/lg: spec chips */
+.interface-body-semibold-xs {
+  font-family: var(--font-family-body);
+  font-weight: var(--font-style-body-semibold);
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-18);
+  letter-spacing: var(--letter-spacing-body);
+}
+/* interface/link/sm/lg: "Go back to the last page." */
+.interface-link-sm {
+  font-family: var(--font-family-body);
+  font-weight: var(--font-style-body);
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
+  letter-spacing: var(--letter-spacing-body);
+  text-decoration: underline;
 }
 
 /* ---------------- SCREENS ---------------- */
@@ -182,7 +208,7 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
 
 /* heading + controls, and the small-screen message: 370 wide, centred */
 .stack,
-.small-screen .spacer-heading {
+.small-screen .interface-heading {
   position: relative;
   width: 370px;
 }

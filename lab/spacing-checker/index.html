@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
   <link rel="preload" href="/assets/fonts/Exposure10.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="/assets/fonts/Parabole-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -21,7 +21,7 @@
     <div class="glow" aria-hidden="true"></div>
 
     <div class="stack">
-      <h1 class="spacer-heading">Spacing checker</h1>
+      <h1 class="interface-heading">Spacing checker</h1>
 
       <div class="controls">
         <div class="selector" data-smooth="" role="group" aria-label="Breakpoint">
@@ -45,7 +45,7 @@
         </div>
 
         <form class="field" data-smooth="edge ring" autocomplete="off">
-          <input class="body-sm" type="text" name="url" inputmode="url" spellcheck="false"
+          <input class="interface-body-sm" type="text" name="url" inputmode="url" spellcheck="false"
                  placeholder="You know what to do..." aria-label="Page address" />
           <button class="go" data-smooth="ring" type="submit" aria-label="Check spacing">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -66,10 +66,10 @@
     <div class="bar-area">
       <div class="strip" data-smooth="">
         <!-- the breakpoint selector is copied in here from the landing screen -->
-        <span class="width body-sm" aria-label="Width being measured"></span>
+        <span class="width interface-body-sm" aria-label="Width being measured"></span>
 
         <form class="field" data-smooth="edge ring" autocomplete="off">
-          <input class="body-sm" type="text" name="url" inputmode="url" spellcheck="false"
+          <input class="interface-body-sm" type="text" name="url" inputmode="url" spellcheck="false"
                  placeholder="You know what to do..." aria-label="Page address" />
           <button class="go" data-smooth="ring" type="submit" aria-label="Check spacing">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -80,7 +80,7 @@
         </form>
 
         <button class="switch" type="button" role="switch" aria-checked="true">
-          <span class="body-sm">Specs</span>
+          <span class="interface-body-sm">Specs</span>
           <span class="track" aria-hidden="true"><span class="knob"></span></span>
         </button>
       </div>
@@ -90,7 +90,7 @@
   <!-- Under 1024 wide: Figma "canvas - desktop - message" (4567:213) -->
   <div class="screen small-screen">
     <div class="glow" aria-hidden="true"></div>
-    <p class="spacer-heading">Not optimized for phones or small screens</p>
+    <p class="interface-heading">Not optimized for phones or small screens</p>
   </div>
 
   <script src="script.js"></script>
