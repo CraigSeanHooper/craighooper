@@ -228,6 +228,7 @@
       -webkit-appearance: none; box-sizing: border-box; width: var(--handle-width); height: var(--handle-height);
       margin-top: calc((var(--track) - var(--handle-height)) / 2); border-radius: var(--radius-full);
       background: var(--control-fill-field); border: var(--stroke-sm) solid var(--control-handle-border);
+      box-shadow: none;   /* iPhone Safari adds its own shadow otherwise */
     }
     input[type="range"]::-moz-range-thumb {
       box-sizing: border-box; width: var(--handle-width); height: var(--handle-height); border-radius: var(--radius-full);
