@@ -276,7 +276,7 @@
       $("preview").hidden = false;
       $("download").disabled = false;
       var w = img.naturalWidth, h = img.naturalHeight;
-      setStatus(w + " × " + h + (matchMedia("(pointer: fine)").matches ? " · press and hold the photo to see the original" : ""));
+      setStatus(w + " × " + h + (matchMedia("(pointer: fine)").matches ? " · press and hold the photo to see the original" : ""), true);
       $("preview").width = 0;   // force a resize on the next update
       update();
     };
@@ -304,7 +304,8 @@
   }
 
   // ---------- controls ----------
-  function setStatus(t) { $("status").textContent = t; }
+  // `size` marks the photo-size line, which phones don't show (Figma); messages always show
+  function setStatus(t, size) { $("status").textContent = t; $("status").classList.toggle("size", !!size); }
 
   // Sizes a field to fit the longest value it can hold, so every box of the
   // same kind is the same width (the font's digits and letters vary in width,

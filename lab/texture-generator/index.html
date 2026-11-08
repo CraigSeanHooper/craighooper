@@ -343,13 +343,15 @@
     .dialog { --r: var(--radius-lg); display: flex; flex-direction: column; padding: calc(var(--space-300) + var(--stroke-sm)); }   /* 24 inside the 1px outline, as in Figma */
     .dialog .btn { width: 100%; margin-top: var(--space-300); }
 
-    #preview { display: block; user-select: none; -webkit-user-select: none; }
+    #preview { display: block; max-width: 100%; max-height: 100%; user-select: none; -webkit-user-select: none; }   /* never larger than its space, even before effects.js sizes it */
     #preview[hidden] { display: none; }
     .status { position: absolute; left: 0; right: 0; bottom: var(--space-200); text-align: center; color: var(--text-muted); font-size: var(--font-size-12); line-height: var(--line-height-18); }
 
     /* ---------- mobile, below 1024: bottom bar, sheets, avatar over the photo ---------- */
     @media (max-width: 1023px) {
       .app { display: block; }
+      /* the page itself never scrolls or bounces: everything is fixed in place */
+      html, body { overflow: hidden; overscroll-behavior: none; }
 
       /* the rail becomes a bar along the bottom: same buttons, same order, spread evenly */
       .rail {
@@ -369,8 +371,10 @@
       /* the photo fills the space above the bar, clear of the avatar */
       .stage {
         position: fixed; left: 0; right: 0; top: 0; bottom: calc(var(--bar-height) + env(safe-area-inset-bottom));
-        padding: var(--header-height) var(--space-200) 0;
+        padding: var(--header-height) var(--space-200) var(--space-200);   /* 16 clear of the bar or sheet */
+        touch-action: none;   /* dragging on the photo doesn't move the page */
       }
+      .status.size { display: none; }   /* no photo size on phones, as in Figma */
       /* with a sheet up, the photo centres between the avatar and the sheet */
       body:has(.panel:not([hidden]):not([data-closing])) .stage,
       body:has(.dialog-wrap:not([hidden]):not([data-closing])) .stage { bottom: calc(var(--bar-height) + env(safe-area-inset-bottom) + var(--sheet-height)); }
@@ -573,6 +577,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=53"></script>
+  <script src="effects.js?v=54"></script>
 </body>
 </html>
