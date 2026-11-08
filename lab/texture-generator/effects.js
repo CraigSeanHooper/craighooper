@@ -245,13 +245,15 @@
     });
   }
 
+  var PHOTO_SHARE = 530 / 840;   // Figma: photo-loaded frames, desktop (Craig, 8 November: "smaller, like Figma")
   function fitPreview() {
     var c = $("preview");
     if (!previewBase) return;
-    if (window.innerWidth < 820) { c.style.width = "100%"; c.style.height = "auto"; return; }
     var stage = $("stage"), cs = getComputedStyle(stage);
     var aw = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     var ah = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    // desktop: the photo stays as tall as in Craig's frames at most (530 of 840), centred with room around it
+    if (!MOBILE.matches) ah = Math.min(ah, stage.clientHeight * PHOTO_SHARE);
     var k = Math.min(aw / c.width, ah / c.height);
     c.style.width = Math.floor(c.width * k) + "px";
     c.style.height = Math.floor(c.height * k) + "px";
@@ -310,6 +312,7 @@
   var measurer = document.createElement("canvas").getContext("2d");
   var widthCache = {};
   function fitText(el) {
+    if (!/-hex$/.test(el.id)) return;   // number boxes are a fixed 48px; only hex codes are fitted
     var cs = getComputedStyle(el), font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
     var hexField = /-hex$/.test(el.id), key = font + (hexField ? "hex" : "num");
     if (!widthCache[key]) {
@@ -390,7 +393,7 @@
     // one row of preset buttons; their chips are redrawn for the current mode in syncControls
     PRESETS.forEach(function (p, i) {
       var b = document.createElement("button");
-      b.type = "button"; b.className = "preset";
+      b.type = "button"; b.className = "preset sq";
       b.innerHTML = '<span class="chips"></span>';
       b.addEventListener("click", function () {
         if (s.mode === "tri") { s.dark = PRESETS[i][0]; s.mid = PRESETS[i][1]; s.light = PRESETS[i][2]; }
@@ -399,12 +402,12 @@
       });
       $("presets").appendChild(b);
     });
-    $("reset").addEventListener("click", function () { var f = s.format; s = JSON.parse(JSON.stringify(DEFAULTS)); s.format = f; syncControls(); update(); });
 
     var file = $("file");
     $("choose").addEventListener("click", function () { file.click(); });
+    $("choose-start").addEventListener("click", function () { file.click(); });
     file.addEventListener("change", function () { loadFile(file.files[0]); file.value = ""; });
-    $("download").addEventListener("click", download);
+    $("export-download").addEventListener("click", download);
 
     var stage = $("stage");
     stage.addEventListener("dragover", function (e) { e.preventDefault(); stage.classList.add("drop"); });
@@ -431,15 +434,191 @@
       if (e.key === "d") { e.preventDefault(); download(); }
     });
     window.addEventListener("resize", fitPreview);
+    // the photo area changes size when the panel opens or closes
+    if ("ResizeObserver" in window) new ResizeObserver(fitPreview).observe(stage);
+  }
+
+  // ---------- rail and panel ----------
+  // A section icon opens the panel scrolled to that section; with the panel
+  // open it scrolls there instead; clicking the selected icon closes the panel.
+  // Scrolling the panel by hand moves the selection to the section in view.
+  function initRail() {
+    var app = document.querySelector(".app"), panel = $("panel"), body = $("panel-body");
+    var buttons = Array.prototype.slice.call(document.querySelectorAll(".rail-btn[data-section]"));
+    var names = buttons.map(function (b) { return b.dataset.section; });
+    var current = null, jumping = false, jumpTimer = 0;
+    var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
+    function select(name) {
+      current = name;
+      if (name) panel.dataset.section = name; else delete panel.dataset.section;   // phones show only this section
+      buttons.forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.section === name); });
+    }
+    function topOf(name) { return $("sec-" + name).offsetTop - parseFloat(getComputedStyle(body).paddingTop); }
+    // While the panel scrolls itself to a section, the selection stays on the
+    // section clicked (the last ones can't reach the top of the panel).
+    function jumpTo(name, smooth) {
+      if (MOBILE.matches) { body.scrollTop = 0; return; }   // one section at a time: start at its top
+      smooth = smooth && !reduceMotion.matches;
+      jumping = true; clearTimeout(jumpTimer);
+      body.scrollTo({ top: topOf(name), behavior: smooth ? "smooth" : "auto" });
+      jumpTimer = setTimeout(function () { jumping = false; }, smooth ? 700 : 50);
+    }
+    function open(name) { showSheet(panel); app.classList.add("open"); select(name); jumpTo(name, false); }
+    function close(instant) { hideSheet(panel, instant); app.classList.remove("open"); select(null); }
+
+    buttons.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var name = b.dataset.section;
+        if (!isShown(panel)) open(name);
+        else if (name === current) close();
+        else { select(name); jumpTo(name, true); }
+      });
+    });
+
+    // the person takes over scrolling: follow them again straight away
+    ["wheel", "touchstart", "pointerdown", "keydown"].forEach(function (t) {
+      body.addEventListener(t, function () { jumping = false; }, { passive: true });
+    });
+    body.addEventListener("scroll", function () {
+      if (jumping || !isShown(panel) || MOBILE.matches) return;   // phones: scrolling stays within one section
+      // The marker line slides from the top of the panel to the bottom as it
+      // scrolls, so every section gets selected on the way down, even the
+      // last ones that can never reach the top.
+      var max = Math.max(1, body.scrollHeight - body.clientHeight);
+      var pad = parseFloat(getComputedStyle(body).paddingTop);
+      var line = body.scrollTop + pad + (body.clientHeight - pad) * Math.min(1, body.scrollTop / max);
+      var pick = names[0];
+      names.forEach(function (n) { if ($("sec-" + n).offsetTop <= line + 1) pick = n; });
+      if (pick !== current) select(pick);
+    }, { passive: true });
+
+    // phones: swipe the sheet down to close it
+    swipeToClose(panel, body, close);
+
+    select(null);
+    // the panel starts closed on every screen size
+    return { close: close };
+  }
+
+  // Dragging a bottom sheet down (from the grabber, or from the top of its
+  // scrolled content) moves it with the finger; let go far enough and it closes.
+  // ---------- phone sheets: slide in and out ----------
+  // Rules from Emil Kowalski's gestures skill: the iOS sheet curve (Vaul's) over 500ms,
+  // transitions rather than keyframes so a sheet can be turned around mid-slide, a sheet
+  // leaves the way it came (down), and a quick snap back when a swipe doesn't close it.
+  // Reduced motion: sheets appear and go without sliding. Desktop: no slide at all.
+  var SHEET_EASE = "cubic-bezier(0.32, 0.72, 0, 1)", SNAP_EASE = "cubic-bezier(0.23, 1, 0.32, 1)";
+  var REDUCE = matchMedia("(prefers-reduced-motion: reduce)");
+  function animates() { return MOBILE.matches && !REDUCE.matches; }
+  function settle(el) { el.style.transition = ""; el.style.transform = ""; }
+  function slide(el, to, ms, ease, done) {
+    var token = (el._slide || 0) + 1; el._slide = token;
+    el.style.transition = "transform " + ms + "ms " + ease;
+    el.style.transform = "translateY(" + to + ")";
+    var finish = function () { if (el._slide !== token) return; el._slide++; done && done(); };
+    el.addEventListener("transitionend", function te(e) { if (e.target === el) { el.removeEventListener("transitionend", te); finish(); } });
+    setTimeout(finish, ms + 80);   // in case transitionend never fires
+  }
+  function isShown(el) { return !el.hidden && !el.dataset.closing; }
+  function showSheet(el) {
+    var wasClosing = !!el.dataset.closing;
+    delete el.dataset.closing;
+    el.hidden = false;
+    if (!animates()) { el._slide = (el._slide || 0) + 1; settle(el); return; }
+    if (!wasClosing) {   // start below the bar; mid-close it turns around from where it is
+      el.style.transition = "none"; el.style.transform = "translateY(100%)"; el.offsetHeight;
+    }
+    slide(el, "0px", 500, SHEET_EASE, function () { settle(el); });
+  }
+  function hideSheet(el, instant) {
+    if (el.hidden) return;
+    if (instant || !animates()) { el._slide = (el._slide || 0) + 1; delete el.dataset.closing; el.hidden = true; settle(el); return; }
+    el.dataset.closing = "1";
+    slide(el, "100%", 500, SHEET_EASE, function () { delete el.dataset.closing; el.hidden = true; settle(el); });
+  }
+  function resetSheetsOnResize() {   // crossing the phone/desktop line mid-slide: finish at once
+    MOBILE.addEventListener("change", function () {
+      document.querySelectorAll(".panel, .dialog-wrap").forEach(function (el) {
+        el._slide = (el._slide || 0) + 1; settle(el);
+        if (el.dataset.closing) { delete el.dataset.closing; el.hidden = true; }
+      });
+    });
+  }
+
+  // Swipe down to close. The sheet follows the finger exactly; on release it closes if
+  // dragged 40% of its height or flicked down quickly, otherwise it snaps back.
+  function swipeToClose(sheet, scroller, onClose) {
+    var startY = null, dy = 0, lastY = 0, lastT = 0, speed = 0;
+    sheet.addEventListener("touchstart", function (e) {
+      if (!MOBILE.matches || e.touches.length !== 1 || sheet.dataset.closing) return;
+      var fromGrabber = e.target.classList.contains("grabber");
+      startY = (fromGrabber || !scroller || scroller.scrollTop <= 0) ? e.touches[0].clientY : null;
+      dy = 0; speed = 0; lastY = startY; lastT = e.timeStamp;
+    }, { passive: true });
+    sheet.addEventListener("touchmove", function (e) {
+      if (startY === null) return;
+      var y = e.touches[0].clientY;
+      dy = y - startY;
+      if (e.timeStamp > lastT) { speed = (y - lastY) / (e.timeStamp - lastT); lastY = y; lastT = e.timeStamp; }
+      if (dy <= 0) { sheet.style.transition = "none"; sheet.style.transform = ""; if (dy < -4) startY = null; return; }   // dragging up scrolls as usual
+      if (e.cancelable) e.preventDefault();
+      sheet._slide = (sheet._slide || 0) + 1;   // the finger takes over from any slide in progress
+      sheet.style.transition = "none";
+      sheet.style.transform = "translateY(" + dy + "px)";
+    }, { passive: false });
+    function end() {
+      if (startY === null) return;
+      startY = null;
+      if (dy <= 0) { settle(sheet); return; }
+      if (dy > sheet.offsetHeight * 0.4 || speed > 0.5) onClose();   // 0.5px per ms = a flick
+      else if (REDUCE.matches) settle(sheet);
+      else slide(sheet, "0px", 200, SNAP_EASE, function () { settle(sheet); });
+    }
+    sheet.addEventListener("touchend", end);
+    sheet.addEventListener("touchcancel", function () { startY = null; settle(sheet); });
+  }
+
+  // ---------- Export dialog ----------
+  // The rail's Download button opens it (and shows as selected while it's
+  // open); clicking it again, Esc, or a click anywhere outside closes it.
+  // The dialog's own Download button saves the file and closes it.
+  function initExport(rail) {
+    var wrap = $("export-dialog"), railBtn = $("download");
+    function isOpen() { return isShown(wrap); }
+    function open() {
+      if (MOBILE.matches) rail.close(true);   // on phones only one sheet shows at a time: swap without a slide out
+      showSheet(wrap); railBtn.setAttribute("aria-pressed", "true");
+      var chosen = wrap.querySelector('#format [aria-pressed="true"]');
+      if (chosen) chosen.focus();   // keyboard users land inside the dialog
+    }
+    function close(backToRail, instant) {
+      if (!isOpen()) return;
+      hideSheet(wrap, instant); railBtn.setAttribute("aria-pressed", "false");
+      if (backToRail) railBtn.focus();
+    }
+    railBtn.setAttribute("aria-pressed", "false");
+    railBtn.addEventListener("click", function () { if (isOpen()) close(); else open(); });
+    $("export-download").addEventListener("click", function () { close(); });
+    swipeToClose(wrap, null, function () { close(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && isOpen() && e.target.tagName !== "INPUT") { e.preventDefault(); close(true); }
+    });
+    // a click outside the dialog closes it (the rail button handles its own toggle)
+    document.addEventListener("pointerdown", function (e) {
+      if (isOpen() && !wrap.contains(e.target) && !railBtn.contains(e.target)) close(false, !!e.target.closest(".rail"));   // tapping another bar icon swaps sheets without a slide out
+    }, true);
   }
 
   // ---------- squircle corners ----------
   // Smoothed ("squircle") corners, using the same geometry as Figma's corner
   // smoothing at 100%. Each .sq element gets its outline and a 1px-inset copy
   // as clip paths; CSS uses them to draw a crisp 1px border with smooth corners.
-  function squirclePath(w, h, radius) {
+  // `o` shifts the shape up and left, for the focus ring that sits outside the edge.
+  function squirclePath(w, h, radius, o) {
+    o = o || 0;
     var budget = Math.min(w, h) / 2, r = Math.min(radius, budget), sm = 1;
-    if (r <= 0) return "M0 0 H" + w + " V" + h + " H0 Z";
+    if (r <= 0) return "M" + -o + " " + -o + " H" + (w - o) + " V" + (h - o) + " H" + -o + " Z";
     var rad = function (deg) { return deg * Math.PI / 180; };
     var p = (1 + sm) * r;
     var arcMeasure = 90 * (1 - sm);
@@ -457,19 +636,19 @@
     var f = function (n) { return +n.toFixed(3); };
     var abc = a + b + c, bc = b + c, ab = a + b;
     return [
-      "M", f(w - p), 0,
+      "M", f(w - p - o), f(-o),
       "c", f(a), 0, f(ab), 0, f(abc), f(d),
       "a", f(r), f(r), 0, 0, 1, f(arc), f(arc),
       "c", f(d), f(c), f(d), f(bc), f(d), f(abc),
-      "L", f(w), f(h - p),
+      "L", f(w - o), f(h - p - o),
       "c", 0, f(a), 0, f(ab), f(-d), f(abc),
       "a", f(r), f(r), 0, 0, 1, f(-arc), f(arc),
       "c", f(-c), f(d), f(-bc), f(d), f(-abc), f(d),
-      "L", f(p), f(h),
+      "L", f(p - o), f(h - o),
       "c", f(-a), 0, f(-ab), 0, f(-abc), f(-d),
       "a", f(r), f(r), 0, 0, 1, f(-arc), f(-arc),
       "c", f(-d), f(-c), f(-d), f(-bc), f(-d), f(-abc),
-      "L", 0, f(p),
+      "L", f(-o), f(p - o),
       "c", 0, f(-a), 0, f(-ab), f(d), f(-abc),
       "a", f(r), f(r), 0, 0, 1, f(arc), f(-arc),
       "c", f(c), f(-d), f(bc), f(-d), f(abc), f(-d),
@@ -478,30 +657,46 @@
   }
 
   function radiusOf(el) {
-    if (el.type === "color") return 5;
-    return 8;
+    if (el.type === "color") return 4;   // radius/xs on the colour swatch
+    if (el.classList.contains("dialog") || el.classList.contains("sq-sheet")) return 16;   // radius/lg
+    return 8;                            // radius/sm everywhere else
   }
 
+  // Below 1024 the Export dialog and the section panel are bottom sheets:
+  // only their top corners are rounded. The shape is drawn taller than the
+  // sheet, so its bottom corners fall outside and get cut off.
+  var MOBILE = matchMedia("(max-width: 1023px)");
+  function topOnly(el) { return MOBILE.matches && (el.classList.contains("dialog") || el.classList.contains("sq-sheet")); }
+
+  var RING = 2;   // focus ring width, outside the edge
   function shape(el) {
     var w = el.offsetWidth, h = el.offsetHeight, r = radiusOf(el);
     if (!w || !h) return;
-    el.style.setProperty("--sq-outer", "path('" + squirclePath(w, h, r) + "')");
-    el.style.setProperty("--sq-inner", "path('" + squirclePath(w - 2, h - 2, r - 1) + "')");
+    var hh = topOnly(el) ? h + r * 2 : h;
+    el.style.setProperty("--sq-outer", "path('" + squirclePath(w, hh, r) + "')");
+    el.style.setProperty("--sq-inner", "path('" + squirclePath(w - 2, hh - 2, r - 1) + "')");
+    var ring = squirclePath(w + RING * 2, h + RING * 2, r + RING, RING);
+    el.style.setProperty("--sq-ring", "path('" + ring + "')");
+    // the band alone, in ::after's own coordinates (it starts 2px up and left):
+    // the ring's outline with the element's outline cut out of it
+    el.style.setProperty("--sq-band", "path(evenodd, '" + squirclePath(w + RING * 2, h + RING * 2, r + RING) + " " + squirclePath(w, h, r, -RING) + "')");
   }
 
   function initSquircles() {
-    var els = document.querySelectorAll(".sq, input[type=color]");
+    var els = document.querySelectorAll(".sq, .sq-sheet, input[type=color]");
     var ro = "ResizeObserver" in window ? new ResizeObserver(function (entries) { entries.forEach(function (e) { shape(e.target); }); }) : null;
     els.forEach(function (el) { shape(el); if (ro) ro.observe(el); });
+    MOBILE.addEventListener("change", function () { els.forEach(shape); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { els.forEach(shape); });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     bind();
+    initExport(initRail());
+    resetSheetsOnResize();
     syncControls();
     initSquircles();
-    // start with a sample photo from the gallery, so the controls are live straight away
-    loadImage("sample.jpg", "dead-rat");
+    // start empty: no photo until one is chosen, dropped or pasted (the + in the middle asks for one)
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncControls);   // re-measure hex fields once the font is in
   });
 })();
