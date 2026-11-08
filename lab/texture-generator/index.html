@@ -271,7 +271,7 @@
       position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--surface-page);
       display: grid; place-items: center; padding: var(--space-500);   /* photo centred in the space left over */
     }
-    .start-add { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); }   /* middle of the screen, as in the frames */
+    .start-add { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }   /* middle of the photo area, beside the rail or the panel */
     #preview:not([hidden]) ~ .start-add { display: none; }
     .stage.drop { box-shadow: inset 0 0 0 2px var(--drop-outline); }   /* photos can still be dropped or pasted here */
     /* Export dialog: centred over the photo area. The wrapper carries the
@@ -305,6 +305,7 @@
       }
       .rail-top, .rail-sections { display: contents; }
       .rail .avatar { display: none; }
+      .start-add { position: fixed; }   /* phones: middle of the screen, as in the frame */
       .avatar-mobile { display: block; position: fixed; top: var(--space-200); left: var(--space-200); z-index: 1; }
 
       /* the photo fills the space above the bar, clear of the avatar */
