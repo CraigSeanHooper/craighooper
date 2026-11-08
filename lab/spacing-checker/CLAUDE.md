@@ -1,6 +1,6 @@
 # Spacing checker — project knowledge
 
-Last updated 7 November 2026.
+Last updated 8 November 2026.
 
 The tool's code lives in this folder, `lab/spacing-checker/`, served at
 craighooper.xyz/lab/spacing-checker/. The site-wide rules in the repo root's `CLAUDE.md`
@@ -81,7 +81,7 @@ All values come from Foundations (fileKey `ToLD1LsCFuUnQQQySDPCOI`). The tool us
 - `glow/centre`, `glow/mid` and `glow/edge` are the glow's gradient stops, fixed at 100%, 70% and 0% opacity within the gradient. violet/20, violet/10, violet/5 (a deeper colour at low opacity gives the centre depth while staying faint). Primitives such as violet are hidden from Figma's pickers (scopes off), so they're always used through semantic tokens like these.
 - `spec/fill` is the spec chip fill (`colour/accent/red`, #EF4444); chip text is `text/on-dark`.
 - `border/focus` is the focus ring (neutral/90), at `stroke/md` (2px), outside the edge.
-- `progress/fill` is the loading line and the loader's arc: neutral/50. `progress/track` is `colour/transparent` (a new Foundations primitive), so there's no visible track. The loader in the bar shares both tokens.
+- `progress/fill` is the loading line and the loader's arc: neutral/50. `progress/track` is `colour/black-alpha/0` (black at 0%; renamed from `colour/transparent` on 8 November, now the first step of the `colour/black-alpha/0` to `95` ramp), so there's no visible track. The loader in the bar shares both tokens.
 - Effect styles: `shadow/xs` on the control strip, `shadow/sm` on the input component (but `shadow/xs` on the landing screen's input, an override the build follows).
 
 Foundations has no disabled tokens. None are needed for release 1.
