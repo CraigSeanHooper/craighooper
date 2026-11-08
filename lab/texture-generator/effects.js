@@ -699,7 +699,7 @@
   // ---------- rail tooltips (desktop only) ----------
   // Each rail button's name, 16px to its right. After a short hover delay; once one has
   // shown, moving to the next button shows its tooltip straight away. Keyboard focus shows
-  // it at once. Hides on mouse leave, blur, a click, or Esc, and fades away by itself after 3 seconds.
+  // it at once. Hides on mouse leave, blur, a click, or Esc, and fades away by itself after 2.5 seconds.
   function initTooltips() {
     var tip = $("tooltip"), box = tip.firstElementChild, timer = 0, coolTimer = 0, lifeTimer = 0, fadeTimer = 0, warm = false, current = null;
     var buttons = Array.prototype.slice.call(document.querySelectorAll(".rail .rail-btn"));
@@ -715,7 +715,7 @@
       if (tip.hidden) { tip.classList.remove("on"); tip.hidden = false; tip.offsetHeight; }
       tip.classList.add("on");
       current = btn; warm = true;
-      lifeTimer = setTimeout(fadeAway, 3000);
+      lifeTimer = setTimeout(fadeAway, 2500);
     }
     function fadeAway() {
       if (!current) return;
