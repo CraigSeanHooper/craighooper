@@ -167,6 +167,8 @@
     .panel[hidden] { display: none; }
     .panel-sheet { display: flex; flex-direction: column; flex: 1; min-height: 0; background: var(--surface-page); }
     .grabber { display: none; }
+    /* fixed header above the scrolling sections: close-panel button at the top right, 24 in */
+    .panel-head { display: flex; justify-content: flex-end; flex: none; padding: var(--space-300) var(--space-300) 0; }
     .panel-body, .dialog { color: var(--text-secondary); }   /* labels, hex codes, values, Format */
     .input input[type="text"] { color: inherit; }
     .panel-body { position: relative; flex: 1; overflow-y: auto; padding: var(--space-300); }
@@ -176,7 +178,6 @@
       color: var(--text-primary); font-size: var(--font-size-12); line-height: var(--line-height-18); font-weight: 600;
     }
     .heading .icon { width: var(--icon-sm); height: var(--icon-sm); }
-    .dialog .heading .icon { display: none; }   /* the desktop dialog's heading has no icon */
 
     .field + .field { margin-top: var(--space-200); }
     .field-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-100); }
@@ -332,6 +333,7 @@
       .panel[data-section="effects"] #sec-effects,
       .panel[data-section="texture"] #sec-texture { display: block; }
       .panel-sheet, .dialog { --r: var(--radius-lg); clip-path: var(--sq-outer, inset(0 0 -16px 0 round var(--radius-lg))); padding-top: var(--space-100); }
+      .panel-head { display: none; }   /* phones close the sheet by its icon or a swipe */
       .grabber {
         display: block; flex: none; width: var(--grabber-width); height: var(--grabber-height); margin: 0 auto;
         border-radius: calc(var(--grabber-height) / 2); background: var(--control-fill-open);
@@ -348,7 +350,6 @@
       /* the Export sheet: same content as the desktop dialog, as tall as the section sheets */
       .dialog { --sq-line: var(--surface-page); padding: var(--space-100) var(--space-200) var(--space-200); }
       .dialog { height: var(--sheet-height); }   /* same height as the section sheets */
-      .dialog .heading .icon { display: block; }   /* the download icon beside Export, as on the other sheets */
       .dialog .grabber { margin-bottom: var(--space-200); }
       .dialog #quality-field { margin-bottom: var(--space-200); }
       .dialog .btn { margin-top: auto; }   /* Download sits at the bottom of the sheet */
@@ -367,6 +368,7 @@
     <symbol id="i-adjust" viewBox="0 0 24 24"><path d="M4.75 8H7.25"/><path d="M12.75 8H19.25"/><path d="M4.75 16H12.25"/><path d="M17.75 16H19.25"/><path d="M12.25 8C12.25 9.24264 11.2426 10.25 10 10.25C8.75736 10.25 7.75 9.24264 7.75 8C7.75 6.75736 8.75736 5.75 10 5.75C11.2426 5.75 12.25 6.75736 12.25 8Z"/><path d="M17.25 16C17.25 17.2426 16.2426 18.25 15 18.25C13.7574 18.25 12.75 17.2426 12.75 16C12.75 14.7574 13.7574 13.75 15 13.75C16.2426 13.75 17.25 14.7574 17.25 16Z"/></symbol>
     <symbol id="i-effects" viewBox="0 0 24 24"><path d="M12.7889 8.7361L16.1973 5.32786C16.9167 4.60838 18.054 4.57915 18.7374 5.26256C19.4209 5.94598 19.3916 7.08325 18.6721 7.80273L15.2374 11.2374"/><path d="M12.3335 8.33347L15.6665 11.6665C16.4153 12.4153 16.4507 13.618 15.7471 14.4095L15 15.25L8.75 9L9.59053 8.25286C10.382 7.54933 11.5847 7.58468 12.3335 8.33347Z"/><path d="M9 10L4.75 12.75L11.25 19.25L14 15"/><path d="M7 15L8.25 13.75"/></symbol>
     <symbol id="i-texture" viewBox="0 0 24 24"><path d="M13.25 18.25H5.75M13.25 18.25V5.75M13.25 18.25H14.25M5.75 18.25V5.75M5.75 18.25H4.75M5.75 5.75H13.25M5.75 5.75H4.75M13.25 5.75H14.25M15.75 7.75H18.25C18.8023 7.75 19.25 8.19772 19.25 8.75V11L17.25 12.25V15.25C17.25 15.8023 16.8023 16.25 16.25 16.25H15.75"/></symbol>
+    <symbol id="i-sidebar" viewBox="0 0 24 24"><path d="M6.75 19.25H17.2502C18.3548 19.25 19.2502 18.3546 19.2502 17.25V6.75C19.2502 5.64543 18.3548 4.75 17.2502 4.75H6.75C5.64543 4.75 4.75 5.64543 4.75 6.75V17.25C4.75 18.3546 5.64543 19.25 6.75 19.25Z"/><path d="M8.25 16.25V7.75"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M4.75 14.75V16.25C4.75 17.9069 6.09315 19.25 7.75 19.25H16.25C17.9069 19.25 19.25 17.9069 19.25 16.25V14.75"/><path d="M12 14.25V4.75"/><path d="M8.75 10.75L12 14.25L15.25 10.75"/></symbol>
   </svg>
 
@@ -392,6 +394,9 @@
     <aside class="panel" id="panel" aria-label="Controls" hidden>
       <div class="panel-sheet sq-sheet">
       <div class="grabber" aria-hidden="true"></div>
+      <div class="panel-head">
+        <button type="button" class="rail-btn sq" id="close-panel" aria-label="Close panel" title="Close panel"><svg class="icon" aria-hidden="true"><use href="#i-sidebar"/></svg></button>
+      </div>
       <div class="panel-body" id="panel-body">
         <section class="section stack" id="sec-colour">
           <h2 class="heading"><svg class="icon" aria-hidden="true"><use href="#i-colour"/></svg>Colour</h2>
@@ -498,6 +503,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=48"></script>
+  <script src="effects.js?v=49"></script>
 </body>
 </html>

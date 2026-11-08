@@ -466,6 +466,12 @@
     }
     function open(name) { showSheet(panel); app.classList.add("open"); select(name); jumpTo(name, false); }
     function close(instant) { hideSheet(panel, instant); app.classList.remove("open"); select(null); }
+    // the close-panel button in the panel's header; focus goes back to the rail icon that was selected
+    $("close-panel").addEventListener("click", function () {
+      var was = current && document.querySelector('.rail-btn[data-section="' + current + '"]');
+      close();
+      if (was) was.focus();
+    });
 
     buttons.forEach(function (b) {
       b.addEventListener("click", function () {
