@@ -336,8 +336,10 @@
     });
     $("mid-row").hidden = s.mode !== "tri";
     var set = s.mode === "tri" ? PRESETS : DUO_PRESETS;
+    var current = (s.mode === "tri" ? [s.dark, s.mid, s.light] : [s.dark, s.light]).join().toLowerCase();
     $("presets").querySelectorAll(".preset").forEach(function (b, i) {
       b.setAttribute("aria-label", "Use colours " + set[i].join(", "));
+      b.setAttribute("aria-pressed", set[i].join().toLowerCase() === current);   // the stroke marks the preset in use
       b.firstChild.innerHTML = set[i].map(function (c) { return '<i style="background:' + c + '"></i>'; }).join("");
     });
     $("colours").dataset.off = s.mode === "original";
@@ -362,6 +364,20 @@
         s[k] = v; slider.value = v; box.value = v; fitText(box); fill(slider);
         if (k !== "quality") update();
       }
+      // touch: press anywhere along the slider and drag, rather than having to hit the
+      // small handle (phone browsers only move a slider by its handle)
+      function fromX(x) {
+        var r = slider.getBoundingClientRect(), hw = parseFloat(getComputedStyle(slider).getPropertyValue("--handle-width"));
+        var t = Math.min(1, Math.max(0, (x - r.left - hw / 2) / (r.width - hw)));
+        var min = +slider.min, max = +slider.max, v = Math.round(min + t * (max - min));
+        if (v !== +slider.value) { slider.value = v; slider.dispatchEvent(new Event("input")); }
+      }
+      slider.addEventListener("touchstart", function (e) { if (!slider.disabled && e.cancelable) e.preventDefault(); }, { passive: false });   // keeps the browser's own handle-only drag out of it
+      slider.addEventListener("pointerdown", function (e) {
+        if (e.pointerType === "mouse" || slider.disabled) return;
+        fromX(e.clientX); slider.setPointerCapture(e.pointerId);
+      });
+      slider.addEventListener("pointermove", function (e) { if (slider.hasPointerCapture(e.pointerId)) fromX(e.clientX); });
       box.addEventListener("input", function () { box.value = box.value.replace(/[^0-9-]/g, ""); fitText(box); });
       box.addEventListener("change", function () { commit(box.value); });
       box.addEventListener("focus", function () { box.select(); });
@@ -558,6 +574,7 @@
     var startY = null, dy = 0, lastY = 0, lastT = 0, speed = 0;
     sheet.addEventListener("touchstart", function (e) {
       if (!MOBILE.matches || e.touches.length !== 1 || sheet.dataset.closing) return;
+      if (e.target.closest('input[type="range"]')) { startY = null; return; }   // dragging a slider never moves the sheet
       var fromGrabber = e.target.classList.contains("grabber");
       startY = (fromGrabber || !scroller || scroller.scrollTop <= 0) ? e.touches[0].clientY : null;
       dy = 0; speed = 0; lastY = startY; lastT = e.timeStamp;
