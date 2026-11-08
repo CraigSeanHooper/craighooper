@@ -357,8 +357,16 @@
       .panel, .dialog-wrap {
         position: fixed; left: 0; right: 0; top: auto; bottom: calc(var(--bar-height) + env(safe-area-inset-bottom)); z-index: 2;
         width: auto; max-width: none; transform: none;
-        border-right: 0; filter: var(--shadow-md-up);
+        border-right: 0;
         touch-action: pan-y;
+      }
+      /* the shadow sits on its own layer behind the sheet: iPhone Safari drops a shadow
+         from anything with a scrolling area inside, like Colour in Tritone */
+      .panel::before, .dialog-wrap::before {
+        content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+        background: var(--surface-page); clip-path: none;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;   /* hidden under the squircle sheet; only its shadow shows */
+        filter: var(--shadow-md-up);
       }
       /* one section per icon, in a sheet of one fixed height; Colour in Tritone scrolls inside it */
       .panel { height: var(--sheet-height); max-height: calc(100% - var(--bar-height) - env(safe-area-inset-bottom) - var(--header-height)); }
