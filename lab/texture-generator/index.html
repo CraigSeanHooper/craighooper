@@ -84,6 +84,7 @@
       /* Foundations effect style shadow/md-up */
       --shadow-md-up: drop-shadow(0 -3px 9px rgba(0, 0, 0, 0.05)) drop-shadow(0 -10px 16.5px rgba(0, 0, 0, 0.04)) drop-shadow(0 -22px 24px rgba(0, 0, 0, 0.02)) drop-shadow(0 -38px 27px rgba(0, 0, 0, 0.01));
       /* Foundations effect style shadow/lg, as drop shadows so it follows the squircle */
+      --shadow-sm: drop-shadow(1px 1px 2.25px rgba(0, 0, 0, 0.05)) drop-shadow(3px 5px 5.25px rgba(0, 0, 0, 0.04)) drop-shadow(8px 12px 6.75px rgba(0, 0, 0, 0.02)) drop-shadow(14px 22px 8.25px rgba(0, 0, 0, 0.01));   /* shadow/sm */
       --shadow-lg: drop-shadow(3px 4px 15px rgba(0, 0, 0, 0.05)) drop-shadow(10px 16px 28.5px rgba(0, 0, 0, 0.04)) drop-shadow(23px 36px 39px rgba(0, 0, 0, 0.02)) drop-shadow(40px 64px 45px rgba(0, 0, 0, 0.01));
     }
 
@@ -280,6 +281,24 @@
     }
     /* starting screen: "Add photo" over a second +, centred as one block in the free space.
        Panel closed: centred in the window (half the rail's width left of the photo area's centre). */
+    /* rail tooltips (desktop only): dark grey label 16px right of the button, centred on it.
+       The wrapper carries the shadow, so the squircle clip doesn't cut it off. */
+    .tooltip {
+      position: fixed; z-index: 10; pointer-events: none; filter: var(--shadow-sm);
+      opacity: 0; transform: translateY(-50%) scale(0.97); transform-origin: left center;
+      transition: opacity 125ms cubic-bezier(0.23, 1, 0.32, 1), transform 125ms cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .tooltip[hidden] { display: none; }
+    .tooltip.on { opacity: 1; transform: translateY(-50%); }
+    .tooltip.instant { transition: none; }
+    .tooltip.fading { transition: opacity 300ms ease-out; }   /* the slower fade after 3 seconds */
+    .tooltip-box {
+      --sq-line: var(--surface-action); --sq-fill: var(--surface-action);
+      display: block; padding: var(--space-50) var(--space-150); white-space: nowrap;
+      color: var(--text-on-action); font-size: var(--font-size-12); line-height: var(--line-height-18); font-weight: 600;
+    }
+    @media (prefers-reduced-motion: reduce) { .tooltip { transform: translateY(-50%); } }
+
     .start { display: flex; flex-direction: column; align-items: center; gap: var(--space-200); }
     .app:not(.open) .start { transform: translateX(calc(var(--rail-width) / -2)); }
     .start-title {
@@ -388,6 +407,8 @@
     <symbol id="i-download" viewBox="0 0 24 24"><path d="M4.75 14.75V16.25C4.75 17.9069 6.09315 19.25 7.75 19.25H16.25C17.9069 19.25 19.25 17.9069 19.25 16.25V14.75"/><path d="M12 14.25V4.75"/><path d="M8.75 10.75L12 14.25L15.25 10.75"/></symbol>
   </svg>
 
+  <div class="tooltip" id="tooltip" aria-hidden="true" hidden><span class="tooltip-box sq"></span></div>
+
   <div class="app">
     <!-- small screens: avatar top-left, over the photo area -->
     <a class="avatar avatar-mobile" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="40" height="40" /></a>
@@ -397,14 +418,14 @@
       <div class="rail-top">
         <a class="avatar" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="40" height="40" /></a>
         <div class="rail-sections">
-          <button type="button" class="rail-btn outline sq" id="choose" aria-label="Choose photo" title="Choose photo"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
-          <button type="button" class="rail-btn sq" data-section="colour" aria-controls="panel" aria-label="Colour" title="Colour"><svg class="icon" aria-hidden="true"><use href="#i-colour"/></svg></button>
-          <button type="button" class="rail-btn sq" data-section="adjust" aria-controls="panel" aria-label="Adjust" title="Adjust"><svg class="icon" aria-hidden="true"><use href="#i-adjust"/></svg></button>
-          <button type="button" class="rail-btn sq" data-section="effects" aria-controls="panel" aria-label="Effects" title="Effects"><svg class="icon" aria-hidden="true"><use href="#i-effects"/></svg></button>
-          <button type="button" class="rail-btn sq" data-section="texture" aria-controls="panel" aria-label="Texture" title="Texture"><svg class="icon" aria-hidden="true"><use href="#i-texture"/></svg></button>
+          <button type="button" class="rail-btn outline sq" id="choose" aria-label="Choose photo"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+          <button type="button" class="rail-btn sq" data-section="colour" aria-controls="panel" aria-label="Colour"><svg class="icon" aria-hidden="true"><use href="#i-colour"/></svg></button>
+          <button type="button" class="rail-btn sq" data-section="adjust" aria-controls="panel" aria-label="Adjust"><svg class="icon" aria-hidden="true"><use href="#i-adjust"/></svg></button>
+          <button type="button" class="rail-btn sq" data-section="effects" aria-controls="panel" aria-label="Effects"><svg class="icon" aria-hidden="true"><use href="#i-effects"/></svg></button>
+          <button type="button" class="rail-btn sq" data-section="texture" aria-controls="panel" aria-label="Texture"><svg class="icon" aria-hidden="true"><use href="#i-texture"/></svg></button>
         </div>
       </div>
-      <button type="button" class="rail-btn sq" id="download" aria-label="Download" title="Download" disabled><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg></button>
+      <button type="button" class="rail-btn sq" id="download" aria-label="Download" disabled><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg></button>
     </nav>
 
     <aside class="panel" id="panel" aria-label="Controls" hidden>
@@ -522,6 +543,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=49"></script>
+  <script src="effects.js?v=51"></script>
 </body>
 </html>

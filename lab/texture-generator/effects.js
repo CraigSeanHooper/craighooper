@@ -663,7 +663,7 @@
   }
 
   function radiusOf(el) {
-    if (el.type === "color") return 4;   // radius/xs on the colour swatch
+    if (el.type === "color" || el.classList.contains("tooltip-box")) return 4;   // radius/xs: colour swatch, tooltip
     if (el.classList.contains("dialog") || el.classList.contains("sq-sheet")) return 16;   // radius/lg
     return 8;                            // radius/sm everywhere else
   }
@@ -696,8 +696,56 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { els.forEach(shape); });
   }
 
+  // ---------- rail tooltips (desktop only) ----------
+  // Each rail button's name, 16px to its right. After a short hover delay; once one has
+  // shown, moving to the next button shows its tooltip straight away. Keyboard focus shows
+  // it at once. Hides on mouse leave, blur, a click, or Esc, and fades away by itself after 3 seconds.
+  function initTooltips() {
+    var tip = $("tooltip"), box = tip.firstElementChild, timer = 0, coolTimer = 0, lifeTimer = 0, fadeTimer = 0, warm = false, current = null;
+    var buttons = Array.prototype.slice.call(document.querySelectorAll(".rail .rail-btn"));
+    function show(btn, instant) {
+      clearTimeout(timer); clearTimeout(coolTimer); clearTimeout(lifeTimer); clearTimeout(fadeTimer);
+      tip.classList.remove("fading");
+      if (MOBILE.matches) return;
+      var r = btn.getBoundingClientRect();
+      box.textContent = btn.getAttribute("aria-label");
+      tip.style.left = (r.right + 16) + "px";   // space/300
+      tip.style.top = (r.top + r.height / 2) + "px";
+      tip.classList.toggle("instant", instant || warm);
+      if (tip.hidden) { tip.classList.remove("on"); tip.hidden = false; tip.offsetHeight; }
+      tip.classList.add("on");
+      current = btn; warm = true;
+      lifeTimer = setTimeout(fadeAway, 3000);
+    }
+    function fadeAway() {
+      if (!current) return;
+      current = null; tip.classList.remove("instant"); tip.classList.add("fading"); tip.classList.remove("on");
+      fadeTimer = setTimeout(function () { tip.hidden = true; tip.classList.remove("fading"); }, 300);
+      coolTimer = setTimeout(function () { warm = false; }, 300);
+    }
+    function hide() {
+      clearTimeout(timer); clearTimeout(lifeTimer);
+      if (!current) return;
+      current = null; tip.classList.remove("on"); tip.hidden = true;
+      coolTimer = setTimeout(function () { warm = false; }, 300);
+    }
+    buttons.forEach(function (btn) {
+      btn.addEventListener("mouseenter", function () {
+        clearTimeout(timer);
+        if (warm) show(btn, true); else timer = setTimeout(function () { show(btn, false); }, 500);
+      });
+      btn.addEventListener("mouseleave", hide);
+      btn.addEventListener("focus", function () { if (btn.matches(":focus-visible")) show(btn, true); });
+      btn.addEventListener("blur", hide);
+      btn.addEventListener("pointerdown", hide);
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") hide(); });
+    MOBILE.addEventListener("change", hide);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     bind();
+    initTooltips();
     initExport(initRail());
     resetSheetsOnResize();
     syncControls();
