@@ -685,7 +685,8 @@
   }
 
   function radiusOf(el) {
-    if (el.type === "color" || el.classList.contains("tooltip-box")) return 4;   // radius/xs: colour swatch, tooltip
+    if (el.classList.contains("tooltip-box")) return 999;   // radius/full: the tooltip is fully rounded (squirclePath caps it at half the height)
+    if (el.type === "color") return 4;   // radius/xs: colour swatch
     if (el.classList.contains("dialog") || el.classList.contains("sq-sheet")) return 16;   // radius/lg
     return 8;                            // radius/sm everywhere else
   }
