@@ -180,8 +180,9 @@
     .avatar:focus-visible { outline: var(--focus-ring) solid var(--border-focus); outline-offset: 0; }
 
     /* ---------- panel: all four sections, scrolling on its own ---------- */
-    /* desktop: the panel floats 8px in from the top and bottom, 16px squircle corners, a 1px outline, shadow/xs */
-    .panel { position: relative; isolation: isolate; display: flex; flex-direction: column; min-height: 0; margin: var(--space-100) 0; }
+    /* desktop: the panel floats 8px in from the top and bottom, 16px squircle corners, a 1px outline, shadow/xs.
+       It sits above the photo area, so its shadow falls across it rather than being covered. */
+    .panel { position: relative; z-index: 1; isolation: isolate; display: flex; flex-direction: column; min-height: 0; margin: var(--space-100) 0; }
     /* the shadow sits on its own layer behind the panel: Safari drops a shadow
        from anything with a scrolling area inside */
     .panel::before {
