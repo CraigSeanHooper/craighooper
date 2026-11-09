@@ -81,7 +81,7 @@
       --swatch: 24px;
       --chip: 32px;
       --label-column: 80px;              /* as wide as "Highlights", so the hex boxes line up */
-      --slider-bar: var(--space-200);    /* 16 tall (Figma space/300) */
+      --slider-bar: var(--space-150);    /* 12 tall on desktop (Figma Size=Small, space/200); 16 on phones */
       --dialog-width: 379px;
 
       /* mobile (below 1024): bottom bar and sheets, designed at 390 */
@@ -214,7 +214,7 @@
     .heading .icon { width: var(--icon-sm); height: var(--icon-sm); }
 
     .field + .field { margin-top: var(--space-200); }
-    .field-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-150); }
+    .field-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-100); }
     .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-150); }
     .stack > * + * { margin-top: var(--space-200); }
 
@@ -356,6 +356,7 @@
 
     /* ---------- mobile, below 1024: bottom bar, sheets, avatar over the photo ---------- */
     @media (max-width: 1023px) {
+      :root { --slider-bar: var(--space-200); }   /* slider bars: 16 tall on phones (Figma Size=Large) */
       .app { display: block; }
       /* the page itself never scrolls or bounces: everything is fixed in place */
       html, body { overflow: hidden; overscroll-behavior: none; }
