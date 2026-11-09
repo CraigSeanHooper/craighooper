@@ -326,11 +326,19 @@
     el.style.width = widthCache[key] + "px";
   }
 
-  // fills the slider track up to the thumb
-  function fill(el) { el.style.setProperty("--p", ((el.value - el.min) / (el.max - el.min) * 100) + "%"); }
+  // fills the bar up to the value; sliders that run below 0 fill out from 0 in the middle
+  function fill(el) {
+    var min = +el.min, max = +el.max, t = (el.value - min) / (max - min) * 100;
+    var from = 0, len = t;
+    if (min < 0) { var zero = -min / (max - min) * 100; from = Math.min(t, zero); len = Math.abs(t - zero); }
+    var f = el.previousElementSibling;
+    f.style.left = from + "%"; f.style.width = len + "%";
+  }
+  // the value shown above a slider: Strength reads as a percentage
+  function readout(k) { $(k + "-value").textContent = s[k] + (k === "amount" ? "%" : ""); }
 
   function syncControls() {
-    SLIDERS.forEach(function (k) { $(k).value = s[k]; $(k + "-value").value = s[k]; fitText($(k + "-value")); fill($(k)); });
+    SLIDERS.forEach(function (k) { $(k).value = s[k]; readout(k); fill($(k)); });
     ["dark", "mid", "light"].forEach(function (k) { $("c-" + k).value = s[k]; $("c-" + k + "-hex").value = s[k].toUpperCase(); fitText($("c-" + k + "-hex")); });
     ["mode", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.value === s[id]); });
@@ -345,51 +353,47 @@
     });
     $("colours").dataset.off = s.mode === "original";
     var png = s.format === "png";
-    $("quality").disabled = png; $("quality-value").disabled = png;
+    $("quality").disabled = png;
     $("quality-field").dataset.off = png;
   }
 
   function bind() {
     SLIDERS.forEach(function (k) {
-      $(k).addEventListener("input", function () {
-        s[k] = +$(k).value; $(k + "-value").value = s[k]; fitText($(k + "-value")); fill($(k));
+      var slider = $(k), bar = slider.parentNode;
+      slider.addEventListener("input", function () {
+        s[k] = +slider.value; readout(k); fill(slider);
         if (k !== "quality") update();
       });
-      // the number box: type a value and press Enter (or click away); arrow keys nudge by 1, Shift by 10
-      var box = $(k + "-value"), slider = $(k);
-      function commit(v) {
-        var min = +slider.min, max = +slider.max;
-        v = Math.round(+v);
-        if (isNaN(v)) v = s[k];
-        v = Math.min(max, Math.max(min, v));
-        s[k] = v; slider.value = v; box.value = v; fitText(box); fill(slider);
-        if (k !== "quality") update();
-      }
-      // touch: press anywhere along the slider and drag, rather than having to hit the
-      // small handle (phone browsers only move a slider by its handle)
-      function fromX(x) {
-        var r = slider.getBoundingClientRect(), hw = parseFloat(getComputedStyle(slider).getPropertyValue("--handle-width"));
-        var t = Math.min(1, Math.max(0, (x - r.left - hw / 2) / (r.width - hw)));
-        var min = +slider.min, max = +slider.max, v = Math.round(min + t * (max - min));
+      function set(v) {
+        v = Math.min(+slider.max, Math.max(+slider.min, Math.round(v)));
         if (v !== +slider.value) { slider.value = v; slider.dispatchEvent(new Event("input")); }
       }
-      slider.addEventListener("touchstart", function (e) { if (!slider.disabled && e.cancelable) e.preventDefault(); }, { passive: false });   // keeps the browser's own handle-only drag out of it
-      slider.addEventListener("pointerdown", function (e) {
+      // arrow keys nudge by 1 (the browser's own), or 10 with Shift
+      slider.addEventListener("keydown", function (e) {
+        var dir = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
+        if (!dir || !e.shiftKey) return;
+        e.preventDefault(); set(s[k] + dir * 10);
+      });
+      // touch: a tap or an up-down swipe does nothing, so scrolling the sheet can't change a
+      // setting. Once a finger moves sideways, the value follows it from where it was.
+      var drag = null, SLOP = 6;
+      bar.addEventListener("pointerdown", function (e) {
         if (e.pointerType === "mouse" || slider.disabled) return;
-        fromX(e.clientX); slider.setPointerCapture(e.pointerId);
+        drag = { id: e.pointerId, x: e.clientX, y: e.clientY, v: +slider.value, on: false };
       });
-      slider.addEventListener("pointermove", function (e) { if (slider.hasPointerCapture(e.pointerId)) fromX(e.clientX); });
-      box.addEventListener("input", function () { box.value = box.value.replace(/[^0-9-]/g, ""); fitText(box); });
-      box.addEventListener("change", function () { commit(box.value); });
-      box.addEventListener("focus", function () { box.select(); });
-      box.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") { commit(box.value); box.blur(); }
-        else if (e.key === "Escape") { box.value = s[k]; fitText(box); box.blur(); }
-        else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-          e.preventDefault();
-          commit(s[k] + (e.key === "ArrowUp" ? 1 : -1) * (e.shiftKey ? 10 : 1));
+      bar.addEventListener("pointermove", function (e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        if (!drag.on) {
+          if (Math.abs(dx) < SLOP && Math.abs(dy) < SLOP) return;
+          if (Math.abs(dy) >= Math.abs(dx)) { drag = null; return; }   // up or down: leave it to the scroll
+          drag.on = true; bar.setPointerCapture(e.pointerId);
         }
+        set(drag.v + dx / bar.clientWidth * (slider.max - slider.min));
       });
+      function end() { drag = null; }
+      bar.addEventListener("pointerup", end);
+      bar.addEventListener("pointercancel", end);
     });
     ["mode", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) {
@@ -575,7 +579,7 @@
     var startY = null, dy = 0, lastY = 0, lastT = 0, speed = 0;
     sheet.addEventListener("touchstart", function (e) {
       if (!MOBILE.matches || e.touches.length !== 1 || sheet.dataset.closing) return;
-      if (e.target.closest('input[type="range"]')) { startY = null; return; }   // dragging a slider never moves the sheet
+      if (e.target.closest(".bar")) { startY = null; return; }   // touching a slider never moves the sheet
       var fromGrabber = e.target.classList.contains("grabber");
       startY = (fromGrabber || !scroller || scroller.scrollTop <= 0) ? e.touches[0].clientY : null;
       dy = 0; speed = 0; lastY = startY; lastT = e.timeStamp;
