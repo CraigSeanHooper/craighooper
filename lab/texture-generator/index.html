@@ -76,7 +76,7 @@
       --icon-md: 24px;
       --icon-sm: 20px;
       --control-height: 32px;            /* tabs, hex boxes */
-      --button-height: 44px;
+      --button-height: calc(var(--space-150) * 2 + var(--line-height-20) + var(--stroke-sm) * 2);   /* 46: 12 + 20 + 12 inside the 1px outline */
       --tab-width: 80px;
       --swatch: 24px;
       --chip: 32px;
@@ -218,12 +218,12 @@
     .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-150); }
     .stack > * + * { margin-top: var(--space-200); }
 
-    /* buttons: 44 tall, grey with an outline; .btn-action is the dark grey one */
+    /* buttons: 46 tall, grey with an outline; .btn-action is the dark grey one. Labels: interface/body/sm/lg */
     .btn {
       --sq-line: var(--border-subtle); --sq-fill: var(--control-fill-on-panel);
       display: inline-flex; align-items: center; justify-content: center; gap: var(--space-100);
       height: var(--button-height); padding: 0 var(--space-200); cursor: pointer; white-space: nowrap;
-      font-size: var(--font-size-12); line-height: var(--line-height-18); font-weight: 600;
+      font-size: var(--font-size-14); line-height: var(--line-height-20); font-weight: 400;
     }
     @media (hover: hover) { .btn:hover { --sq-fill: var(--control-fill-hover); } }
     .btn:disabled { opacity: 0.45; cursor: default; }
