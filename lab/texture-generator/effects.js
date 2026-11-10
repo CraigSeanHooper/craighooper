@@ -534,15 +534,21 @@
   // Rules from Emil Kowalski's gestures skill: the iOS sheet curve (Vaul's) over 500ms,
   // transitions rather than keyframes so a sheet can be turned around mid-slide, a sheet
   // leaves the way it came (down), and a quick snap back when a swipe doesn't close it.
-  // Reduced motion: sheets appear and go without sliding. Desktop: no slide at all.
+  // Phone menus (9 November) float above the bar: they fade in over the same 500ms
+  // while rising RISE px, and fade out sinking the same way.
+  // Reduced motion: they fade without moving. Desktop: no animation at all.
   var SHEET_EASE = "cubic-bezier(0.32, 0.72, 0, 1)", SNAP_EASE = "cubic-bezier(0.23, 1, 0.32, 1)";
   var REDUCE = matchMedia("(prefers-reduced-motion: reduce)");
-  function animates() { return MOBILE.matches && !REDUCE.matches; }
-  function settle(el) { el.style.transition = ""; el.style.transform = ""; }
-  function slide(el, to, ms, ease, done) {
+  var RISE = 8;   // space/100
+  function animates() { return MOBILE.matches; }
+  function rise() { return REDUCE.matches ? 0 : RISE; }
+  function settle(el) { el.style.transition = ""; el.style.transform = ""; el.style.opacity = ""; }
+  function offset(el) { var m = /translateY\((-?[\d.]+)px\)/.exec(el.style.transform); return m ? +m[1] : 0; }
+  function slide(el, to, ms, ease, done, opacity) {
     var token = (el._slide || 0) + 1; el._slide = token;
-    el.style.transition = "transform " + ms + "ms " + ease;
-    el.style.transform = "translateY(" + to + ")";
+    el.style.transition = "transform " + ms + "ms " + ease + ", opacity " + ms + "ms " + ease;
+    el.style.transform = "translateY(" + to + "px)";
+    el.style.opacity = opacity == null ? "" : opacity;
     var finish = function () { if (el._slide !== token) return; el._slide++; done && done(); };
     el.addEventListener("transitionend", function te(e) { if (e.target === el) { el.removeEventListener("transitionend", te); finish(); } });
     setTimeout(finish, ms + 80);   // in case transitionend never fires
@@ -553,16 +559,16 @@
     delete el.dataset.closing;
     el.hidden = false;
     if (!animates()) { el._slide = (el._slide || 0) + 1; settle(el); return; }
-    if (!wasClosing) {   // start below the bar; mid-close it turns around from where it is
-      el.style.transition = "none"; el.style.transform = "translateY(100%)"; el.offsetHeight;
+    if (!wasClosing) {   // start faded out, a little low; mid-close it turns around from where it is
+      el.style.transition = "none"; el.style.transform = "translateY(" + rise() + "px)"; el.style.opacity = "0"; el.offsetHeight;
     }
-    slide(el, "0px", 500, SHEET_EASE, function () { settle(el); });
+    slide(el, 0, 500, SHEET_EASE, function () { settle(el); }, "1");
   }
   function hideSheet(el, instant) {
     if (el.hidden) return;
     if (instant || !animates()) { el._slide = (el._slide || 0) + 1; delete el.dataset.closing; el.hidden = true; settle(el); return; }
     el.dataset.closing = "1";
-    slide(el, "100%", 500, SHEET_EASE, function () { delete el.dataset.closing; el.hidden = true; settle(el); });
+    slide(el, offset(el) + rise(), 500, SHEET_EASE, function () { delete el.dataset.closing; el.hidden = true; settle(el); }, "0");   // from wherever a swipe left it
   }
   function resetSheetsOnResize() {   // crossing the phone/desktop line mid-slide: finish at once
     MOBILE.addEventListener("change", function () {
@@ -601,7 +607,7 @@
       if (dy <= 0) { settle(sheet); return; }
       if (dy > sheet.offsetHeight * 0.4 || speed > 0.5) onClose();   // 0.5px per ms = a flick
       else if (REDUCE.matches) settle(sheet);
-      else slide(sheet, "0px", 200, SNAP_EASE, function () { settle(sheet); });
+      else slide(sheet, 0, 200, SNAP_EASE, function () { settle(sheet); });
     }
     sheet.addEventListener("touchend", end);
     sheet.addEventListener("touchcancel", function () { startY = null; settle(sheet); });
@@ -691,17 +697,13 @@
     return 8;                            // radius/sm everywhere else
   }
 
-  // Below 1024 the Export dialog and the section panel are bottom sheets:
-  // only their top corners are rounded. The shape is drawn taller than the
-  // sheet, so its bottom corners fall outside and get cut off.
   var MOBILE = matchMedia("(max-width: 1023px)");
-  function topOnly(el) { return MOBILE.matches && (el.classList.contains("dialog") || el.classList.contains("sq-sheet")); }
 
   var RING = 2;   // focus ring width, outside the edge
   function shape(el) {
     var w = el.offsetWidth, h = el.offsetHeight, r = radiusOf(el);
     if (!w || !h) return;
-    var hh = topOnly(el) ? h + r * 2 : h;
+    var hh = h;
     el.style.setProperty("--sq-outer", "path('" + squirclePath(w, hh, r) + "')");
     el.style.setProperty("--sq-inner", "path('" + squirclePath(w - 2, hh - 2, r - 1) + "')");
     var ring = squirclePath(w + RING * 2, h + RING * 2, r + RING, RING);

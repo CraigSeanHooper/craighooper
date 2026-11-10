@@ -81,14 +81,14 @@
       --swatch: 24px;
       --chip: 32px;
       --label-column: 80px;              /* as wide as "Highlights", so the hex boxes line up */
-      --slider-bar: var(--space-150);    /* 12 tall on desktop (Figma Size=Small, space/200); 16 on phones */
+      --slider-bar: var(--space-150);    /* 12 tall on desktop (Figma Size=Large, space/200); 16 on phones */
       --dialog-width: 379px;
 
       /* mobile (below 1024): bottom bar and sheets, designed at 390 */
       --control-fill-open: #cccccc;      /* control/fill/open: the sheet grabber */
       --header-height: calc(var(--space-200) * 2 + var(--rail-button));                      /* avatar, 16 in: 72 */
       --bar-height: calc(var(--space-150) * 2 + var(--rail-button) + var(--stroke-sm));      /* 65, plus the phone's safe area */
-      --sheet-height: 314px;             /* every phone sheet, grabber included (Craig, 8 November) */
+      --sheet-height: 236px;             /* every phone menu (Craig, 9 November: 314 until the colour fields were hidden) */
       --grabber-width: 36px;
       --grabber-height: 4px;
       /* Foundations effect style shadow/md-up */
@@ -284,6 +284,7 @@
     }
 
     /* colour fields: label column as wide as "Highlights", then the swatch and hex box */
+    .colour-fields[hidden] { display: none; }
     .colour-fields { display: grid; grid-template-columns: var(--label-column) max-content; align-items: center; column-gap: var(--space-150); row-gap: var(--space-100); }
     .colour-field { display: contents; }
     .colour-field[hidden] { display: none; }
@@ -356,7 +357,7 @@
 
     /* ---------- mobile, below 1024: bottom bar, sheets, avatar over the photo ---------- */
     @media (max-width: 1023px) {
-      :root { --slider-bar: var(--space-200); }   /* slider bars: 16 tall on phones (Figma Size=Large) */
+      :root { --slider-bar: var(--space-200); }   /* slider bars: 16 tall on phones (Figma Size=Small) */
       .app { display: block; }
       /* the page itself never scrolls or bounces: everything is fixed in place */
       html, body { overflow: hidden; overscroll-behavior: none; }
@@ -385,11 +386,12 @@
       .status.size { display: none; }   /* no photo size on phones, as in Figma */
       /* with a sheet up, the photo centres between the avatar and the sheet */
       body:has(.panel:not([hidden]):not([data-closing])) .stage,
-      body:has(.dialog-wrap:not([hidden]):not([data-closing])) .stage { bottom: calc(var(--bar-height) + env(safe-area-inset-bottom) + var(--sheet-height)); }
+      body:has(.dialog-wrap:not([hidden]):not([data-closing])) .stage { bottom: calc(var(--bar-height) + env(safe-area-inset-bottom) + var(--space-150) + var(--sheet-height)); }
 
-      /* sheets: slide up above the bar, 16px top corners, grabber at the top */
+      /* menus: float 12 in from the sides and 12 above the bar, 16px squircle, 1px outline, shadow/sm.
+         They fade in while rising a few pixels (effects.js). The grabber keeps its space but isn't shown. */
       .panel, .dialog-wrap {
-        position: fixed; left: 0; right: 0; top: auto; bottom: calc(var(--bar-height) + env(safe-area-inset-bottom)); z-index: 2;
+        position: fixed; left: var(--space-150); right: var(--space-150); top: auto; bottom: calc(var(--bar-height) + env(safe-area-inset-bottom) + var(--space-150)); z-index: 2;
         width: auto; max-width: none; transform: none; margin: 0;
         touch-action: pan-y;
       }
@@ -398,22 +400,21 @@
       .panel::before, .dialog-wrap::before {
         content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
         background: var(--surface-page); clip-path: none;
-        border-radius: var(--radius-lg) var(--radius-lg) 0 0;   /* hidden under the squircle sheet; only its shadow shows */
-        filter: var(--shadow-md-up);
+        border-radius: var(--radius-lg);   /* hidden under the squircle menu; only its shadow shows */
+        filter: var(--shadow-sm);
       }
       /* one section per icon, in a sheet of one fixed height; Colour in Tritone scrolls inside it */
-      .panel { height: var(--sheet-height); max-height: calc(100% - var(--bar-height) - env(safe-area-inset-bottom) - var(--header-height)); }
+      .panel { height: var(--sheet-height); max-height: calc(100% - var(--bar-height) - env(safe-area-inset-bottom) - var(--space-150) - var(--header-height)); }
       .panel .section, .panel .section + .section { display: none; margin-top: 0; }
       .panel[data-section="colour"] #sec-colour,
       .panel[data-section="adjust"] #sec-adjust,
       .panel[data-section="effects"] #sec-effects,
       .panel[data-section="texture"] #sec-texture { display: block; }
-      .panel-sheet { padding: 0; background: var(--surface-page); }
-      .panel-sheet::before { content: none; }
-      .panel-sheet, .dialog { --r: var(--radius-lg); clip-path: var(--sq-outer, inset(0 0 -16px 0 round var(--radius-lg))); padding-top: var(--space-100); }
+      .panel-sheet { padding: 0; }
+      .panel-sheet, .dialog { --r: var(--radius-lg); padding-top: var(--space-100); }
       .panel-head { display: none; }   /* phones close the sheet by its icon or a swipe */
       .grabber {
-        display: block; flex: none; width: var(--grabber-width); height: var(--grabber-height); margin: 0 auto;
+        display: block; visibility: hidden; flex: none; width: var(--grabber-width); height: var(--grabber-height); margin: 0 auto;
         border-radius: calc(var(--grabber-height) / 2); background: var(--control-fill-open);
       }
       .panel[data-closing], .dialog-wrap[data-closing] { pointer-events: none; }   /* sliding away: taps go through (effects.js slides the sheets) */
@@ -426,7 +427,7 @@
       .field + .field, .stack > * + * { margin-top: var(--space-150); }
 
       /* the Export sheet: same content as the desktop dialog, as tall as the section sheets */
-      .dialog { --sq-line: var(--surface-page); padding: var(--space-100) var(--space-200) var(--space-200); }
+      .dialog { padding: var(--space-100) var(--space-200) var(--space-200); }
       .dialog { height: var(--sheet-height); }   /* same height as the section sheets */
       .dialog .grabber { margin-bottom: var(--space-200); }
       .dialog #quality-field { margin-bottom: var(--space-200); }
@@ -487,7 +488,7 @@
           </div>
           <div class="colours stack" id="colours">
             <div class="presets" id="presets"></div>
-            <div class="colour-fields">
+            <div class="colour-fields" hidden>   <!-- hidden for now (Craig, 9 November); presets set the colours -->
               <label class="colour-field">
                 <span>Shadows</span>
                 <span class="input sq"><input type="color" id="c-dark" aria-label="Shadow colour" /><input type="text" class="mono" id="c-dark-hex" maxlength="7" aria-label="Shadow colour hex" /></span>
@@ -586,6 +587,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=57"></script>
+  <script src="effects.js?v=58"></script>
 </body>
 </html>
