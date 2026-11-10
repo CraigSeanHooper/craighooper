@@ -46,12 +46,12 @@ edits it through the CMS, so a stale copy would quietly revert his live text.
 
 ## Publishing
 
-The website's Claude Code project is Dropbox › Claude › Portfolio, with the repo cloned at
-`~/Library/CloudStorage/Dropbox/Claude/Portfolio/craighooper` (moved there 10 November
+The website's Claude Code project is Dropbox › Claude › Personal Digital Work, with the repo cloned at
+`~/Library/CloudStorage/Dropbox/Claude/Personal Digital Work/craighooper` (moved there 10 November
 2026). This is the only copy on the Mac: the website, the spacing checker and the texture
 generator are all worked on from here (the tools' separate Dropbox folders were removed on
 10 November 2026). The texture generator's notes and build brief sit outside the repo in
-Portfolio › texture-generator. If git errors oddly, Dropbox may have damaged its hidden files: clone
+Personal Digital Work › texture-generator. If git errors oddly, Dropbox may have damaged its hidden files: clone
 fresh from GitHub. The GitHub CLI is at
 `~/.local/bin/gh` (not on the PATH) and is signed in as CraigSeanHooper; git uses it
 for pushing. Set up 2 November 2026.
