@@ -340,7 +340,11 @@
     f.style.left = from + "%"; f.style.width = len + "%";
   }
   // the value shown above a slider: Strength reads as a percentage
-  function readout(k) { $(k + "-value").textContent = s[k] + (k === "amount" ? "%" : ""); }
+  function readout(k) {
+    var text = s[k] + (k === "amount" ? "%" : "");
+    $(k + "-value").textContent = text;
+    if (k === "amount") $(k).setAttribute("aria-valuetext", text);   // screen readers say "100%", as shown
+  }
 
   function syncControls() {
     SLIDERS.forEach(function (k) { $(k).value = s[k]; readout(k); fill($(k)); });
