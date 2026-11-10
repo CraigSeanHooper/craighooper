@@ -2,3 +2,12 @@
 # so the gallery's "Say hello" button always matches this site.
 /content/home.json
   Access-Control-Allow-Origin: https://photos.craighooper.xyz
+
+# Basic protections on every page: only this site may show its pages inside a frame
+# (the spacing checker will), browsers don't guess file types, and links to other
+# sites only tell them which site the visitor came from, not the page.
+/*
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

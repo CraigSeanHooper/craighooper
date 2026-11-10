@@ -166,6 +166,12 @@ GitHub → Netlify, auto-deploy on push. Settled — don't re-open it unless Cra
 `_headers` lets photos.craighooper.xyz read `content/home.json`, so the gallery's
 "Say hello" button uses the same CMS email as this site. Keep it.
 
+`_headers` also sets basic protections on every page (10 November 2026): only this site may
+frame its pages (`frame-ancestors 'self'`, kept for the spacing checker), `nosniff`, and a
+`strict-origin-when-cross-origin` referrer policy. Outside libraries are copied into
+`assets/vendor/` (cuelume 0.1.2, the homepage sounds) rather than loaded from a CDN. The
+only remaining outside script is Umami analytics, which updates in place.
+
 ## Conventions
 - File and folder names: lowercase kebab-case only. Never underscores.
 - Narrow request, narrow edit. Don't rebuild or delete assets that weren't asked about;
