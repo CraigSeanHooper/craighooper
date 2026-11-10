@@ -46,9 +46,10 @@ edits it through the CMS, so a stale copy would quietly revert his live text.
 
 ## Publishing
 
-The repo is cloned on Craig's Mac in Dropbox, at
-`~/Library/CloudStorage/Dropbox/Claude/Spacing Checker Tool/craighooper` (moved there
-2 November 2026). If git errors oddly, Dropbox may have damaged its hidden files: clone
+The website's Claude Code project is Dropbox › Claude › Portfolio, with the repo cloned at
+`~/Library/CloudStorage/Dropbox/Claude/Portfolio/craighooper` (moved there 10 November
+2026). The spacing checker and texture generator each have their own folder in Dropbox ›
+Claude, with their own copy of this repo; all copies push to the same `main`. If git errors oddly, Dropbox may have damaged its hidden files: clone
 fresh from GitHub. The GitHub CLI is at
 `~/.local/bin/gh` (not on the PATH) and is signed in as CraigSeanHooper; git uses it
 for pushing. Set up 2 November 2026.
