@@ -95,18 +95,37 @@
     };
   }
 
+  // ---------- keeping the page responsive ----------
+  // The heavy steps hand control back to the browser every 40ms or so, so clicks,
+  // taps and slider drags are still answered while a photo is being processed
+  // (Chrome's guidance: no single task over 50ms).
+  var deadline = 0;
+  function startBudget() { deadline = performance.now() + 40; }
+  function tick() {   // returns a promise to wait on once the budget is spent, otherwise null
+    if (performance.now() < deadline) return null;
+    var p = window.scheduler && typeof scheduler.yield === "function" ? scheduler.yield() : new Promise(function (r) { setTimeout(r, 0); });
+    return p.then(startBudget);
+  }
+  // a copy of the settings, so a run in progress isn't changed halfway by a slider
+  function snapshot() { var o = {}; for (var k in s) o[k] = s[k]; return o; }
+
   // ---------- processing ----------
   // Runs every step on `base` (a canvas holding the photo) and returns a new
   // canvas. Sizes are relative to the photo, so preview and download match.
-  function processImage(base) {
+  // `s` is a snapshot of the settings taken when the run started.
+  async function processImage(base, s) {
+    startBudget();
     var W = base.width, H = base.height, U = Math.max(W, H) / 2000;   // 1 unit ≈ 1px on a 2000px photo
     var out = canvasOf(W, H), ctx = out.getContext("2d");
     ctx.drawImage(base, 0, 0);
-    var data = ctx.getImageData(0, 0, W, H), px = data.data, i;
+    var data = ctx.getImageData(0, 0, W, H), px = data.data, i, y, end, wait, row = W * 4;
 
     // levels from the histogram, so the colours always reach full range
     var hist = new Uint32Array(256), n = px.length / 4;
-    for (i = 0; i < px.length; i += 4) hist[(px[i] * 0.2126 + px[i + 1] * 0.7152 + px[i + 2] * 0.0722) | 0]++;
+    for (y = 0; y < H; y++) {
+      for (i = y * row, end = i + row; i < end; i += 4) hist[(px[i] * 0.2126 + px[i + 1] * 0.7152 + px[i + 2] * 0.0722) | 0]++;
+      if ((wait = tick())) await wait;
+    }
     var lo = 0, hi = 255, acc = 0;
     for (i = 0; i < 256; i++) { acc += hist[i]; if (acc > n * 0.005) { lo = i; break; } }
     acc = 0;
@@ -127,7 +146,9 @@
 
     var t = s.mode === "original" ? 0 : s.amount / 100;
     var dk = hex(s.dark), md = hex(s.mid), lt = hex(s.light), tri = s.mode === "tri";
-    for (i = 0; i < px.length; i += 4) {
+    for (y = 0; y < H; y++) {
+     if ((wait = tick())) await wait;
+     for (i = y * row, end = i + row; i < end; i += 4) {
       var r = px[i], g = px[i + 1], b = px[i + 2];
       var l = lut[(r * 0.2126 + g * 0.7152 + b * 0.0722) | 0], cr, cg, cb;
       var or = lut[r], og = lut[g], ob = lut[b];
@@ -140,15 +161,16 @@
       px[i]     = or * 255 * (1 - t) + cr * t;
       px[i + 1] = og * 255 * (1 - t) + cg * t;
       px[i + 2] = ob * 255 * (1 - t) + cb * t;
+     }
     }
     ctx.putImageData(data, 0, 0);
 
-    if (s.misregister > 0) misregister(ctx, W, H, U);
-    if (s.vignette > 0) vignette(ctx, W, H, s.mode === "original" ? "#000000" : s.dark);
+    if (s.misregister > 0) await misregister(ctx, W, H, U, s);
+    if (s.vignette > 0) vignette(ctx, W, H, s.mode === "original" ? "#000000" : s.dark, s);
 
     // speckle is printed in the shadow colour (near-black in Original mode)
-    if (s.speckle > 0) speckle(ctx, W, H, U, s.mode === "original" ? "#141414" : s.dark);
-    if (s.grain > 0) grain(ctx, W, H, U);
+    if (s.speckle > 0) await speckle(ctx, W, H, U, s.mode === "original" ? "#141414" : s.dark, s);
+    if (s.grain > 0) await grain(ctx, W, H, U, s);
     return out;
   }
 
@@ -158,16 +180,17 @@
   // (85%) mixed in: a clearly visible offset whose fringe edges fade instead of
   // ending in a hard line. (A full hard shift was too harsh; a wide spread at
   // 60% and 8px was too faint.)
-  function misregister(ctx, W, H, U) {
+  async function misregister(ctx, W, H, U, s) {
     var d = s.misregister / 100 * 14 * U;
     if (d < 0.5) return;
-    var img = ctx.getImageData(0, 0, W, H), src = new Uint8ClampedArray(img.data), p = img.data;
+    var img = ctx.getImageData(0, 0, W, H), src = new Uint8ClampedArray(img.data), p = img.data, wait;
     var taps = [0.55, 0.7, 0.85, 1], mix = 0.85;
     function at(x, y, c) {
       x = x < 0 ? 0 : x > W - 1 ? W - 1 : x | 0; y = y < 0 ? 0 : y > H - 1 ? H - 1 : y | 0;
       return src[(y * W + x) * 4 + c];
     }
     for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
+      if (x === 0 && (wait = tick())) await wait;
       var i = (y * W + x) * 4, r = 0, b = 0;
       for (var t = 0; t < 4; t++) {
         var o = d * taps[t];
@@ -182,7 +205,7 @@
 
 
   // Darkens the edges toward the shadow colour.
-  function vignette(ctx, W, H, colour) {
+  function vignette(ctx, W, H, colour, s) {
     var c = hex(colour), r = Math.sqrt(W * W + H * H) / 2, k = s.vignette / 100;
     var g = ctx.createRadialGradient(W / 2, H / 2, r * (0.75 - k * 0.45), W / 2, H / 2, r);
     g.addColorStop(0, "rgba(" + c + ",0)");
@@ -192,13 +215,14 @@
 
   // Speckle: small round specks, gathered in drifts like dust or ink spatter.
   // (Larger blots were tried and removed: Craig prefers only the small ones.)
-  function speckle(ctx, W, H, U, ink) {
+  async function speckle(ctx, W, H, U, ink, s) {
     var fbm = makeNoise(textureSeed * 3 + 1), rand = mulberry32(textureSeed * 7 + 5);
     var amt = s.speckle / 100, freq = 5 / Math.max(W, H);
-    var tries = Math.round(W * H / (U * U) * 0.07 * amt), TAU = Math.PI * 2;
+    var tries = Math.round(W * H / (U * U) * 0.07 * amt), TAU = Math.PI * 2, wait;
     ctx.save();
     ctx.fillStyle = ink;
     for (var n = 0; n < tries; n++) {
+      if ((n & 4095) === 0 && (wait = tick())) await wait;
       var x = rand() * W, y = rand() * H;
       // drifts: keep a speck only where the cluster noise is high enough
       var c = fbm(x * freq, y * freq, 4);
@@ -216,11 +240,12 @@
   // pattern holds still while sliders move. (Two "improved" versions, soft
   // clumped grain and crisp blurred grain, were tried on 14 October and both
   // looked worse to Craig. This is the original; keep it.)
-  function grain(ctx, W, H, U) {
+  async function grain(ctx, W, H, U, s) {
     var rand = mulberry32(textureSeed * 17 + 9);
     var size = Math.max(1, s.grainSize * 0.8 * U), gw = Math.ceil(W / size), gh = Math.ceil(H / size);
-    var g = canvasOf(gw, gh), gc = g.getContext("2d"), d = gc.createImageData(gw, gh), p = d.data, k = s.grain / 100 * 70;
+    var g = canvasOf(gw, gh), gc = g.getContext("2d"), d = gc.createImageData(gw, gh), p = d.data, k = s.grain / 100 * 70, wait, row = gw * 4;
     for (var i = 0; i < p.length; i += 4) {
+      if (i % row === 0 && (wait = tick())) await wait;
       var nv = (rand() - 0.5) * k, v = nv > 0 ? 255 : 0;
       p[i] = v; p[i + 1] = v; p[i + 2] = v; p[i + 3] = Math.abs(nv) * 2;
     }
@@ -235,18 +260,29 @@
 
 
   // ---------- preview ----------
-  var queued = false;
+  // One run at a time. Changes made while a run is going are picked up by one
+  // more run straight after it, with the latest settings.
+  var queued = false, busy = false, again = false, photoId = 0;
+  function draw(img) {
+    var c = $("preview");
+    if (c.width !== previewBase.width || c.height !== previewBase.height) { c.width = previewBase.width; c.height = previewBase.height; fitPreview(); }
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);   // a draft is stretched to fill; full size again on release
+  }
   function update() {
-    if (!previewBase || queued) return;
+    if (!previewBase) return;
+    if (showOriginal) { draw(previewBase); return; }   // the original needs no processing
+    if (busy) { again = true; return; }
+    if (queued) return;
     queued = true;
-    requestAnimationFrame(function () {
-      queued = false;
-      var draft = sliding && !showOriginal && draftBase;
-      var out = showOriginal ? previewBase : processImage(draft ? draftBase : previewBase);
-      var c = $("preview");
-      if (c.width !== previewBase.width || c.height !== previewBase.height) { c.width = previewBase.width; c.height = previewBase.height; fitPreview(); }
-      c.getContext("2d").drawImage(out, 0, 0, c.width, c.height);   // a draft is stretched to fill; full size again on release
-    });
+    requestAnimationFrame(run);
+  }
+  async function run() {
+    queued = false; busy = true; again = false;
+    var id = photoId, base = sliding && draftBase ? draftBase : previewBase, out = null;
+    try { out = await processImage(base, snapshot()); } catch (e) { out = null; }
+    busy = false;
+    if (out && id === photoId && !showOriginal) draw(out);
+    if (again || id !== photoId) update();
   }
 
   var PHOTO_SHARE = 530 / 840;   // Figma: photo-loaded frames, desktop (Craig, 8 November: "smaller, like Figma")
@@ -276,6 +312,7 @@
     img.onload = function () {
       source = img;
       fileBase = name;
+      photoId++;
       previewBase = scaled(img, PREVIEW_MAX);
       draftBase = scaled(img, DRAFT_MAX);
       $("preview").hidden = false;
@@ -290,22 +327,28 @@
   }
 
   // ---------- download ----------
-  function download() {
-    if (!source) return;
+  // The full-size run hands control back to the browser as it goes, so the page
+  // keeps responding while a large photo is prepared.
+  var exporting = false;
+  async function download() {
+    if (!source || exporting) return;
+    exporting = true;
+    var settings = snapshot(), name = fileBase, out = null;
     setStatus("Preparing full-size image…");
-    setTimeout(function () {
-      var out = processImage(scaled(source, EXPORT_MAX));
-      var type = s.format === "png" ? "image/png" : "image/jpeg";
-      out.toBlob(function (blob) {
-        if (!blob) { setStatus("Couldn't create the file."); return; }
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = fileBase + "-edited." + s.format;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
-        setStatus("Saved " + a.download + " · " + out.width + " × " + out.height);
-      }, type, s.quality / 100);
-    }, 30);
+    await new Promise(function (r) { setTimeout(r, 30); });   // let the message show first
+    try { out = await processImage(scaled(source, EXPORT_MAX), settings); } catch (e) { out = null; }
+    if (!out) { exporting = false; setStatus("Couldn't create the file."); return; }
+    var type = settings.format === "png" ? "image/png" : "image/jpeg";
+    out.toBlob(function (blob) {
+      exporting = false;
+      if (!blob) { setStatus("Couldn't create the file."); return; }
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = name + "-edited." + settings.format;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+      setStatus("Saved " + a.download + " · " + out.width + " × " + out.height);
+    }, type, settings.quality / 100);
   }
 
   // ---------- controls ----------
@@ -489,7 +532,8 @@
     function select(name) {
       current = name;
       if (name) panel.dataset.section = name; else delete panel.dataset.section;   // phones show only this section
-      buttons.forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.section === name); });
+      // screen readers hear "expanded" on the icon whose section is open, "collapsed" on the others
+      buttons.forEach(function (b) { b.setAttribute("aria-expanded", b.dataset.section === name); });
     }
     function topOf(name) { return $("sec-" + name).offsetTop - parseFloat(getComputedStyle(body).paddingTop); }
     // While the panel scrolls itself to a section, the selection stays on the
@@ -569,11 +613,17 @@
     el.addEventListener("transitionend", function te(e) { if (e.target === el) { el.removeEventListener("transitionend", te); finish(); } });
     setTimeout(finish, ms + 80);   // in case transitionend never fires
   }
-  function isShown(el) { return !el.hidden && !el.dataset.closing; }
+  // The panel shows and hides with `hidden`; the Export dialog is the browser's own
+  // dialog, opened as a modal (focus stays inside it) and closed with close().
+  function isDialog(el) { return el.tagName === "DIALOG"; }
+  function isOut(el) { return isDialog(el) ? !el.open : el.hidden; }
+  function reveal(el) { if (isDialog(el)) { if (!el.open) el.showModal(); } else el.hidden = false; }
+  function conceal(el) { if (isDialog(el)) { if (el.open) el.close(); } else el.hidden = true; }
+  function isShown(el) { return !isOut(el) && !el.dataset.closing; }
   function showSheet(el) {
     var wasClosing = !!el.dataset.closing;
     delete el.dataset.closing;
-    el.hidden = false;
+    reveal(el);
     if (!animates()) { el._slide = (el._slide || 0) + 1; settle(el); return; }
     if (!wasClosing) {   // start faded out, a little low; mid-close it turns around from where it is
       el.style.transition = "none"; el.style.transform = "translateY(" + rise() + "px)"; el.style.opacity = "0"; el.offsetHeight;
@@ -581,16 +631,18 @@
     slide(el, 0, 500, SHEET_EASE, function () { settle(el); }, "1");
   }
   function hideSheet(el, instant) {
-    if (el.hidden) return;
-    if (instant || !animates()) { el._slide = (el._slide || 0) + 1; delete el.dataset.closing; el.hidden = true; settle(el); return; }
+    if (isOut(el)) return;
+    if (instant || !animates()) { el._slide = (el._slide || 0) + 1; delete el.dataset.closing; conceal(el); settle(el); return; }
     el.dataset.closing = "1";
-    slide(el, offset(el) + rise(), 500, SHEET_EASE, function () { delete el.dataset.closing; el.hidden = true; settle(el); }, "0");   // from wherever a swipe left it
+    // the dialog fades out as an ordinary (non-modal) one, so the page answers taps straight away
+    if (isDialog(el) && el.matches(":modal")) { var t = el.style.transform, o = el.style.opacity; el.close(); el.show(); el.style.transform = t; el.style.opacity = o; }
+    slide(el, offset(el) + rise(), 500, SHEET_EASE, function () { delete el.dataset.closing; conceal(el); settle(el); }, "0");   // from wherever a swipe left it
   }
   function resetSheetsOnResize() {   // crossing the phone/desktop line mid-slide: finish at once
     MOBILE.addEventListener("change", function () {
       document.querySelectorAll(".panel, .dialog-wrap").forEach(function (el) {
         el._slide = (el._slide || 0) + 1; settle(el);
-        if (el.dataset.closing) { delete el.dataset.closing; el.hidden = true; }
+        if (el.dataset.closing) { delete el.dataset.closing; conceal(el); }
       });
     });
   }
@@ -637,33 +689,57 @@
 
   // ---------- Export dialog ----------
   // The rail's Download button opens it (and shows as selected while it's
-  // open); clicking it again, Esc, or a click anywhere outside closes it.
-  // The dialog's own Download button saves the file and closes it.
+  // open); clicking it again, Esc, the phone's back gesture, or a click anywhere
+  // outside closes it. The dialog's own Download button saves the file and closes it.
+  // While it's open the rest of the page can't be reached (the browser's modal dialog),
+  // so a click on a rail or bar button behind it is passed on to that button.
   function initExport(rail) {
     var wrap = $("export-dialog"), railBtn = $("download");
     function isOpen() { return isShown(wrap); }
     function open() {
       if (MOBILE.matches) rail.close(true);   // on phones only one sheet shows at a time: swap without a slide out
-      showSheet(wrap); railBtn.setAttribute("aria-pressed", "true");
+      showSheet(wrap); railBtn.setAttribute("aria-expanded", "true");
       var chosen = wrap.querySelector('#format [aria-pressed="true"]');
       if (chosen) chosen.focus();   // keyboard users land inside the dialog
     }
     function close(backToRail, instant) {
       if (!isOpen()) return;
-      hideSheet(wrap, instant); railBtn.setAttribute("aria-pressed", "false");
+      hideSheet(wrap, instant); railBtn.setAttribute("aria-expanded", "false");
       if (backToRail) railBtn.focus();
     }
-    railBtn.setAttribute("aria-pressed", "false");
+    railBtn.setAttribute("aria-expanded", "false");
     railBtn.addEventListener("click", function () { if (isOpen()) close(); else open(); });
     $("export-download").addEventListener("click", function () { close(); });
     swipeToClose(wrap, null, function () { close(); });
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && isOpen() && e.target.tagName !== "INPUT") { e.preventDefault(); close(true); }
+    // Esc and the back gesture: close with the usual fade rather than at once
+    wrap.addEventListener("cancel", function (e) { e.preventDefault(); close(true); });
+    // closed by the browser itself (a repeated Esc): keep the rail button in step
+    wrap.addEventListener("close", function () {
+      if (!wrap.dataset.closing) { settle(wrap); railBtn.setAttribute("aria-expanded", "false"); }
     });
-    // a click outside the dialog closes it (the rail button handles its own toggle)
-    document.addEventListener("pointerdown", function (e) {
-      if (isOpen() && !wrap.contains(e.target) && !railBtn.contains(e.target)) close(false, !!e.target.closest(".rail"));   // tapping another bar icon swaps sheets without a slide out
-    }, true);
+    // a press and release outside the dialog close it; on a rail or bar button, that button then acts
+    function outside(e) {
+      var r = wrap.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    }
+    function buttonAt(x, y) {
+      var hit = null;
+      document.querySelectorAll(".rail .rail-btn").forEach(function (b) {
+        var r = b.getBoundingClientRect();
+        if (!b.disabled && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) hit = b;
+      });
+      return hit;
+    }
+    var pressedOutside = false;
+    wrap.addEventListener("pointerdown", function (e) { pressedOutside = e.target === wrap && outside(e); });
+    wrap.addEventListener("click", function (e) {
+      if (!pressedOutside || e.target !== wrap || !outside(e)) return;
+      pressedOutside = false;
+      var btn = buttonAt(e.clientX, e.clientY);
+      if (btn === railBtn) { close(); return; }   // the Download button toggles it closed
+      close(false, !!btn);   // tapping another bar icon swaps sheets without a slide out
+      if (btn) btn.click();
+    });
   }
 
   // ---------- squircle corners ----------
@@ -746,13 +822,14 @@
   // ---------- rail tooltips (desktop only) ----------
   // Each rail button's name, 16px to its right. After a short hover delay; once one has
   // shown, moving to the next button shows its tooltip straight away. Keyboard focus shows
-  // it at once. Hides on mouse leave, blur, a click, or Esc, and fades away by itself after 2.5 seconds.
+  // it at once. It stays while the pointer is on the button or the tooltip itself (so the
+  // pointer can move onto it, for people using screen magnifiers) or the button has focus,
+  // and hides when they leave, on a click, or on Esc.
   function initTooltips() {
-    var tip = $("tooltip"), box = tip.firstElementChild, timer = 0, coolTimer = 0, lifeTimer = 0, fadeTimer = 0, warm = false, current = null;
+    var tip = $("tooltip"), box = tip.firstElementChild, timer = 0, coolTimer = 0, leaveTimer = 0, warm = false, current = null;
     var buttons = Array.prototype.slice.call(document.querySelectorAll(".rail .rail-btn"));
     function show(btn, instant) {
-      clearTimeout(timer); clearTimeout(coolTimer); clearTimeout(lifeTimer); clearTimeout(fadeTimer);
-      tip.classList.remove("fading");
+      clearTimeout(timer); clearTimeout(coolTimer); clearTimeout(leaveTimer);
       if (MOBILE.matches) return;
       var r = btn.getBoundingClientRect();
       box.textContent = btn.getAttribute("aria-label");
@@ -762,26 +839,27 @@
       if (tip.hidden) { tip.classList.remove("on"); tip.hidden = false; tip.offsetHeight; }
       tip.classList.add("on");
       current = btn; warm = true;
-      lifeTimer = setTimeout(fadeAway, 2500);
-    }
-    function fadeAway() {
-      if (!current) return;
-      current = null; tip.classList.remove("instant"); tip.classList.add("fading"); tip.classList.remove("on");
-      fadeTimer = setTimeout(function () { tip.hidden = true; tip.classList.remove("fading"); }, 300);
-      coolTimer = setTimeout(function () { warm = false; }, 300);
     }
     function hide() {
-      clearTimeout(timer); clearTimeout(lifeTimer);
+      clearTimeout(timer); clearTimeout(leaveTimer);
       if (!current) return;
       current = null; tip.classList.remove("on"); tip.hidden = true;
       coolTimer = setTimeout(function () { warm = false; }, 300);
     }
+    // leaving the button: a moment's grace to cross the 16px gap onto the tooltip
+    function leave() {
+      clearTimeout(timer); clearTimeout(leaveTimer);
+      if (current && document.activeElement === current && current.matches(":focus-visible")) return;   // still focused by keyboard
+      leaveTimer = setTimeout(hide, 150);
+    }
+    tip.addEventListener("mouseenter", function () { clearTimeout(leaveTimer); });
+    tip.addEventListener("mouseleave", leave);
     buttons.forEach(function (btn) {
       btn.addEventListener("mouseenter", function () {
-        clearTimeout(timer);
-        if (warm) show(btn, true); else timer = setTimeout(function () { show(btn, false); }, 500);
+        clearTimeout(timer); clearTimeout(leaveTimer);
+        if (warm || current) show(btn, true); else timer = setTimeout(function () { show(btn, false); }, 500);
       });
-      btn.addEventListener("mouseleave", hide);
+      btn.addEventListener("mouseleave", leave);
       btn.addEventListener("focus", function () { if (btn.matches(":focus-visible")) show(btn, true); });
       btn.addEventListener("blur", hide);
       btn.addEventListener("pointerdown", hide);
