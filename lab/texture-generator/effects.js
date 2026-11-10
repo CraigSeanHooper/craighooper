@@ -11,6 +11,7 @@
   "use strict";
 
   var PREVIEW_MAX = 1600;   // longest side of the on-screen preview
+  var DRAFT_MAX = 800;      // while a slider is being dragged: a quarter of the work, so the photo keeps up with the finger
   var EXPORT_MAX = 6000;    // longest side of a download
 
   // Two-colour sets for Duotone: a deep shadow and a lighter tint of the same hue.
@@ -52,6 +53,8 @@
   var source = null;     // the loaded Image
   var fileBase = "photo";
   var previewBase = null; // source scaled to preview size
+  var draftBase = null;   // smaller copy, used only while a slider is being dragged
+  var sliding = false;    // a finger or the mouse is dragging a slider
   var showOriginal = false;
 
   // ---------- helpers ----------
@@ -238,10 +241,11 @@
     queued = true;
     requestAnimationFrame(function () {
       queued = false;
-      var out = showOriginal ? previewBase : processImage(previewBase);
+      var draft = sliding && !showOriginal && draftBase;
+      var out = showOriginal ? previewBase : processImage(draft ? draftBase : previewBase);
       var c = $("preview");
-      if (c.width !== out.width || c.height !== out.height) { c.width = out.width; c.height = out.height; fitPreview(); }
-      c.getContext("2d").drawImage(out, 0, 0);
+      if (c.width !== previewBase.width || c.height !== previewBase.height) { c.width = previewBase.width; c.height = previewBase.height; fitPreview(); }
+      c.getContext("2d").drawImage(out, 0, 0, c.width, c.height);   // a draft is stretched to fill; full size again on release
     });
   }
 
@@ -273,6 +277,7 @@
       source = img;
       fileBase = name;
       previewBase = scaled(img, PREVIEW_MAX);
+      draftBase = scaled(img, DRAFT_MAX);
       $("preview").hidden = false;
       $("download").disabled = false;
       var w = img.naturalWidth, h = img.naturalHeight;
@@ -374,26 +379,33 @@
         if (!dir || !e.shiftKey) return;
         e.preventDefault(); set(s[k] + dir * 10);
       });
-      // touch: a tap or an up-down swipe does nothing, so scrolling the sheet can't change a
-      // setting. Once a finger moves sideways, the value follows it from where it was.
-      var drag = null, SLOP = 6;
-      bar.addEventListener("pointerdown", function (e) {
+      // mouse: the photo redraws at draft size while the bar is held, full size on release
+      slider.addEventListener("pointerdown", function (e) { if (e.pointerType === "mouse") sliding = true; });
+      // touch: a tap or an up-down swipe does nothing, so a swipe down can close the menu
+      // without changing a setting. Once a finger moves sideways, the value follows it from
+      // where it was. The whole field (name, value and bar, 44px tall) takes the finger.
+      var field = bar.closest(".field"), drag = null, SLOP = 4;
+      field.addEventListener("pointerdown", function (e) {
         if (e.pointerType === "mouse" || slider.disabled) return;
         drag = { id: e.pointerId, x: e.clientX, y: e.clientY, v: +slider.value, on: false };
       });
-      bar.addEventListener("pointermove", function (e) {
+      field.addEventListener("pointermove", function (e) {
         if (!drag || e.pointerId !== drag.id) return;
         var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
         if (!drag.on) {
           if (Math.abs(dx) < SLOP && Math.abs(dy) < SLOP) return;
-          if (Math.abs(dy) >= Math.abs(dx)) { drag = null; return; }   // up or down: leave it to the scroll
-          drag.on = true; bar.setPointerCapture(e.pointerId);
+          if (Math.abs(dy) >= Math.abs(dx)) { drag = null; return; }   // up or down: leave it to the menu
+          drag.on = true; sliding = true; field.setPointerCapture(e.pointerId);
         }
         set(drag.v + dx / bar.clientWidth * (slider.max - slider.min));
       });
       function end() { drag = null; }
-      bar.addEventListener("pointerup", end);
-      bar.addEventListener("pointercancel", end);
+      field.addEventListener("pointerup", end);
+      field.addEventListener("pointercancel", end);
+    });
+    // letting go of any slider: back to the full-size preview
+    ["pointerup", "pointercancel"].forEach(function (t) {
+      window.addEventListener(t, function () { if (sliding) { sliding = false; update(); } });
     });
     ["mode", "format"].forEach(function (id) {
       $(id).querySelectorAll("button").forEach(function (b) {
@@ -582,10 +594,10 @@
   // Swipe down to close. The sheet follows the finger exactly; on release it closes if
   // dragged 40% of its height or flicked down quickly, otherwise it snaps back.
   function swipeToClose(sheet, scroller, onClose) {
-    var startY = null, dy = 0, lastY = 0, lastT = 0, speed = 0;
+    var startY = null, startX = 0, locked = false, dy = 0, lastY = 0, lastT = 0, speed = 0;
     sheet.addEventListener("touchstart", function (e) {
       if (!MOBILE.matches || e.touches.length !== 1 || sheet.dataset.closing) return;
-      if (e.target.closest(".bar")) { startY = null; return; }   // touching a slider never moves the sheet
+      startX = e.touches[0].clientX; locked = false;   // a sideways move belongs to a slider, never the menu
       var fromGrabber = e.target.classList.contains("grabber");
       startY = (fromGrabber || !scroller || scroller.scrollTop <= 0) ? e.touches[0].clientY : null;
       dy = 0; speed = 0; lastY = startY; lastT = e.timeStamp;
@@ -594,6 +606,12 @@
       if (startY === null) return;
       var y = e.touches[0].clientY;
       dy = y - startY;
+      if (!locked) {   // wait for a clear direction before moving the menu
+        var dx = e.touches[0].clientX - startX;
+        if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+        if (Math.abs(dx) > Math.abs(dy)) { startY = null; return; }
+        locked = true;
+      }
       if (e.timeStamp > lastT) { speed = (y - lastY) / (e.timeStamp - lastT); lastY = y; lastT = e.timeStamp; }
       if (dy <= 0) { sheet.style.transition = "none"; sheet.style.transform = ""; if (dy < -4) startY = null; return; }   // dragging up scrolls as usual
       if (e.cancelable) e.preventDefault();

@@ -260,7 +260,7 @@
     /* touch: a tap or an up-down swipe leaves the slider alone (the sheet scrolls);
        only a sideways drag moves it, from where it already is (effects.js) */
     @media (pointer: coarse) {
-      .bar { touch-action: pan-y; }
+      .field:has(.bar) { touch-action: pan-y; }
       .bar input[type="range"] { pointer-events: none; }
     }
 
@@ -587,6 +587,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=58"></script>
+  <script src="effects.js?v=59"></script>
 </body>
 </html>
