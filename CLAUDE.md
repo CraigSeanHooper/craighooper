@@ -4,7 +4,8 @@ Last updated 2 November 2026.
 
 ## What this project is
 Craig's personal site — a portfolio and a testbed for design ideas. Built as plain
-static HTML/CSS/JS from Figma designs. No frameworks or build tools.
+static HTML/CSS/JS from Figma designs. No frameworks or build tools, apart from one small
+deploy step for the homepage text (below).
 
 **Current homepage (live since 2026-10-25):** built from the Figma frames `desktop-10.3`
 (`3351:55`) and `mobile-10.3` (`3362:68`). Large Melange headline (`display-1`), bio
@@ -33,6 +34,15 @@ of dev jargon.
 **Words and links** — Craig handles these himself in Pages CMS (app.pagescms.org),
 connected to GitHub. Editable: headline, bio paragraphs (a list), email address, and
 Social Links (one Twitter URL, one Instagram URL — these drive the icons).
+
+**How the text reaches the page (since 10 November 2026):** on every deploy, Netlify runs
+`scripts/bake-home-text.py` (set in `netlify.toml`), which writes `content/home.json` into
+`index.html`. The page arrives with the text already in it; there's no script swapping it in
+after load (that made the headline change on screen). The text in the repo's `index.html` can
+fall behind the CMS; that's fine, but don't hand-edit it as if it were the source. To preview
+locally, run the script on your copy of the site. If the homepage markup it looks for changes
+(the `headline` h1, the `bio` div, the `data-social` links), update the script too, or the
+deploy fails and the last good version stays live.
 
 The CMS depends on `.pages.yml` in the repo root. If a change adds or removes CMS fields,
 update `.pages.yml` too. Never overwrite `content/home.json` with an older copy: Craig

@@ -1,0 +1,5 @@
+# Fill the homepage with the Pages CMS text before it goes live.
+# The site is still plain files: this one step is the whole build.
+[build]
+  publish = "."
+  command = "python3 scripts/bake-home-text.py"

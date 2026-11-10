@@ -4,3 +4,5 @@
 
 # Claude's instruction files stay in the repo but aren't served
 /CLAUDE.md                       /404.html  404!
+/netlify.toml                    /404.html  404!
+/scripts/*                       /404.html  404!

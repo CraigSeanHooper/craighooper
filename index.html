@@ -27,6 +27,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
+  <link rel="preload" href="/assets/fonts/KMRMelangeGrotesk-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
 
   <script type="application/ld+json">
@@ -56,9 +57,9 @@
   </div>
 
   <main class="copy">
-    <h1 class="display-1 headline">Working on digital modernization for Canadian Blood Services</h1>
+    <h1 class="display-1 headline">Working on digital modernization for Canadian Blood Services.</h1>
     <div class="bio">
-      <p class="display-2">I began building interfaces at the outset of the web, and at each evolution over the past 25 years, I have adapted my skillset to match. I work on design systems and component libraries, with the aim of promoting consistency and a shared process.</p>
+      <p class="display-2">I began building interfaces at the outset of the web, and at each evolution over the past 25 years, I have adapted my skillset to match. I work on design systems and component libraries, with the aim of promoting consistency, and a systems-based workflow.</p>
     </div>
     <figure class="portrait">
       <img src="assets/portrait.jpg" alt="Craig Hooper, seated, holding an apple, with a handwritten note: careful what you put in your mouth" width="576" height="384">
@@ -78,51 +79,6 @@
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 9L13.5 12L18 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13.5H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10.5H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 7.5V7C5 5.89543 5.89543 5 7 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H7C5.89543 19 5 18.1046 5 17V16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     </a>
   </nav>
-
-  <script>
-    // Editable homepage content from content/home.json (managed via Pages CMS).
-    // The text baked into the HTML above stays as a fallback if this fails.
-    (function () {
-      fetch('content/home.json', { cache: 'no-store' })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (data) {
-          if (!data) return;
-
-          var h1 = document.querySelector('.headline');
-          if (data.headline && h1) {
-            h1.textContent = '';
-            data.headline.split(/\r?\n/).forEach(function (line, i) {
-              if (i) h1.appendChild(document.createElement('br'));
-              h1.appendChild(document.createTextNode(line));
-            });
-          }
-
-          var bio = document.querySelector('.bio');
-          if (Array.isArray(data.bio) && data.bio.length && bio) {
-            bio.innerHTML = '';
-            data.bio.forEach(function (para) {
-              if (!para) return;
-              var p = document.createElement('p');
-              p.className = 'display-2';
-              p.textContent = para;
-              bio.appendChild(p);
-            });
-          }
-
-          // Twitter and Instagram icon links come from the CMS "Social Links" fields.
-          if (data.social) {
-            ['twitter', 'instagram'].forEach(function (key) {
-              var a = document.querySelector('[data-social="' + key + '"]');
-              if (a && data.social[key]) a.href = data.social[key];
-            });
-          }
-
-          var mail = document.querySelector('[data-social="email"]');
-          if (data.email && mail) mail.href = 'mailto:' + data.email;
-        })
-        .catch(function () { /* keep baked-in fallback */ });
-    })();
-  </script>
 
   <!-- Interaction sounds. Version-pinned; cuelume is pre-1.0. -->
   <script type="module">
