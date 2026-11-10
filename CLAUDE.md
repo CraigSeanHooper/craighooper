@@ -16,7 +16,7 @@ uses `display-1` for "Go home" over the bar photo.
 
 `preview/` holds the draft the homepage was built from and is free for whatever comes next.
 `lab/` holds standalone experiments: `hero-grid`, `infinite`, `texture-generator`, and the
-spacing checker (`lab/spacing-checker/`, which has its own `CLAUDE.md`). The v9 archives
+spacing checker (`lab/spacing-checker/`). The v9 archives
 were deleted on 2 November 2026, along with the fonts only they used (Means Web, KMR
 Apparat, Marlin Soft).
 
@@ -50,8 +50,9 @@ The website's Claude Code project is Dropbox › Claude › Personal Digital Wor
 `~/Library/CloudStorage/Dropbox/Claude/Personal Digital Work/craighooper` (moved there 10 November
 2026). This is the only copy on the Mac: the website, the spacing checker and the texture
 generator are all worked on from here (the tools' separate Dropbox folders were removed on
-10 November 2026). The texture generator's notes and build brief sit outside the repo in
-Personal Digital Work › texture-generator. If git errors oddly, Dropbox may have damaged its hidden files: clone
+10 November 2026). Each tool's notes sit outside the repo, in Personal Digital Work ›
+spacing-checker and › texture-generator, because this repo is public. Never put private
+notes in the repo. If git errors oddly, Dropbox may have damaged its hidden files: clone
 fresh from GitHub. The GitHub CLI is at
 `~/.local/bin/gh` (not on the PATH) and is signed in as CraigSeanHooper; git uses it
 for pushing. Set up 2 November 2026.
@@ -118,7 +119,7 @@ What ships on the homepage and 404 is one face: **KMR Melange Grotesk SemiBold**
 | `display-2/lg` · `/sm` | 48 / 48 | 24 / 26 | Bio |
 
 Parabole Regular is the body face for some lab pages (`hero-grid`, `infinite`). The spacing
-checker uses Inter instead (since 7 November; see its own `CLAUDE.md`). Switching a
+checker uses Inter instead (since 7 November; see its notes). Switching a
 typeface is a token change plus a woff2 in `assets/fonts/`.
 
 ## Working with type in Figma (important)
@@ -172,5 +173,5 @@ GitHub → Netlify, auto-deploy on push. Settled — don't re-open it unless Cra
 - Publish, say what changed in a sentence or two, done.
 
 ## Continuity
-This file and `lab/spacing-checker/CLAUDE.md` carry context between sessions. If the
+This file and the tools' notes in Personal Digital Work carry context between sessions. If the
 workflow changes, update this file.
