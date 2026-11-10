@@ -61,9 +61,23 @@
   function $(id) { return document.getElementById(id); }
   function hex(h) { h = h.replace("#", ""); return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
   function canvasOf(w, h) { var c = document.createElement("canvas"); c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h)); return c; }
+  // Phones (iPhone Safari above all) cap how much memory a page may use for images.
+  // Past the cap a canvas quietly comes back empty, so large ones are checked by
+  // drawing one pixel in the far corner and reading it back.
+  function checked(c) {
+    var ctx = c.getContext("2d"), x = c.width - 1, y = c.height - 1;
+    if (!ctx) throw new Error("no memory for this image size");
+    ctx.fillStyle = "#000"; ctx.fillRect(x, y, 1, 1);
+    var ok = ctx.getImageData(x, y, 1, 1).data[3] === 255;
+    ctx.clearRect(x, y, 1, 1);
+    if (!ok) { freeCanvas(c); throw new Error("no memory for this image size"); }
+    return c;
+  }
+  // hands a canvas's memory back straight away, rather than whenever the browser gets round to it
+  function freeCanvas(c) { if (c) { c.width = 0; c.height = 0; } }
   function scaled(img, max) {
     var iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height, k = Math.min(1, max / Math.max(iw, ih));
-    var c = canvasOf(iw * k, ih * k), ctx = c.getContext("2d");
+    var c = checked(canvasOf(iw * k, ih * k)), ctx = c.getContext("2d");
     ctx.imageSmoothingQuality = "high";
     ctx.drawImage(img, 0, 0, c.width, c.height);
     return c;
@@ -113,11 +127,13 @@
   // Runs every step on `base` (a canvas holding the photo) and returns a new
   // canvas. Sizes are relative to the photo, so preview and download match.
   // `s` is a snapshot of the settings taken when the run started.
-  async function processImage(base, s) {
+  // `freeBase` (downloads only) hands the base's memory back once it's copied.
+  async function processImage(base, s, freeBase) {
     startBudget();
     var W = base.width, H = base.height, U = Math.max(W, H) / 2000;   // 1 unit ≈ 1px on a 2000px photo
-    var out = canvasOf(W, H), ctx = out.getContext("2d");
+    var out = checked(canvasOf(W, H)), ctx = out.getContext("2d");
     ctx.drawImage(base, 0, 0);
+    if (freeBase) freeCanvas(base);
     var data = ctx.getImageData(0, 0, W, H), px = data.data, i, y, end, wait, row = W * 4;
 
     // levels from the histogram, so the colours always reach full range
@@ -163,9 +179,10 @@
       px[i + 2] = ob * 255 * (1 - t) + cb * t;
      }
     }
+    // misregistration works on the same pixels before they go back, rather than reading a second copy
+    if (s.misregister > 0) await misregister(px, W, H, U, s);
     ctx.putImageData(data, 0, 0);
-
-    if (s.misregister > 0) await misregister(ctx, W, H, U, s);
+    data = px = null;   // let the browser reclaim the pixel copy straight away
     if (s.vignette > 0) vignette(ctx, W, H, s.mode === "original" ? "#000000" : s.dark, s);
 
     // speckle is printed in the shadow colour (near-black in Original mode)
@@ -180,27 +197,30 @@
   // (85%) mixed in: a clearly visible offset whose fringe edges fade instead of
   // ending in a hard line. (A full hard shift was too harsh; a wide spread at
   // 60% and 8px was too faint.)
-  async function misregister(ctx, W, H, U, s) {
+  // `p` is the photo's pixels, changed in place. Only the red and blue channels are
+  // copied to read from (a quarter of the photo each), to keep memory down on phones.
+  async function misregister(p, W, H, U, s) {
     var d = s.misregister / 100 * 14 * U;
     if (d < 0.5) return;
-    var img = ctx.getImageData(0, 0, W, H), src = new Uint8ClampedArray(img.data), p = img.data, wait;
+    var n = W * H, red = new Uint8Array(n), blue = new Uint8Array(n), wait;
+    for (var k = 0; k < n; k++) { red[k] = p[k * 4]; blue[k] = p[k * 4 + 2]; }
     var taps = [0.55, 0.7, 0.85, 1], mix = 0.85;
-    function at(x, y, c) {
+    function at(x, y, ch) {
       x = x < 0 ? 0 : x > W - 1 ? W - 1 : x | 0; y = y < 0 ? 0 : y > H - 1 ? H - 1 : y | 0;
-      return src[(y * W + x) * 4 + c];
+      return ch[y * W + x];
     }
     for (var y = 0; y < H; y++) for (var x = 0; x < W; x++) {
       if (x === 0 && (wait = tick())) await wait;
       var i = (y * W + x) * 4, r = 0, b = 0;
       for (var t = 0; t < 4; t++) {
         var o = d * taps[t];
-        r += at(x + o, y + o * 0.5, 0);
-        b += at(x - o, y - o * 0.5, 2);
+        r += at(x + o, y + o * 0.5, red);
+        b += at(x - o, y - o * 0.5, blue);
       }
-      p[i] = src[i] * (1 - mix) + r / 4 * mix;
-      p[i + 2] = src[i + 2] * (1 - mix) + b / 4 * mix;
+      var j = i >> 2;
+      p[i] = red[j] * (1 - mix) + r / 4 * mix;
+      p[i + 2] = blue[j] * (1 - mix) + b / 4 * mix;
     }
-    ctx.putImageData(img, 0, 0);
   }
 
 
@@ -253,6 +273,7 @@
     ctx.save();
     ctx.imageSmoothingEnabled = size > 1.5;
     ctx.drawImage(g, 0, 0, gw * size, gh * size);
+    freeCanvas(g);
     ctx.restore();
   }
 
@@ -329,26 +350,38 @@
   // ---------- download ----------
   // The full-size run hands control back to the browser as it goes, so the page
   // keeps responding while a large photo is prepared.
+  // If the browser runs out of image memory (iPhones cap it), it tries again
+  // smaller, and says so. Effects are sized to the photo, so a smaller file looks the same.
+  var FALLBACK_SIZES = [4000, 3000, 2000];
   var exporting = false;
+  function toBlob(c, type, q) { return new Promise(function (r) { c.toBlob(r, type, q); }); }
   async function download() {
     if (!source || exporting) return;
     exporting = true;
-    var settings = snapshot(), name = fileBase, out = null;
+    var settings = snapshot(), name = fileBase, blob = null, w = 0, h = 0;
+    var type = settings.format === "png" ? "image/png" : "image/jpeg";
+    var full = Math.min(EXPORT_MAX, Math.max(source.naturalWidth, source.naturalHeight));
+    var sizes = [full].concat(FALLBACK_SIZES.filter(function (n) { return n < full; }));
     setStatus("Preparing full-size image…");
     await new Promise(function (r) { setTimeout(r, 30); });   // let the message show first
-    try { out = await processImage(scaled(source, EXPORT_MAX), settings); } catch (e) { out = null; }
-    if (!out) { exporting = false; setStatus("Couldn't create the file."); return; }
-    var type = settings.format === "png" ? "image/png" : "image/jpeg";
-    out.toBlob(function (blob) {
-      exporting = false;
-      if (!blob) { setStatus("Couldn't create the file."); return; }
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = name + "-edited." + settings.format;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
-      setStatus("Saved " + a.download + " · " + out.width + " × " + out.height);
-    }, type, settings.quality / 100);
+    for (var k = 0; k < sizes.length && !blob; k++) {
+      if (k > 0) setStatus("Not enough memory for full size. Trying a smaller size…");
+      var out = null;
+      try {
+        out = await processImage(scaled(source, sizes[k]), settings, true);
+        w = out.width; h = out.height;
+        blob = await toBlob(out, type, settings.quality / 100);
+      } catch (e) { blob = null; }
+      freeCanvas(out);   // hand the memory back before saving or trying again
+    }
+    exporting = false;
+    if (!blob) { setStatus("Couldn't create the file. Try a smaller photo."); return; }
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name + "-edited." + settings.format;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+    setStatus("Saved " + a.download + " · " + w + " × " + h + (k > 1 ? " (smaller than full size: this browser ran out of memory)" : ""));
   }
 
   // ---------- controls ----------
