@@ -325,7 +325,7 @@
     .tooltip.on { opacity: 1; pointer-events: auto; }   /* the pointer can rest on it without it vanishing */
     .tooltip.instant { transition: none; }
     .tooltip-box {
-      --sq-line: var(--surface-action); --sq-fill: var(--surface-action); --r: var(--radius-full);   /* fully rounded */
+      --sq-line: var(--surface-action); --sq-fill: var(--surface-action);   /* radius/sm (8px), the .sq default */
       display: block; padding: var(--space-50) var(--space-150); white-space: nowrap;
       color: var(--text-on-action); font-size: var(--font-size-12); line-height: var(--line-height-18); font-weight: 400;   /* interface/body/xs/lg */
     }
@@ -595,6 +595,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=63"></script>
+  <script src="effects.js?v=64"></script>
 </body>
 </html>
