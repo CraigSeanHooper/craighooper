@@ -207,6 +207,8 @@
     .input input[type="text"] { color: inherit; }
     .panel-body { position: relative; flex: 1; overflow-y: auto; padding: 0 var(--space-300) var(--space-300); }
     .section + .section { margin-top: var(--space-500); }
+    /* the Export heading takes focus when the dialog opens (so no button shows a ring); it isn't a control */
+    #export-title:focus { outline: none; }
     .heading {
       display: flex; align-items: center; gap: var(--space-100); margin: 0 0 var(--space-300);
       color: var(--text-primary); font-size: var(--font-size-12); line-height: var(--line-height-18); font-weight: 600;
@@ -575,7 +577,7 @@
       <dialog class="dialog-wrap" id="export-dialog" aria-labelledby="export-title">
         <div class="dialog sq">
           <div class="grabber" aria-hidden="true"></div>
-          <h2 class="heading" id="export-title"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export</h2>
+          <h2 class="heading" id="export-title" tabindex="-1" autofocus><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Export</h2>
           <div class="field row">
             <span>Format</span>
             <div class="tabs" id="format">
@@ -593,6 +595,6 @@
     </main>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=62"></script>
+  <script src="effects.js?v=63"></script>
 </body>
 </html>

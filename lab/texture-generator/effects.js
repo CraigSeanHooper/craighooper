@@ -732,8 +732,9 @@
     function open() {
       if (MOBILE.matches) rail.close(true);   // on phones only one sheet shows at a time: swap without a slide out
       showSheet(wrap); railBtn.setAttribute("aria-expanded", "true");
-      var chosen = wrap.querySelector('#format [aria-pressed="true"]');
-      if (chosen) chosen.focus();   // keyboard users land inside the dialog
+      // focus lands on the Export heading (it has autofocus), not on a button, so no focus ring
+      // shows on JPG when the dialog is opened by a tap or click; Tab moves on to the controls
+      $("export-title").focus();
     }
     function close(backToRail, instant) {
       if (!isOpen()) return;
