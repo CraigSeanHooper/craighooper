@@ -86,8 +86,7 @@
 
       /* mobile (below 1024): bottom bar and sheets, designed at 390 */
       --control-fill-open: #cccccc;      /* control/fill/open: the sheet grabber */
-      --avatar-mobile: 48px;             /* the same size as the website's avatar on phones */
-      --header-height: calc(var(--space-200) * 2 + var(--avatar-mobile));                    /* avatar, 16 in: 80 */
+      --header-height: calc(var(--space-100) + var(--rail-button) + var(--space-200));       /* avatar 8 in, then 16 clear: 64 */
       --bar-height: calc(var(--space-150) * 2 + var(--rail-button) + var(--stroke-sm));      /* 65, plus the phone's safe area */
       --sheet-height: 236px;             /* every phone menu (Craig, 9 November: 314 until the colour fields were hidden) */
       --grabber-width: 36px;
@@ -383,8 +382,7 @@
       .start { gap: var(--space-150); }
       .app:not(.open) .start { transform: none; }
       .start-title { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-      .avatar-mobile { display: block; position: fixed; top: var(--space-200); left: var(--space-200); z-index: 1; }
-      .avatar-mobile, .avatar-mobile img { width: var(--avatar-mobile); height: var(--avatar-mobile); }
+      .avatar-mobile { display: block; position: fixed; top: var(--space-100); left: var(--space-100); z-index: 1; }
 
       /* the photo fills the space above the bar, clear of the avatar */
       .stage {
