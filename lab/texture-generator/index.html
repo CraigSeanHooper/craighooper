@@ -38,7 +38,8 @@
       --text-secondary: #4d4d4d;         /* text/secondary */
       --text-muted: #808080;             /* text/muted */
       --icon-disabled: #b3b3b3;          /* icon/disabled */
-      --icon-primary: #1a1a1a;           /* icon/primary */
+      --icon-primary: #333333;           /* icon/primary: neutral 80 (11 November) */
+      --surface-avatar: #ffffff;         /* surface/avatar */
       --surface-accent: #fffbc6;         /* surface/accent: the only colour, "you are here" */
       --text-on-accent: #1a1a1a;         /* text/on-accent */
       --control-fill-hover: #e6e6e6;     /* control/fill/hover */
@@ -73,6 +74,7 @@
       --rail-width: 64px;
       --panel-width: 380px;
       --rail-button: 40px;
+      --avatar-sm: 32px;                 /* avatar/sm: the drawing inside the 40 circle */
       --icon-md: 24px;
       --icon-sm: 20px;
       --control-height: 32px;            /* tabs, hex boxes */
@@ -174,10 +176,20 @@
     .rail-btn:disabled, .rail-btn:disabled:hover { --sq-line: transparent; --sq-fill: transparent; color: var(--icon-disabled); cursor: default; }
 
     /* ---------- avatar: top of the rail ---------- */
-    .avatar { display: block; width: var(--rail-button); height: var(--rail-button); border-radius: 50%; }
+    /* avatar/static Size=Small: the 32 drawing in a 40 circle, space/50 all round. A full circle: no smoothing */
+    .avatar {
+      display: grid; place-items: center; width: var(--rail-button); height: var(--rail-button);
+      border-radius: var(--radius-full); background: var(--surface-avatar);
+    }
     .avatar-mobile { display: none; }
-    .avatar img { display: block; width: var(--rail-button); height: var(--rail-button); }
-    .avatar:focus-visible { outline: var(--focus-ring) solid var(--border-focus); outline-offset: 0; }
+    .avatar img { display: block; width: var(--avatar-sm); height: var(--avatar-sm); }
+    /* Focus: border/focus at stroke/md, on the edge of the circle, no gap */
+    .avatar:focus-visible { outline: var(--focus-ring) solid var(--border-focus); outline-offset: calc(var(--focus-ring) * -1); }
+    /* Hover: the drawing spins, as on the homepage */
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .avatar:hover img { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
+    }
+    @keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
     /* ---------- panel: all four sections, scrolling on its own ---------- */
     /* desktop: the panel floats 8px in from the top and bottom, 16px squircle corners, a 1px outline, shadow/xs.
@@ -462,12 +474,12 @@
 
   <div class="app">
     <!-- small screens: avatar top-left, over the photo area -->
-    <a class="avatar avatar-mobile" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="40" height="40" /></a>
+    <a class="avatar avatar-mobile" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="32" height="32" /></a>
 
     <!-- the rail: these buttons never appear, hide or move -->
     <nav class="rail" aria-label="Tools">
       <div class="rail-top">
-        <a class="avatar" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="40" height="40" /></a>
+        <a class="avatar" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="32" height="32" /></a>
         <div class="rail-sections">
           <button type="button" class="rail-btn outline sq" id="choose" aria-label="Choose photo"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
           <button type="button" class="rail-btn sq" data-section="colour" aria-controls="panel" aria-label="Colour"><svg class="icon" aria-hidden="true"><use href="#i-colour"/></svg></button>
