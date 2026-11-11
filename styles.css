@@ -187,7 +187,7 @@ h1, p { margin: 0; font-weight: inherit; }
   /* avatar/static Small: a space/700 (40) circle, drawing fills it */
   .avatar-btn { width: var(--space-700); height: var(--space-700); }
   .avatar-btn img { width: 100%; height: 100%; }
-  .social { right: var(--space-300); }
+  .social { top: var(--space-400); right: var(--space-300); }
   .link-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .copy {
     width: auto;
