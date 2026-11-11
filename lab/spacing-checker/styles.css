@@ -25,6 +25,7 @@
   --colour-neutral-20: #cccccc;
   --colour-neutral-50: #808080;
   --colour-neutral-70: #4d4d4d;
+  --colour-neutral-80: #333333;
   --colour-neutral-90: #1a1a1a;
 
   --colour-violet-5:  #f3effe;
@@ -71,7 +72,7 @@
   --text-primary:       var(--colour-neutral-90);
   --text-secondary:     var(--colour-neutral-70);
   --text-muted:         var(--colour-neutral-50);
-  --icon-primary:       var(--colour-neutral-90);
+  --icon-primary:       var(--colour-neutral-80);
   --icon-muted:         var(--colour-neutral-50);
   --control-fill-field: var(--colour-neutral-0);
   --control-segment-track:    var(--colour-neutral-10);
