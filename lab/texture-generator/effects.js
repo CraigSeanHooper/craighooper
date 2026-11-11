@@ -832,7 +832,11 @@
 
   var RING = 2;   // focus ring width, outside the edge
   function shape(el) {
-    var w = el.offsetWidth, h = el.offsetHeight, r = radiusOf(el);
+    // round fractional sizes up so the clip never shaves the right or bottom edge;
+    // fall back to the layout size while something is scaled (preset hover)
+    var b = el.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, r = radiusOf(el);
+    if (Math.abs(b.width - w) < 1) w = Math.ceil(b.width);
+    if (Math.abs(b.height - h) < 1) h = Math.ceil(b.height);
     if (!w || !h) return;
     var hh = h;
     el.style.setProperty("--sq-outer", "path('" + squirclePath(w, hh, r) + "')");
@@ -869,7 +873,8 @@
       tip.style.left = (r.right + 16) + "px";   // space/300
       tip.style.top = (r.top + r.height / 2) + "px";
       tip.classList.toggle("instant", instant || warm);
-      if (tip.hidden) { tip.classList.remove("on"); tip.hidden = false; tip.offsetHeight; }
+      if (tip.hidden) { tip.classList.remove("on"); tip.hidden = false; }
+      shape(box);   // re-shape now for the new label, so no frame shows the old shape
       tip.classList.add("on");
       current = btn; warm = true;
     }
