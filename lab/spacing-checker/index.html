@@ -72,9 +72,10 @@
   </main>
 
   <!-- After an address is entered: Figma "canvas - desktop / loading" (4577:222) -->
-  <div class="screen tool" hidden>
+  <main class="screen tool" hidden>
+    <h1 class="visually-hidden">Spacing checker</h1>
     <div class="page"></div>
-    <div class="progress" aria-hidden="true"></div>
+    <div class="progress" role="progressbar" aria-label="Loading page"></div>
 
     <div class="bar-area">
       <div class="strip" data-smooth="">
@@ -98,13 +99,17 @@
         </button>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- Under 1024 wide: Figma "canvas - desktop - message" (4567:213) -->
   <div class="screen small-screen">
     <div class="glow" aria-hidden="true"></div>
     <p class="interface-heading">Not optimized for phones or small screens</p>
   </div>
+
+  <!-- Read out by screen readers: what the tool is doing right now. Kept outside the
+       screens so it's always present, which screen readers need to announce changes. -->
+  <p class="visually-hidden" role="status"></p>
 
   <script src="script.js"></script>
   <script src="smooth-corners.js"></script>

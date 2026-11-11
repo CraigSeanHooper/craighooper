@@ -105,6 +105,18 @@ body {
 }
 h1, p { margin: 0; }
 [hidden] { display: none !important; }
+/* Read by screen readers, not shown. Sizes here aren't design values. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cursor: pointer; }
 
 /* ---------------- TEXT STYLES ---------------- */
@@ -295,6 +307,10 @@ button { margin: 0; padding: 0; border: 0; background: none; color: inherit; cur
 .progress.creep {
   width: 90%;
   transition: width 20s cubic-bezier(0.1, 0.7, 0.2, 1);
+}
+/* Reduced motion: no quick start, just a slow, even creep, so it still shows progress */
+@media (prefers-reduced-motion: reduce) {
+  .progress.creep { transition: width 40s linear; }
 }
 
 /* ---------------- control-strip ---------------- */

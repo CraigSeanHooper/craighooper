@@ -35,11 +35,21 @@ specs.addEventListener('click', () => {
 });
 
 // Enter and the arrow button both load the page, from either screen.
+const status = document.querySelector('[role="status"]');
+
 function load(address) {
-  strip.querySelector('.field input').value = address;
+  const field = strip.querySelector('.field input');
+  field.value = address;
   landing.hidden = true;
   tool.hidden = false;
   showWidth();
+
+  // Hiding the landing screen would drop keyboard focus to the top of the page, so it
+  // moves to the address in the bar, where the visitor was typing.
+  field.focus();
+
+  // Screen readers can't see the loading line, so say what's happening.
+  status.textContent = `Loading ${address}`;
 
   // The loading line creeps forward while waiting. Finishing it, once the page has
   // loaded and its specs are measured, comes with the measuring step.
