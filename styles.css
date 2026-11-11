@@ -25,7 +25,7 @@
   --font-weight-semibold: 600;
 
   --space-50: 4px; --space-100: 8px; --space-200: 12px; --space-300: 16px;
-  --space-400: 20px; --space-500: 24px; --space-600: 32px; --space-700: 40px;
+  --space-400: 20px; --space-500: 24px; --space-600: 32px;
   --radius-xs: 4px;
   --radius-full: 64px;
   --stroke-md: 2px;
@@ -38,6 +38,7 @@
   --letter-spacing-minus-1: -0.5px;
 
   --icon-lg: 24px;
+  --avatar-sm: 32px; --avatar-lg: 48px;
 }
 
 /* ---------------- SEMANTIC ---------------- */
@@ -127,7 +128,8 @@ h1, p { margin: 0; font-weight: inherit; }
 .portrait .note-mobile { display: none; }
 
 /* avatar — top left */
-/* avatar/static Large: a 56 circle, drawing inset 12.5% each side (Figma). Small on mobile. */
+/* avatar/static: a circle with space/50 padding around the drawing.
+   Large (desktop): avatar/lg drawing, 56 circle. Small (mobile): avatar/sm drawing, 40 circle. */
 .avatar-wrap {
   position: absolute;
   top: var(--space-100);
@@ -136,14 +138,14 @@ h1, p { margin: 0; font-weight: inherit; }
 }
 .avatar-btn {
   display: grid; place-items: center;
-  width: 56px; height: 56px; padding: 0; border: 0;
+  padding: var(--space-50); border: 0;
   border-radius: var(--radius-full);
   background: var(--surface-avatar);
   cursor: pointer;
 }
-.avatar-btn img { display: block; width: 75%; height: 75%; object-fit: cover; }
-/* Focus (avatar/static State=Focus): border/focus ring at stroke/md, space/50 outside, hugging the circle */
-.avatar-btn:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--space-50); }
+.avatar-btn img { display: block; width: var(--avatar-lg); height: var(--avatar-lg); object-fit: cover; }
+/* Focus (avatar/static State=Focus): border/focus ring at stroke/md on the edge of the circle, no gap */
+.avatar-btn:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: calc(-1 * var(--stroke-md)); }
 @media (hover: hover) and (min-width: 821px) {
   .avatar-btn:hover { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
 }
@@ -184,9 +186,7 @@ h1, p { margin: 0; font-weight: inherit; }
 
 /* ---------------- MOBILE (≤820px) ---------------- */
 @media (max-width: 820px) {
-  /* avatar/static Small: a space/700 (40) circle, drawing fills it */
-  .avatar-btn { width: var(--space-700); height: var(--space-700); }
-  .avatar-btn img { width: 100%; height: 100%; }
+  .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
   .social { top: var(--space-400); right: var(--space-300); }
   .link-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .copy {
