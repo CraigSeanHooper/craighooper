@@ -74,7 +74,8 @@
       --rail-width: 64px;
       --panel-width: 380px;
       --rail-button: 40px;
-      --avatar-sm: 32px;                 /* avatar/sm: the drawing inside the 40 circle */
+      --avatar-sm: 32px;                 /* avatar/sm: the drawing inside the 40 circle (phones) */
+      --avatar-lg: 48px;                 /* avatar/lg: the drawing inside the 56 circle (desktop) */
       --icon-md: 24px;
       --icon-sm: 20px;
       --control-height: 32px;            /* tabs, hex boxes */
@@ -160,7 +161,7 @@
     /* ---------- rail ---------- */
     .rail {
       display: flex; flex-direction: column; justify-content: space-between; align-items: center;
-      min-height: 0; padding: var(--space-300) var(--space-150) var(--space-150);
+      min-height: 0; padding: var(--space-300) var(--space-50) var(--space-150);   /* 4 at the sides so the 56 avatar fits the 64 rail */
     }
     .rail-top { display: flex; flex-direction: column; align-items: center; gap: var(--space-300); }
     .rail-sections { display: flex; flex-direction: column; gap: var(--space-100); }
@@ -185,11 +186,15 @@
     .avatar img { display: block; width: var(--avatar-sm); height: var(--avatar-sm); }
     /* Focus: border/focus at stroke/md, on the edge of the circle, no gap */
     .avatar:focus-visible { outline: var(--focus-ring) solid var(--border-focus); outline-offset: calc(var(--focus-ring) * -1); }
-    /* Hover: the drawing spins, as on the homepage */
-    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-      .avatar:hover img { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
+    /* Hover on desktop: the avatar spins (with the homepage's sparkle sound), as on the homepage */
+    @media (hover: hover) and (min-width: 1024px) {
+      .rail .avatar:hover { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
     }
+    @media (prefers-reduced-motion: reduce) { .rail .avatar:hover { animation: none; } }
     @keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    /* desktop rail: avatar/static Size=Large, the 48 drawing in a 56 circle */
+    .rail .avatar { width: calc(var(--avatar-lg) + var(--space-50) * 2); height: calc(var(--avatar-lg) + var(--space-50) * 2); }
+    .rail .avatar img { width: var(--avatar-lg); height: var(--avatar-lg); }
 
     /* ---------- panel: all four sections, scrolling on its own ---------- */
     /* desktop: the panel floats 8px in from the top and bottom, 16px squircle corners, a 1px outline, shadow/xs.
@@ -479,7 +484,7 @@
     <!-- the rail: these buttons never appear, hide or move -->
     <nav class="rail" aria-label="Tools">
       <div class="rail-top">
-        <a class="avatar" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="32" height="32" /></a>
+        <a class="avatar" href="/" aria-label="Craig Hooper, home" data-cuelume-hover="sparkle"><img src="/assets/avatar.png" alt="" width="48" height="48" /></a>
         <div class="rail-sections">
           <button type="button" class="rail-btn outline sq" id="choose" aria-label="Choose photo"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
           <button type="button" class="rail-btn sq" data-section="colour" aria-controls="panel" aria-label="Colour"><svg class="icon" aria-hidden="true"><use href="#i-colour"/></svg></button>
@@ -608,5 +613,10 @@
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
   <script src="effects.js?v=65"></script>
+  <!-- the homepage's interaction sounds (cuelume 0.1.2, in assets/vendor): the avatar's hover sparkle -->
+  <script type="module">
+    import { bind } from "/assets/vendor/cuelume-0.1.2/index.js";
+    bind();
+  </script>
 </body>
 </html>
