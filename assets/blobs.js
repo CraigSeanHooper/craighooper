@@ -314,6 +314,13 @@
       im.setAttribute('preserveAspectRatio', 'none');
       pat.appendChild(im);
     }
+    /* The shape can grow past its first outline as the cursor reshapes it, so
+       the whole artwork is first filled with the photo's flat background
+       (#EDE4FF); any growth just shows more of that, never a cut edge. */
+    var bg = document.createElementNS(NS, 'rect');
+    bg.setAttribute('width', VW); bg.setAttribute('height', VH);
+    bg.setAttribute('fill', '#EDE4FF');
+    pat.appendChild(bg);
     img('/assets/portrait-blob.jpg', px, py, pw, ph);
     img('/assets/portrait-blob-circle.svg', px + 121 * sc, py + 27 * sc, 47 * sc, 48 * sc);
     defs.appendChild(pat);
