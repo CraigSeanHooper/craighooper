@@ -33,7 +33,7 @@
   --stroke-md: 2px;
 
   --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
-  --line-height-22: 22px; --line-height-24: 24px; --line-height-28: 28px; --line-height-36: 36px;
+  --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-36: 36px;
   --letter-spacing-minus-1: -0.5px;
 
   --icon-lg: 24px;
@@ -94,7 +94,7 @@ body {
 h1, p { margin: 0; font-weight: inherit; }
 
 /* ---------------- TEXT STYLES ---------------- */
-/* display-1/lg 32/36 → /sm 24/28; display-2/lg 18/24 → /sm 16/22 (steps down at 820px) */
+/* display-1/lg 32/36 → /sm 24/26; display-2/lg 18/24 → /sm 16/22 (steps down at 820px) */
 .display-1 { font-size: var(--font-size-32); line-height: var(--line-height-36); color: var(--text-primary); text-wrap: balance; }
 .display-2 {
   font-family: var(--font-family-body); font-weight: var(--font-style-body);
@@ -175,7 +175,7 @@ h1, p { margin: 0; font-weight: inherit; }
   .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
   .social { top: var(--space-300); right: var(--space-300); }
   .page { padding: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)) var(--space-500); }
-  .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-28); }
+  .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
   .display-2 { font-size: var(--font-size-16); line-height: var(--line-height-22); }
   /* blobs: space/400 below the bio (Figma 245 × 173) */
   .copy .blobs { width: 245px; aspect-ratio: 245 / 173; margin-top: calc(var(--space-400) - var(--space-100)); }
