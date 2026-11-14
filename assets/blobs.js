@@ -10,6 +10,10 @@
      morph     : LERP 0.09 (deliberately slowed; 0.16 felt too fast)
      shapes    : 4 only. Cursor must NOT spawn new shapes.
      mobile    : renders the same artwork, interaction disabled
+     size      : 570x320 / 350x196 by default; a page can set its own with
+                 data-desktop="WxH" / data-mobile="WxH" on #blobs
+     photo     : with data-photo on #blobs, one of the four shapes (picked at
+                 random each visit) shows Craig's photo instead of a colour
 
    HOW IT WORKS (one paragraph, so nobody re-derives it):
      Shapes are not drawn as paths. A coarse cell grid is filled by a
@@ -38,7 +42,10 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var interactive = !isMobile && !reduceMotion;
 
+  var host = document.getElementById('blobs');
   var M = isMobile ? CONFIG.mobile : CONFIG.desktop;
+  var own = host.getAttribute(isMobile ? 'data-mobile' : 'data-desktop');
+  if (own) { var wh = own.split('x'); M = { vw: +wh[0], vh: +wh[1], gw: M.gw, gh: M.gh }; }
   var VW = M.vw, VH = M.vh, GW = M.gw, GH = M.gh;
   var UP = CONFIG.upsample, PD = CONFIG.pad;
   var FW = GW * UP + 2 * PD, FH = GH * UP + 2 * PD;
@@ -47,7 +54,6 @@
   var R = CONFIG.round, LP = CONFIG.lerp, BRU = CONFIG.brush;
   var PAL = CONFIG.palette.accents, DK = CONFIG.palette.mass;
 
-  var host = document.getElementById('blobs');
   var svg = document.createElementNS(NS, 'svg');
   svg.setAttribute('viewBox', '0 0 ' + VW + ' ' + VH);
   svg.setAttribute('role', 'img');
@@ -282,6 +288,39 @@
   }
 
   build();
+
+  /* Photo: one shape, picked at random, is filled with Craig's photo. The photo
+     covers the shape's box, centred, with the hand-drawn circle round his head
+     placed as in Figma (photo 300 x 200, circle 47 x 48 at 121, 27). Holes still
+     open in it, because the shape itself is the mask. */
+  if (host.hasAttribute('data-photo')) {
+    var pick = A[Math.floor(rnd() * A.length)].el;
+    pick.removeAttribute('class');
+    var bb = pick.getBBox();
+    var sc = Math.max(bb.width / 300, bb.height / 200);
+    var pw = 300 * sc, ph = 200 * sc;
+    var px = bb.x + (bb.width - pw) / 2, py = bb.y + (bb.height - ph) / 2;
+    var defs = document.createElementNS(NS, 'defs');
+    var pat = document.createElementNS(NS, 'pattern');
+    pat.setAttribute('id', 'blob-photo');
+    pat.setAttribute('patternUnits', 'userSpaceOnUse');
+    pat.setAttribute('x', 0); pat.setAttribute('y', 0);
+    pat.setAttribute('width', VW); pat.setAttribute('height', VH);
+    function img(href, x, y, w, h) {
+      var im = document.createElementNS(NS, 'image');
+      im.setAttribute('href', href);
+      im.setAttribute('x', x); im.setAttribute('y', y);
+      im.setAttribute('width', w); im.setAttribute('height', h);
+      im.setAttribute('preserveAspectRatio', 'none');
+      pat.appendChild(im);
+    }
+    img('/assets/portrait-blob.jpg', px, py, pw, ph);
+    img('/assets/portrait-blob-circle.svg', px + 121 * sc, py + 27 * sc, 47 * sc, 48 * sc);
+    defs.appendChild(pat);
+    svg.insertBefore(defs, svg.firstChild);
+    pick.setAttribute('fill', 'url(#blob-photo)');
+    svg.setAttribute('aria-label', 'Craig Hooper, inside generative blob artwork');
+  }
 
   if (!interactive) return;   // mobile / reduced motion: static artwork, no listeners
 
