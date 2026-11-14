@@ -12,11 +12,16 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
   <link rel="stylesheet" href="/styles.css">
+  <script src="/assets/blobs.js" defer></script>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="7cd61b65-fc45-4109-a7cd-35237990d2b3"></script>
 </head>
 <body>
-  <main>
-    <a class="notfound" href="/"><h1 class="visually-hidden">Page not found. Go home.</h1></a>
+  <main class="notfound-page">
+    <a class="notfound" href="/">
+      <h1 class="visually-hidden">Page not found. Go home.</h1>
+    </a>
+    <!-- outside the link, so clicking a blob opens a hole instead of going home -->
+    <div class="blobs" id="blobs"></div>
   </main>
 </body>
 </html>

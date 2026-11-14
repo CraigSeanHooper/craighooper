@@ -30,8 +30,8 @@ def swap(pattern, build):
         sys.exit(f"bake-home-text: couldn't find {pattern!r} in index.html")
 
 
-# The homepage, plus the preview of the next homepage while there is one.
-for page_path in (root / "index.html", root / "preview/index.html"):
+# The homepage.
+for page_path in (root / "index.html",):
     if not page_path.exists():
         continue
     page = page_path.read_text(encoding="utf-8")
