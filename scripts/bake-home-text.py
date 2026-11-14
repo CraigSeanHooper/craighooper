@@ -17,8 +17,6 @@ from pathlib import Path
 
 root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
 data = json.loads((root / "content/home.json").read_text(encoding="utf-8"))
-page_path = root / "index.html"
-page = page_path.read_text(encoding="utf-8")
 
 
 def text(s):
@@ -32,25 +30,31 @@ def swap(pattern, build):
         sys.exit(f"bake-home-text: couldn't find {pattern!r} in index.html")
 
 
-headline = data.get("headline", "")
-if headline.strip():
-    inner = "<br>".join(text(line) for line in re.split(r"\r?\n", headline))
-    swap(r'(<h1 class="display-1 headline">).*?(</h1>)',
-         lambda m: m.group(1) + inner + m.group(2))
+# The homepage, plus the preview of the next homepage while there is one.
+for page_path in (root / "index.html", root / "preview/index.html"):
+    if not page_path.exists():
+        continue
+    page = page_path.read_text(encoding="utf-8")
 
-bio = [p for p in data.get("bio") or [] if p]
-if bio:
-    paras = "".join(f'\n      <p class="display-2">{text(p)}</p>' for p in bio)
-    swap(r'(<div class="bio">).*?(</div>)',
-         lambda m: m.group(1) + paras + "\n    " + m.group(2))
+    headline = data.get("headline", "")
+    if headline.strip():
+        inner = "<br>".join(text(line) for line in re.split(r"\r?\n", headline))
+        swap(r'(<h1 class="display-1 headline">).*?(</h1>)',
+             lambda m: m.group(1) + inner + m.group(2))
 
-links = dict(data.get("social") or {})
-if data.get("email"):
-    links["email"] = "mailto:" + data["email"]
-for key, url in links.items():
-    if key in ("twitter", "instagram", "email") and url:
-        swap(r'(<a href=")[^"]*(" [^>]*data-social="' + key + r'")',
-             lambda m, u=url: m.group(1) + html.escape(u) + m.group(2))
+    bio = [p for p in data.get("bio") or [] if p]
+    if bio:
+        paras = "".join(f'\n      <p class="display-2">{text(p)}</p>' for p in bio)
+        swap(r'(<div class="bio">).*?(</div>)',
+             lambda m: m.group(1) + paras + "\n    " + m.group(2))
 
-page_path.write_text(page, encoding="utf-8")
-print("bake-home-text: homepage text filled in from content/home.json")
+    links = dict(data.get("social") or {})
+    if data.get("email"):
+        links["email"] = "mailto:" + data["email"]
+    for key, url in links.items():
+        if key in ("twitter", "instagram", "email") and url:
+            swap(r'(<a href=")[^"]*(" [^>]*data-social="' + key + r'")',
+                 lambda m, u=url: m.group(1) + html.escape(u) + m.group(2))
+
+    page_path.write_text(page, encoding="utf-8")
+    print(f"bake-home-text: {page_path.relative_to(root)} filled in from content/home.json")

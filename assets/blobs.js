@@ -24,7 +24,7 @@
 
   var CONFIG = {
     desktop: { vw: 570, vh: 320, gw: 24, gh: 13 },
-    mobile:  { vw: 350, vh: 224, gw: 20, gh: 13 },
+    mobile:  { vw: 350, vh: 196, gw: 20, gh: 13 },
     mobileBreakpoint: 820,
     palette: { mass: '#000000', accents: ['#E8452F', '#1F6FEB', '#F2C230'] },
     round: { blur: 9, clean: 2, tension: 0.18, threshold: 0.50 },

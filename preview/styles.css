@@ -1,8 +1,16 @@
+/* Preview of the next homepage and 404 (Figma: desktop-10.3 3404:69, mobile-10.3 3362:68,
+   404-desktop 2836:364, 404-mobile 2836:375). Typography mode: Exposure. */
+
 /* ---------------- FONTS ---------------- */
 @font-face {
-  font-family: "KMR Melange Grotesk";
-  src: url("../assets/fonts/KMRMelangeGrotesk-SemiBold.woff2") format("woff2");
-  font-weight: 600; font-style: normal; font-display: swap;
+  font-family: "Exposure";
+  src: url("/assets/fonts/Exposure-Minus20Regular.woff2") format("woff2");
+  font-weight: 450; font-style: normal; font-display: swap;   /* Exposure [-20] */
+}
+@font-face {
+  font-family: "Exposure";
+  src: url("/assets/fonts/Exposure-Minus10Regular.woff2") format("woff2");
+  font-weight: 425; font-style: normal; font-display: swap;   /* Exposure [-10] */
 }
 
 /* ---------------- PRIMITIVES ---------------- */
@@ -11,41 +19,58 @@
   --colour-neutral-10: #e6e6e6;
   --colour-neutral-20: #cccccc;
   --colour-neutral-70: #4d4d4d;
+  --colour-neutral-80: #333333;
   --colour-neutral-90: #1a1a1a;
 
-  --font-family-melange: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;
-  --font-weight-semibold: 600;
+  --font-family-exposure: "Exposure", Georgia, serif;
+  --font-weight-exposure-10: 425;   /* "[-10] Regular" */
+  --font-weight-exposure-20: 450;   /* "[-20] Regular" */
 
-  --space-50: 4px; --space-100: 8px; --space-200: 12px; --space-300: 16px;
+  --space-50: 4px; --space-100: 8px; --space-300: 16px;
   --space-400: 20px; --space-500: 24px; --space-600: 32px;
+  --radius-xs: 4px;
   --radius-full: 64px;
+  --stroke-md: 2px;
 
-  --font-size-24: 24px; --font-size-40: 40px; --font-size-48: 48px; --font-size-64: 64px;
-  --line-height-26: 26px; --line-height-40: 40px; --line-height-48: 48px; --line-height-60: 60px;
+  --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
+  --line-height-22: 22px; --line-height-24: 24px; --line-height-28: 28px; --line-height-36: 36px;
   --letter-spacing-minus-1: -0.5px;
 
   --icon-lg: 24px;
+  --avatar-sm: 32px; --avatar-lg: 48px;
 }
 
 /* ---------------- SEMANTIC ---------------- */
 :root {
   --text-primary:   var(--colour-neutral-90);
+  --text-on-dark:   var(--colour-neutral-0);
   --text-secondary: var(--colour-neutral-70);
-  --icon-primary:   var(--colour-neutral-90);
+  --icon-primary:   var(--colour-neutral-80);
+  --icon-hover:     var(--colour-neutral-90);
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
+  --border-focus:   var(--colour-neutral-90);
 
-  --font-family-heading: var(--font-family-melange);
-  --font-style-heading:  var(--font-weight-semibold);
+  /* Typography, Exposure mode */
+  --font-family-heading: var(--font-family-exposure);
+  --font-style-heading:  var(--font-weight-exposure-20);
+  --font-family-body:    var(--font-family-exposure);
+  --font-style-body:     var(--font-weight-exposure-10);
   --letter-spacing-heading: var(--letter-spacing-minus-1);
+
+  /* blob artwork: the large mass (the accents never change) */
+  --blob-mass: #000000;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --text-primary:   var(--colour-neutral-10);
     --text-secondary: var(--colour-neutral-20);
-    --icon-primary:   var(--colour-neutral-10);
+    --icon-primary:   var(--colour-neutral-20);
+    --icon-hover:     var(--colour-neutral-10);
     --surface-page:   var(--colour-neutral-90);
     --surface-avatar: var(--colour-neutral-90);
+    --border-focus:   var(--colour-neutral-10);
+    --blob-mass:      var(--colour-neutral-0);
   }
   /* the avatar is black line art on a transparent background; flip it to white */
   .avatar-btn img { filter: invert(1); }
@@ -57,85 +82,163 @@ html { color-scheme: light dark; background: var(--surface-page); }
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;   /* the blobs may run past the right edge on narrower screens */
   background: var(--surface-page);
   font-family: var(--font-family-heading);
   font-weight: var(--font-style-heading);
   letter-spacing: var(--letter-spacing-heading);
-  font-feature-settings: "salt" 1;
+  font-size-adjust: from-font;   /* the fallback font matches Exposure's size while it loads */
   -webkit-font-smoothing: antialiased;
 }
 h1, p { margin: 0; font-weight: inherit; }
 
 /* ---------------- TEXT STYLES ---------------- */
-.display-1 { font-size: var(--font-size-64); line-height: var(--line-height-60); color: var(--text-primary); }
-.display-2 { font-size: var(--font-size-48); line-height: var(--line-height-48); color: var(--text-secondary); }
+/* display-1/lg 32/36 → /sm 24/28; display-2/lg 18/24 → /sm 16/22 (steps down at 820px) */
+.display-1 { font-size: var(--font-size-32); line-height: var(--line-height-36); color: var(--text-primary); text-wrap: balance; }
+.display-2 {
+  font-family: var(--font-family-body); font-weight: var(--font-style-body);
+  font-size: var(--font-size-18); line-height: var(--line-height-24); color: var(--text-secondary);
+  text-wrap: pretty;   /* no single word left on the last line */
+}
 
 /* ---------------- LAYOUT ---------------- */
+/* the copy sits in the middle of the screen */
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 570px);   /* the copy is 570 wide, narrower when the screen is */
+  place-content: center;
+  padding: calc(var(--space-100) + var(--avatar-lg) + 2 * var(--space-50) + var(--space-500)) var(--space-500);   /* clear of the avatar */
+}
 .copy {
-  width: 770px;
-  max-width: calc(100% - 2 * var(--space-500));
-  margin: 0 auto;
-  padding: 96px 0 96px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-300);
+  align-items: center;
+  gap: var(--space-100);
+  text-align: center;
 }
-.photo { display: block; width: 288px; height: 192px; object-fit: cover; 
-  /* 32px above the photo: the copy gap (16) plus 16 */
-  margin-top: calc(var(--space-600) - var(--space-300)); }
+.copy-img {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-600);
+}
+.bio { display: flex; flex-direction: column; gap: var(--space-100); }
+
+/* photo with the handwritten note laid over it; the blobs sit behind, off its right side */
+.portrait {
+  position: relative;
+  margin: 0;
+  width: 288px; height: 192px;
+}
+.portrait-clip { position: relative; z-index: 1; width: 100%; height: 100%; overflow: hidden; }
+.portrait-clip img { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.portrait-clip .note { height: auto; }
+
+/* blobs: 570 × 320, top level with the photo, starting 183 of its 288px in (Figma) */
+.blobs { position: absolute; top: 0; left: calc(183 / 288 * 100%); width: 570px; aspect-ratio: 570 / 320; }
+.blobs svg { display: block; width: 100%; height: 100%; }
+.blob-mass { fill: var(--blob-mass); }
 
 /* avatar — top left */
-.avatar-wrap {
-  position: absolute;
-  top: var(--space-100);
-  left: var(--space-100);
-  width: 56px; height: 56px;
-  z-index: 3;
-}
+.avatar-wrap { position: absolute; top: var(--space-100); left: var(--space-100); z-index: 3; }
 .avatar-btn {
   display: grid; place-items: center;
-  width: 56px; height: 56px; padding: 0; border: 0;
+  padding: var(--space-50); border: 0;
   border-radius: var(--radius-full);
   background: var(--surface-avatar);
   cursor: pointer;
 }
-.avatar-btn img { display: block; width: 48px; height: 48px; object-fit: cover; }
-.avatar-btn:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
+.avatar-btn img { display: block; width: var(--avatar-lg); height: var(--avatar-lg); object-fit: cover; }
+.avatar-btn:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: calc(-1 * var(--stroke-md)); }
 @media (hover: hover) and (min-width: 821px) {
   .avatar-btn:hover { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
 }
 @keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* social icons — top right */
+/* social icons and mail — top right, in one row */
 .social {
   position: absolute;
-  top: var(--space-200);
-  right: var(--space-200);
+  top: var(--space-500);
+  right: var(--space-500);
   display: flex;
+  align-items: center;
   gap: var(--space-400);
   z-index: 3;
 }
-.social a { display: block; width: var(--icon-lg); height: var(--icon-lg); color: var(--icon-primary); }
+.social a {
+  position: relative; display: block;
+  width: var(--icon-lg); height: var(--icon-lg);
+  color: var(--icon-primary);
+  border-radius: var(--radius-xs); --ring-gap: var(--space-50);
+}
 .social svg { display: block; width: 100%; height: 100%; }
-.social a:focus-visible { outline: 2px solid var(--text-primary); outline-offset: 3px; }
+@media (hover: hover) { .social a:hover { color: var(--icon-hover); } }
+/* Focus: border/focus ring at stroke/md, space/50 outside, 100% smoothed (assets/squircle.js) */
+.social a:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--ring-gap); }
+.social a[data-ring-ready]:focus-visible { outline: none; }
+.social a[data-ring-ready]:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * (var(--ring-gap) + var(--stroke-md)));
+  background: var(--border-focus);
+  clip-path: var(--smooth-ring);
+  pointer-events: none;
+}
 
 /* ---------------- MOBILE (≤820px) ---------------- */
 @media (max-width: 820px) {
-  .avatar-wrap { top: var(--space-50); left: var(--space-50); }
-  .copy {
-    width: auto;
-    max-width: none;
-    margin: 0 var(--space-500);
-    padding: 160px 0 96px;
-    gap: var(--space-100);
-  }
-  .display-1 { font-size: var(--font-size-40); line-height: var(--line-height-40); }
-  .display-2 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .photo { width: 192px; height: 128px; margin-top: calc(var(--space-500) - var(--space-100)); } /* 24px above the photo */
+  .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
+  .social { top: var(--space-300); right: var(--space-300); }
+  .page { padding: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)) var(--space-500); }
+  .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-28); }
+  .display-2 { font-size: var(--font-size-16); line-height: var(--line-height-22); }
+  /* no photo on mobile; the blobs sit centred, space/300 below the text */
+  .copy { position: relative; }
+  .portrait-clip { display: none; }
+  .copy-img { gap: 0; }
+  .portrait { position: absolute; top: 100%; left: 50%; width: 350px; height: auto; translate: -50% var(--space-300); }
+  .blobs { position: static; width: 350px; aspect-ratio: 350 / 196; }
 }
 
-/* ---------------- Load-in animation (matches the live homepage) ---------------- */
+/* ---------------- 404 PAGE ---------------- */
+/* the whole photo is one link back to the homepage; the blobs cover the man's face */
+.notfound-page { position: relative; }
+.notfound {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--colour-neutral-90) url("/assets/bg-404-desktop.jpg") center / cover no-repeat;
+  background-image: image-set(
+    url("/assets/bg-404-desktop.avif") type("image/avif"),
+    url("/assets/bg-404-desktop.jpg") type("image/jpeg")
+  );
+}
+.notfound:focus-visible { outline: 2px solid var(--text-on-dark); outline-offset: -6px; }
+/* blobs: 570 × 320 at 128, 192 in the 1600 × 940 frame. The photo is "cover", so the face moves
+   with the screen shape; positions are kept as shares of the screen to stay over it. */
+main.notfound-page .blobs { --blob-mass: #000000; top: calc(192 / 940 * 100%); left: calc(128 / 1600 * 100%); width: calc(570 / 1600 * 100%); }
+@media (max-width: 820px) {
+  .notfound {
+    background-image: url("/assets/bg-404-mobile.jpg");
+    background-image: image-set(
+      url("/assets/bg-404-mobile.avif") type("image/avif"),
+      url("/assets/bg-404-mobile.jpg") type("image/jpeg")
+    );
+  }
+  /* 350 × 196 at -40, 192 in the 390 × 844 frame */
+  main.notfound-page .blobs { position: absolute; top: calc(192 / 844 * 100%); left: calc(-40 / 390 * 100%); width: calc(350 / 390 * 100%); aspect-ratio: 350 / 196; }
+}
+.visually-hidden:where(:not(:focus-within, :active)) {
+  position: absolute !important; clip-path: inset(50%) !important; overflow: hidden !important;
+  width: 1px !important; height: 1px !important; margin: -1px !important;
+  padding: 0 !important; border: 0 !important; white-space: nowrap !important;
+}
+
+/* ---------------- Load-in animation  ---------------- */
 @media (prefers-reduced-motion: no-preference) {
   .avatar-wrap, .copy > *, .social {
     opacity: 0;
@@ -145,7 +248,6 @@ h1, p { margin: 0; font-weight: inherit; }
   .avatar-wrap           { animation-delay: 0.04s; }
   .copy > :nth-child(1)  { animation-delay: 0.10s; }
   .copy > :nth-child(2)  { animation-delay: 0.18s; }
-  .copy > :nth-child(3)  { animation-delay: 0.26s; }
   .social                { animation-delay: 0.32s; }
   /* corner items fade only — no movement, so they always land exactly in place */
   .avatar-wrap, .social  { translate: none; animation-name: fade; }
