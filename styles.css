@@ -27,7 +27,7 @@
   --font-weight-semibold: 600;
 
   --space-50: 4px; --space-100: 8px; --space-300: 16px;
-  --space-400: 20px; --space-500: 24px; --space-600: 32px;
+  --space-400: 20px; --space-500: 24px; --space-600: 32px; --space-700: 40px;
   --radius-xs: 4px;
   --radius-full: 64px;
   --stroke-md: 2px;
@@ -121,8 +121,8 @@ h1, p { margin: 0; font-weight: inherit; }
   gap: var(--space-100);
   text-align: center;
 }
-/* blobs: below the bio, space/600 from it (Figma 503 × 264). One shape holds the photo. */
-.copy .blobs { width: 503px; max-width: 100%; aspect-ratio: 503 / 264; margin-top: calc(var(--space-600) - var(--space-100)); }
+/* blobs: below the bio, space/700 from it, as wide as the text (Figma 570 × 299). One shape holds the photo. */
+.copy .blobs { width: 570px; max-width: 100%; aspect-ratio: 570 / 299; margin-top: calc(var(--space-700) - var(--space-100)); }
 .blobs svg { display: block; width: 100%; height: 100%; }
 .blob-mass { fill: var(--blob-mass); }
 
@@ -179,8 +179,8 @@ h1, p { margin: 0; font-weight: inherit; }
   .page { padding: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)) var(--space-500); }
   .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
   .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
-  /* blobs: space/400 below the bio (Figma 320 × 226) */
-  .copy .blobs { width: 320px; max-width: 100%; aspect-ratio: 320 / 226; margin-top: calc(var(--space-400) - var(--space-100)); }
+  /* blobs: space/600 below the bio, as wide as the text (Figma 354 × 250) */
+  .copy .blobs { width: 354px; max-width: 100%; aspect-ratio: 354 / 250; margin-top: calc(var(--space-600) - var(--space-100)); }
 }
 
 /* ---------------- 404 PAGE ---------------- */
