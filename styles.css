@@ -34,7 +34,7 @@
 
   --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
   --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-36: 36px;
-  --letter-spacing-minus-1: -0.5px;
+  --letter-spacing-0: 0px;
 
   --icon-lg: 24px;
   --avatar-sm: 32px; --avatar-lg: 48px;
@@ -56,7 +56,7 @@
   --font-style-heading:  var(--font-weight-exposure-20);
   --font-family-body:    var(--font-family-exposure);
   --font-style-body:     var(--font-weight-exposure-10);
-  --letter-spacing-heading: var(--letter-spacing-minus-1);
+  --letter-spacing-heading: var(--letter-spacing-0);
 
   /* blob artwork: the large mass (the accents never change) */
   --blob-mass: #000000;
