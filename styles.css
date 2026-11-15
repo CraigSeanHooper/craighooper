@@ -1,16 +1,16 @@
-/* Preview of the next homepage and 404 (Figma: desktop-10.3 3404:69, mobile-10.3 3362:68,
-   404-desktop 2836:364, 404-mobile 2836:375). Typography mode: Exposure. */
+/* Homepage and 404 (Figma: desktop-10.3 3404:69, mobile-10.3 3362:68,
+   404-desktop 2836:364, 404-mobile 2836:375). Typography mode: Melange. */
 
 /* ---------------- FONTS ---------------- */
 @font-face {
-  font-family: "Exposure";
-  src: url("/assets/fonts/Exposure-Minus20Regular.woff2") format("woff2");
-  font-weight: 450; font-style: normal; font-display: swap;   /* Exposure [-20] */
+  font-family: "KMR Melange Grotesk";
+  src: url("/assets/fonts/KMRMelangeGrotesk-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;   /* SemiBold */
 }
 @font-face {
-  font-family: "Exposure";
-  src: url("/assets/fonts/Exposure-Minus10Regular.woff2") format("woff2");
-  font-weight: 425; font-style: normal; font-display: swap;   /* Exposure [-10] */
+  font-family: "KMR Melange Grotesk";
+  src: url("/assets/fonts/KMRMelangeGrotesk-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;   /* Regular */
 }
 
 /* ---------------- PRIMITIVES ---------------- */
@@ -22,9 +22,9 @@
   --colour-neutral-80: #333333;
   --colour-neutral-90: #1a1a1a;
 
-  --font-family-exposure: "Exposure", Georgia, serif;
-  --font-weight-exposure-10: 425;   /* "[-10] Regular" */
-  --font-weight-exposure-20: 450;   /* "[-20] Regular" */
+  --font-family-melange: "KMR Melange Grotesk", system-ui, sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
 
   --space-50: 4px; --space-100: 8px; --space-300: 16px;
   --space-400: 20px; --space-500: 24px; --space-600: 32px;
@@ -32,9 +32,10 @@
   --radius-full: 64px;
   --stroke-md: 2px;
 
-  --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
-  --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-36: 36px;
+  --font-size-14: 14px; --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
+  --line-height-20: 20px; --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-36: 36px;
   --letter-spacing-minus-1: -0.5px;
+  --letter-spacing-0: 0px;
 
   --icon-lg: 24px;
   --avatar-sm: 32px; --avatar-lg: 48px;
@@ -51,12 +52,13 @@
   --surface-avatar: var(--colour-neutral-0);
   --border-focus:   var(--colour-neutral-90);
 
-  /* Typography, Exposure mode */
-  --font-family-heading: var(--font-family-exposure);
-  --font-style-heading:  var(--font-weight-exposure-20);
-  --font-family-body:    var(--font-family-exposure);
-  --font-style-body:     var(--font-weight-exposure-10);
+  /* Typography, Melange mode */
+  --font-family-heading: var(--font-family-melange);
+  --font-style-heading:  var(--font-weight-semibold);
+  --font-family-body:    var(--font-family-melange);
+  --font-style-body:     var(--font-weight-regular);
   --letter-spacing-heading: var(--letter-spacing-minus-1);
+  --letter-spacing-body:    var(--letter-spacing-0);
 
   /* blob artwork: the large mass (the accents never change) */
   --blob-mass: #000000;
@@ -88,17 +90,17 @@ body {
   font-family: var(--font-family-heading);
   font-weight: var(--font-style-heading);
   letter-spacing: var(--letter-spacing-heading);
-  font-size-adjust: from-font;   /* the fallback font matches Exposure's size while it loads */
+  font-size-adjust: from-font;   /* the fallback font matches Melange's size while it loads */
   -webkit-font-smoothing: antialiased;
 }
 h1, p { margin: 0; font-weight: inherit; }
 
 /* ---------------- TEXT STYLES ---------------- */
-/* display-1/lg 32/36 → /sm 24/26; display-2/lg 18/24 → /sm 16/22 (steps down at 820px) */
+/* display-1/lg 32/36 → /sm 24/26; body/md/lg 16/22 → /sm 14/20 (steps down at 820px) */
 .display-1 { font-size: var(--font-size-32); line-height: var(--line-height-36); color: var(--text-primary); text-wrap: balance; }
-.display-2 {
-  font-family: var(--font-family-body); font-weight: var(--font-style-body);
-  font-size: var(--font-size-18); line-height: var(--line-height-24); color: var(--text-secondary);
+.body-md {
+  font-family: var(--font-family-body); font-weight: var(--font-style-body); letter-spacing: var(--letter-spacing-body);
+  font-size: var(--font-size-16); line-height: var(--line-height-22); color: var(--text-secondary);
   text-wrap: pretty;   /* no single word left on the last line */
 }
 
@@ -176,7 +178,7 @@ h1, p { margin: 0; font-weight: inherit; }
   .social { top: var(--space-300); right: var(--space-300); }
   .page { padding: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)) var(--space-500); }
   .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .display-2 { font-size: var(--font-size-16); line-height: var(--line-height-22); }
+  .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   /* blobs: space/400 below the bio (Figma 245 × 173) */
   .copy .blobs { width: 245px; aspect-ratio: 245 / 173; margin-top: calc(var(--space-400) - var(--space-100)); }
 }
