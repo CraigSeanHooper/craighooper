@@ -117,10 +117,11 @@ h1, p { margin: 0; font-weight: inherit; }
 .copy {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center;   /* the blobs stay centred */
   gap: var(--space-100);
-  text-align: center;
+  text-align: left;
 }
+.copy .headline, .copy .bio { align-self: stretch; }   /* text runs the full column width, left-aligned */
 /* blobs: below the bio, space/600 from it (Figma 503 × 264). One shape holds the photo. */
 .copy .blobs { width: 503px; max-width: 100%; aspect-ratio: 503 / 264; margin-top: calc(var(--space-600) - var(--space-100)); }
 .blobs svg { display: block; width: 100%; height: 100%; }
