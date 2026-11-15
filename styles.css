@@ -179,8 +179,8 @@ h1, p { margin: 0; font-weight: inherit; }
   .page { padding: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)) var(--space-500); }
   .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
   .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
-  /* blobs: space/400 below the bio (Figma 245 × 173) */
-  .copy .blobs { width: 245px; aspect-ratio: 245 / 173; margin-top: calc(var(--space-400) - var(--space-100)); }
+  /* blobs: space/400 below the bio (Figma 320 × 226) */
+  .copy .blobs { width: 320px; max-width: 100%; aspect-ratio: 320 / 226; margin-top: calc(var(--space-400) - var(--space-100)); }
 }
 
 /* ---------------- 404 PAGE ---------------- */
