@@ -3,11 +3,6 @@ media:
     label: Assets
     input: assets
     output: /assets
-  - name: hero-grid-images
-    label: Hero Grid Images
-    input: lab/hero-grid/assets/images
-    output: /lab/hero-grid/assets/images
-    categories: [image]
   - name: photo-gallery-photos
     label: Photo Gallery Photos
     input: lab/photo-gallery/assets/photos
@@ -28,28 +23,6 @@ content:
         fields:
           - { name: twitter, label: Twitter, type: string }
           - { name: instagram, label: Instagram, type: string }
-
-  - name: hero-grid
-    label: Lab — Hero Grid
-    type: file
-    path: content/hero-grid.json
-    fields:
-      - name: headline
-        label: Headline
-        type: text
-      - name: photos
-        label: Photos
-        type: object
-        list: true
-        fields:
-          - name: src
-            label: Image
-            type: image
-            options:
-              media: hero-grid-images
-          - name: alt
-            label: Alt Text
-            type: string
 
   - name: photo-gallery-page
     label: Lab — Photo Gallery Page Text
