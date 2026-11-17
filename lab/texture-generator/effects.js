@@ -832,11 +832,10 @@
 
   var RING = 2;   // focus ring width, outside the edge
   function shape(el) {
-    // round fractional sizes up so the clip never shaves the right or bottom edge;
-    // fall back to the layout size while something is scaled (preset hover)
-    var b = el.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, r = radiusOf(el);
-    if (Math.abs(b.width - w) < 1) w = Math.ceil(b.width);
-    if (Math.abs(b.height - h) < 1) h = Math.ceil(b.height);
+    // the exact layout size (unaffected by zoom or transforms), rounded up so a
+    // fractional width (tooltip text) never gets its right edge shaved
+    var cs = getComputedStyle(el), r = radiusOf(el);
+    var w = Math.ceil(parseFloat(cs.width) - 0.01), h = Math.ceil(parseFloat(cs.height) - 0.01);
     if (!w || !h) return;
     var hh = h;
     el.style.setProperty("--sq-outer", "path('" + squirclePath(w, hh, r) + "')");
