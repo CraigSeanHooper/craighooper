@@ -24,9 +24,9 @@
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
   <meta name="theme-color" content="#ffffff" />
   <style>
-    @font-face { font-family: "Inter"; src: url("/assets/fonts/Inter-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
-    @font-face { font-family: "Exposure"; src: url("/assets/fonts/Exposure10.woff2") format("woff2"); font-weight: 425; font-style: normal; font-display: swap; }   /* Exposure [-10], its single cut */
-    @font-face { font-family: "Inter"; src: url("/assets/fonts/Inter-SemiBold.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+    /* Foundations Typography, Melange + Parabole mode: headings Melange SemiBold, everything else Parabole Regular */
+    @font-face { font-family: "Parabole"; src: url("/assets/fonts/Parabole-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: "KMR Melange Grotesk"; src: url("/assets/fonts/KMRMelangeGrotesk-SemiBold.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
 
     /* Foundations tokens, Light only: this tool has no dark mode.
        Figma names in the comments. Space names follow this repo, not Figma
@@ -67,8 +67,9 @@
       --font-size-14: 14px; --line-height-20: 20px;   /* everything else */
       --font-size-24: 24px; --line-height-26: 26px;   /* interface/heading/sm: Choose photo on phones */
       --font-size-32: 32px; --line-height-34: 34px;   /* interface/heading/lg: Choose photo on desktop */
-      --font-family-exposure: "Exposure", "Helvetica Neue", Arial, sans-serif;
-      --font-weight-exposure: 425;
+      --font-family-heading: "KMR Melange Grotesk", "Helvetica Neue", Arial, sans-serif;   /* font-family/heading and /body-strong */
+      --font-family-body: "Parabole", "Helvetica Neue", Arial, sans-serif;                 /* font-family/body */
+      --font-weight-semibold: 600;       /* font-style/heading, /body-semibold */
       --letter-spacing-heading: -0.5px;
 
       --rail-width: calc(var(--avatar-lg) + var(--space-50) * 2 + var(--space-100) * 2);   /* 72: the 56 avatar with 8 each side */
@@ -107,7 +108,8 @@
     body {
       margin: 0; height: 100vh; height: 100dvh;
       background: var(--surface-page); color: var(--text-primary);
-      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;   /* standard double-storey "a": no stylistic alternates */
+      font-family: var(--font-family-body);
+      font-size-adjust: from-font;   /* the fallback matches the web font's size while it loads */
       font-weight: 400; font-synthesis: none;
       font-size: var(--font-size-14); line-height: var(--line-height-20); letter-spacing: 0;
       -webkit-font-smoothing: antialiased;
@@ -228,7 +230,8 @@
     #export-title:focus { outline: none; }
     .heading {
       display: flex; align-items: center; gap: var(--space-100); margin: 0 0 var(--space-300);
-      color: var(--text-primary); font-size: var(--font-size-12); line-height: var(--line-height-18); font-weight: 600;
+      color: var(--text-primary); font-size: var(--font-size-12); line-height: var(--line-height-18);
+      font-family: var(--font-family-heading); font-weight: var(--font-weight-semibold);   /* body-semibold/xs */
     }
     .heading .icon { width: var(--icon-sm); height: var(--icon-sm); }
 
@@ -351,7 +354,7 @@
     .app:not(.open) .start { transform: translateX(calc(var(--rail-width) / -2)); }
     .start-title {
       margin: 0; color: var(--text-primary); text-align: center;
-      font-family: var(--font-family-exposure); font-weight: var(--font-weight-exposure);
+      font-family: var(--font-family-heading); font-weight: var(--font-weight-semibold);   /* display-1 */
       font-size: var(--font-size-32); line-height: var(--line-height-34); letter-spacing: var(--letter-spacing-heading);
     }
     #preview:not([hidden]) ~ .start { display: none; }
