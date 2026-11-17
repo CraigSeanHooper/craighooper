@@ -304,6 +304,9 @@
       content: ""; position: absolute; inset: calc(var(--focus-ring) * -1); pointer-events: none;
       background: var(--border-selected); clip-path: var(--sq-band, none);
     }
+    /* Original uses no preset: no ring, so the greyed-out chips stay clean squircles */
+    .colours[data-off="true"] .preset[aria-pressed="true"] { clip-path: var(--sq-outer, inset(0 round var(--r))); }
+    .colours[data-off="true"] .preset[aria-pressed="true"]::after { content: none; }
 
     /* colour fields: label column as wide as "Highlights", then the swatch and hex box */
     .colour-fields[hidden] { display: none; }
