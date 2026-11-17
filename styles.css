@@ -38,8 +38,8 @@
   --radius-full: 64px;
   --stroke-md: 2px;
 
-  --font-size-14: 14px; --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
-  --line-height-20: 20px; --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-34: 34px;
+  --font-size-12: 12px; --font-size-14: 14px; --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
+  --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-34: 34px;
   --letter-spacing-minus-1: -0.5px;
   --letter-spacing-0: 0px;
 
@@ -102,11 +102,11 @@ body {
 h1, p { margin: 0; font-weight: inherit; }
 
 /* ---------------- TEXT STYLES ---------------- */
-/* display-1/lg 32/34 → /sm 24/26; body/md/lg 16/22 → /sm 14/20 (steps down at 820px) */
+/* display-1/lg 32/34 → /sm 24/26; body/sm/lg 14/20 → /sm 12/18 (steps down at 820px) */
 .display-1 { font-size: var(--font-size-32); line-height: var(--line-height-34); color: var(--text-primary); text-wrap: balance; }
-.body-md {
+.body-sm {
   font-family: var(--font-family-body); font-weight: var(--font-style-body); letter-spacing: var(--letter-spacing-body);
-  font-size: var(--font-size-16); line-height: var(--line-height-22); color: var(--text-secondary);
+  font-size: var(--font-size-14); line-height: var(--line-height-20); color: var(--text-secondary);
   text-wrap: pretty;   /* no single word left on the last line */
 }
 
@@ -203,7 +203,7 @@ h1, p { margin: 0; font-weight: inherit; }
   .social a.link-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   .page { --clear: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)); }
   .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
+  .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
   /* blobs: space/100 below the bio, as wide as the text (Figma 354 × 250) */
   .copy .blobs { width: 354px; max-width: 100%; aspect-ratio: 354 / 250; margin-top: 0; }   /* the copy's own space/100 gap */
 }
