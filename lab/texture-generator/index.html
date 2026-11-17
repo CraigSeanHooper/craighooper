@@ -104,6 +104,8 @@
     }
 
     * { box-sizing: border-box; }
+    /* no iPhone tap flash: Safari's grey tap rectangle ignores the squircle corners; every control shows its own pressed or selected state */
+    * { -webkit-tap-highlight-color: transparent; }
     html { color-scheme: light; background: var(--surface-page); }
     body {
       margin: 0; height: 100vh; height: 100dvh;
