@@ -72,7 +72,11 @@
     return 270;
   }
 
-  function tile(photo) {
+  // How a tile's photo loads. "first" is the newest photo when the page opens,
+  // the first thing people see, so it loads straight away at top priority.
+  // "now" is any other photo already on screen at the start. Everything else
+  // waits until it's about to come into view.
+  function tile(photo, load) {
     var displayWidth = tileWidth(photo);
 
     var item = document.createElement("li");
@@ -91,7 +95,8 @@
     img.src = src(photo, displayWidth);
     img.srcset = src(photo, displayWidth) + " 1x, " + src(photo, displayWidth * 2) + " 2x";
     img.alt = photo.alt;
-    img.loading = "lazy";
+    if (load === "first") img.fetchPriority = "high";
+    else if (load !== "now") img.loading = "lazy";
     img.decoding = "async";
     img.draggable = false;
     img.width = displayWidth;
@@ -133,8 +138,11 @@
 
   function renderColumn() {
     var next = photos.slice(shown, shown + BATCH);
+    var opening = shown === 0;
     var batch = document.createDocumentFragment();
-    next.forEach(function (photo) { batch.appendChild(tile(photo)); });
+    next.forEach(function (photo, i) {
+      batch.appendChild(tile(photo, opening && i === 0 ? "first" : null));
+    });
     grid.appendChild(batch);
     shown += next.length;
     button.hidden = shown >= photos.length;
@@ -210,7 +218,7 @@
     return { rows: rows, height: y };
   }
 
-  function draw() {
+  function draw(opening) {
     frameRequested = false;
     plane.style.transform = "translate3d(" + (-cam.x) + "px," + (-cam.y) + "px,0)";
 
@@ -235,7 +243,13 @@
             var key = by + "," + ri + "," + bx + "," + item.index;
             wanted[key] = true;
             if (!live[key]) {
-              var el = tile(item.photo);
+              var load = null;
+              if (opening === true) {
+                var onScreen = x + item.w > cam.x && x < cam.x + vw && y + item.h > cam.y && y < cam.y + vh;
+                if (by === 0 && ri === 0 && bx === 0 && item.index === 0) load = "first";
+                else if (onScreen) load = "now";
+              }
+              var el = tile(item.photo, load);
               el.style.left = x + "px";
               el.style.top = y + "px";
               plane.appendChild(el);
@@ -382,7 +396,7 @@
       // First photo starts at the page margin, top and left.
       cam.x = -token("--page-margin");
       cam.y = -token("--page-top");
-      draw();
+      draw(true);
     } else {
       root.classList.remove("is-canvas");
       canvas.hidden = true;
