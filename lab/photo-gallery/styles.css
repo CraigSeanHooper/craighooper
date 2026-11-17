@@ -433,67 +433,6 @@ a {
   color: var(--text-secondary);
 }
 
-/* --- Load more ------------------------------------------------- */
-/* Foundations btn/action, Size=Small (Figma index-mobile): a full-width yellow
-   button. It only shows on mobile. Text uses text-on-accent so it stays dark on
-   the yellow in dark mode too. The fill is a 100% smoothed squircle, drawn on
-   ::before from the shape assets/squircle.js works out (--smooth-shape), so the
-   button itself isn't clipped and the focus ring can sit outside it. Until that
-   shape is ready, a plain rounded fill stands in. btn/action has no hover state
-   in Foundations yet. */
-
-.load-more {
-  --ring-gap: var(--space-50);
-  position: relative;
-  isolation: isolate;
-  width: 100%;
-  border: 0;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  padding: var(--space-200) var(--space-500);
-  background: var(--surface-accent);
-  color: var(--text-on-accent);
-}
-
-.load-more[hidden] {
-  display: none;
-}
-
-.load-more[data-ring-ready] {
-  background: none;
-}
-
-.load-more[data-ring-ready]::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--surface-accent);
-  clip-path: var(--smooth-shape);
-  pointer-events: none;
-}
-
-/* Focus: the same ring as btn/link, a border/focus ring at stroke/md, space/50
-   outside the button, 100% smoothed. The plain outline stands in until the
-   smoothed ring is ready. */
-.load-more:focus-visible {
-  outline: var(--stroke-md) solid var(--border-focus);
-  outline-offset: var(--ring-gap);
-}
-
-.load-more[data-ring-ready]:focus-visible {
-  outline: none;
-}
-
-.load-more[data-ring-ready]:focus-visible::after {
-  content: "";
-  position: absolute;
-  inset: calc(-1 * (var(--ring-gap) + var(--stroke-md)));
-  background: var(--border-focus);
-  clip-path: var(--smooth-ring);
-  pointer-events: none;
-}
-
 /* --- Mobile grid ----------------------------------------------- */
 
 @media (max-width: 820px) {

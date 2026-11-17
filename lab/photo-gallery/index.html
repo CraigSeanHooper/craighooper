@@ -33,7 +33,6 @@
 
   <section class="grid-and-button">
     <ul class="grid" id="grid"></ul>
-    <button class="load-more body-md" id="load-more" type="button" data-smooth-ring hidden>Load more photos</button>
   </section>
 
 </main>
@@ -45,7 +44,7 @@
 
 <script>
 (function () {
-  // Mobile: how many photos appear before "Load more".
+  // Mobile: how many photos load at a time as you scroll.
   var BATCH = 8;
 
   // Desktop shows a canvas you drag around; mobile keeps the scrolling column.
@@ -55,7 +54,6 @@
 
   var root = document.documentElement;
   var grid = document.getElementById("grid");
-  var button = document.getElementById("load-more");
   var canvas = document.getElementById("canvas");
   var plane = document.getElementById("plane");
   var photos = [];
@@ -132,11 +130,19 @@
     return parseFloat(getComputedStyle(root).getPropertyValue(name)) || 0;
   }
 
-  /* --- Mobile: the column with "Load more" -------------------- */
+  /* --- Mobile: the column, loading more as you scroll --------- */
+  // The next batch is added when the last photo comes within a screen's
+  // height of view, so new photos are ready before you reach the end.
 
   var shown = 0;
+  var nearEnd = "IntersectionObserver" in window
+    ? new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) renderColumn();
+      }, { rootMargin: "0px 0px 100% 0px" })
+    : null;
 
   function renderColumn() {
+    if (nearEnd) nearEnd.disconnect();
     var next = photos.slice(shown, shown + BATCH);
     var opening = shown === 0;
     var batch = document.createDocumentFragment();
@@ -145,10 +151,11 @@
     });
     grid.appendChild(batch);
     shown += next.length;
-    button.hidden = shown >= photos.length;
+    if (shown < photos.length) {
+      if (nearEnd) nearEnd.observe(grid.lastElementChild);
+      else renderColumn(); // very old browsers: just show them all
+    }
   }
-
-  button.addEventListener("click", renderColumn);
 
   /* --- Desktop: the drag canvas -------------------------------- */
   // Photos are split into a few rows. Each row repeats endlessly sideways
@@ -388,6 +395,7 @@
     plane.innerHTML = "";
     live = {};
     shown = 0;
+    if (nearEnd) nearEnd.disconnect();
 
     if (desktop.matches && photos.length) {
       root.classList.add("is-canvas");
