@@ -1,5 +1,7 @@
-# Fill the homepage with the Pages CMS text before it goes live.
-# The site is still plain files: this one step is the whole build.
+# Fill the homepage with the Pages CMS text, then build the photo gallery
+# (its photo list and page text). The site is still plain files: these two
+# steps are the whole build. If either fails, the deploy stops and the last
+# good version stays live.
 [build]
   publish = "."
-  command = "python3 scripts/bake-home-text.py"
+  command = "python3 scripts/bake-home-text.py && python3 scripts/build-photo-gallery.py"

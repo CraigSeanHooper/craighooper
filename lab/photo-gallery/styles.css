@@ -1,0 +1,705 @@
+/* ---------------------------------------------------------------
+   craighooper.xyz/lab/photo-gallery/
+   Structure mirrors Foundations: primitives -> semantic -> classes.
+   Class names match the Figma text style names.
+   --------------------------------------------------------------- */
+
+@font-face {
+  font-family: "KMR Melange Grotesk";
+  src: url("assets/fonts/KMRMelangeGrotesk-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Parabole";
+  src: url("assets/fonts/Parabole-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Primitives ------------------------------------------------ */
+
+:root {
+  --scale-base-0: 0px;
+  --scale-base-2: 2px;
+  --scale-base-4: 4px;
+  --scale-base-8: 8px;
+  --scale-base-12: 12px;
+  --scale-base-16: 16px;
+  --scale-base-20: 20px;
+  --scale-base-24: 24px;
+  --scale-base-32: 32px;
+  --scale-base-40: 40px;
+  --scale-base-48: 48px;
+  --scale-base-64: 64px;
+  --scale-base-80: 80px;
+  --scale-base-96: 96px;
+  --scale-base-128: 128px;
+  --scale-base-144: 144px;
+  --scale-base-192: 192px;
+  --scale-base-320: 320px;
+  --scale-base-496: 496px;
+
+  --scale-font-size-12: 12px;
+  --scale-font-size-14: 14px;
+  --scale-font-size-16: 16px;
+  --scale-font-size-24: 24px;
+  --scale-font-size-32: 32px;
+
+  --scale-line-height-18: 18px;
+  --scale-line-height-20: 20px;
+  --scale-line-height-22: 22px;
+  --scale-line-height-26: 26px;
+  --scale-line-height-34: 34px;
+
+  --scale-letter-spacing-0: 0px;
+  --scale-letter-spacing-minus-1: -0.5px;   /* same value as craighooper.xyz */
+
+  --colour-neutral-0: #ffffff;
+  --colour-neutral-5: #f2f2f2;
+  --colour-neutral-10: #f5f5f5;
+  --colour-neutral-20: #cccccc;
+  --colour-neutral-70: #4d4d4d;
+  --colour-neutral-90: #1a1a1a;
+  --colour-neutral-95: #0d0d0d;
+  --colour-accent-yellow: #fffbc6;
+  --colour-link-blue: #0000ee;
+  --colour-link-blue-hover: #0000aa;
+  --colour-link-blue-mid: #3a6fd8;
+  --colour-link-blue-mid-hover: #2b57ae;
+
+  --font-family-parabole: "Parabole";
+  --font-family-melange: "KMR Melange Grotesk";
+
+  --font-weight-regular: 400;
+  --font-weight-blank-semibold: 600;
+}
+
+/* --- Semantic -------------------------------------------------- */
+
+:root {
+  --space-0: var(--scale-base-0);
+  --space-25: var(--scale-base-2);
+  --space-50: var(--scale-base-4);
+  --space-100: var(--scale-base-8);
+  --space-200: var(--scale-base-12);
+  --space-300: var(--scale-base-16);
+  --space-400: var(--scale-base-20);
+  --space-500: var(--scale-base-24);
+  --space-600: var(--scale-base-32);
+  --space-700: var(--scale-base-40);
+  --space-800: var(--scale-base-48);
+  --space-900: var(--scale-base-64);
+  --space-1000: var(--scale-base-80);
+  --space-1100: var(--scale-base-96);
+  --space-1200: var(--scale-base-128);
+  --space-1300: var(--scale-base-144);
+  --space-1400: var(--scale-base-192);
+  --space-1500: var(--scale-base-320);
+  --space-1600: var(--scale-base-496);
+
+  --stroke-md: var(--scale-base-2);
+
+  --avatar-sm: var(--scale-base-32);
+  --avatar-lg: var(--scale-base-48);
+
+  --surface-page: var(--colour-neutral-0);
+  --surface-raised: var(--colour-neutral-5);
+  --surface-accent: var(--colour-accent-yellow);
+
+  --text-primary: var(--colour-neutral-90);
+  --text-secondary: var(--colour-neutral-70);
+  --border-focus: var(--colour-neutral-90);
+  --text-on-accent: var(--colour-neutral-90);
+  --text-on-dark: var(--colour-neutral-0);
+  --surface-link: var(--colour-link-blue);
+  --surface-link-hover: var(--colour-link-blue-hover);
+
+  --radius-xs: var(--scale-base-4);
+  --radius-sm: var(--scale-base-8);
+  --radius-md: var(--scale-base-12);
+  --radius-lg: var(--scale-base-16);
+  --radius-full: 999px;
+
+  --surface-avatar: var(--surface-page);
+
+  --font-family-heading: var(--font-family-melange);   /* matches craighooper.xyz */
+  --font-family-body: var(--font-family-parabole);
+
+  --font-style-heading: var(--font-weight-blank-semibold);
+  --font-style-display: var(--font-weight-blank-semibold);
+  --font-style-body: var(--font-weight-regular);
+
+  --font-size-12: var(--scale-font-size-12);
+  --font-size-14: var(--scale-font-size-14);
+  --font-size-16: var(--scale-font-size-16);
+  --font-size-24: var(--scale-font-size-24);
+  --font-size-32: var(--scale-font-size-32);
+
+  --line-height-18: var(--scale-line-height-18);
+  --line-height-20: var(--scale-line-height-20);
+  --line-height-22: var(--scale-line-height-22);
+  --line-height-26: var(--scale-line-height-26);
+  --line-height-34: var(--scale-line-height-34);
+
+  --letter-spacing-display: var(--scale-letter-spacing-minus-1);
+  --letter-spacing-body: var(--scale-letter-spacing-0);
+
+  /* Layout, from the desktop artboard */
+  --page-margin: var(--space-1100);
+  --page-top: var(--space-1100);
+  --page-bottom: var(--space-1100);
+  --intro-gap: var(--space-200);
+  --section-gap: var(--space-900);
+  --grid-col-gap: var(--space-1200);
+  --grid-row-gap: var(--space-1200);
+  --grid-btn-gap: var(--space-800);
+  --btn-pad-y: var(--space-300);
+  --btn-pad-x: var(--space-600);
+  --btn-radius: var(--radius-md);
+  --tile-width-portrait: 270px;
+  --tile-width-landscape: 370px;
+  --tile-width-square: var(--scale-base-320);
+}
+
+/* Dark mode follows the computer's setting, same as craighooper.xyz. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-page: var(--colour-neutral-90);
+    --surface-raised: var(--colour-neutral-95);
+    --surface-avatar: var(--colour-neutral-90);
+    --text-primary: var(--colour-neutral-10);
+    --text-secondary: var(--colour-neutral-20);
+    --border-focus: var(--colour-neutral-10);
+    --surface-link: var(--colour-link-blue-mid);
+    --surface-link-hover: var(--colour-link-blue-mid-hover);
+  }
+
+  /* the avatar is black line art on a transparent background; flip it to white */
+  .avatar-btn img {
+    filter: invert(1);
+  }
+}
+
+@media (max-width: 820px) {
+  :root {
+    --page-margin: var(--space-500);
+    --page-top: var(--space-1000);
+    --page-bottom: var(--space-700);
+    --intro-gap: var(--space-100);
+    --section-gap: var(--space-600);
+    --grid-row-gap: var(--space-600);
+    --grid-btn-gap: var(--space-600);
+    --btn-pad-y: var(--space-200);
+    --btn-pad-x: var(--space-500);
+    --btn-radius: var(--radius-sm);
+  }
+}
+
+/* --- Reset ----------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  color-scheme: light dark;
+  background: var(--surface-page);
+}
+
+body {
+  margin: 0;
+  position: relative;
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-family-body), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* --- Text styles ----------------------------------------------- */
+/* Class names match the Figma text style names. */
+
+.h1 {
+  font-feature-settings: "salt" 1;
+  font-family: var(--font-family-heading), "Helvetica Neue", Arial, sans-serif;
+  font-weight: var(--font-style-display);
+  font-size: var(--font-size-32);
+  line-height: var(--line-height-34);
+  letter-spacing: var(--letter-spacing-display);
+  color: var(--text-primary);
+}
+
+.body-md {
+  font-family: var(--font-family-body), system-ui, sans-serif;
+  font-weight: var(--font-style-body);
+  font-size: var(--font-size-16);
+  line-height: var(--line-height-22);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+.body-sm {
+  font-family: var(--font-family-body), system-ui, sans-serif;
+  font-weight: var(--font-style-body);
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+.body-xs {
+  font-family: var(--font-family-body), system-ui, sans-serif;
+  font-weight: var(--font-style-body);
+  font-size: var(--font-size-12);
+  line-height: var(--line-height-18);
+  letter-spacing: var(--letter-spacing-body);
+}
+
+.secondary {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 820px) {
+  .h1 {
+    font-size: var(--font-size-24);
+    line-height: var(--line-height-26);
+  }
+
+  .body-md {
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-20);
+  }
+
+  .body-sm {
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-18);
+  }
+}
+
+/* --- Visually hidden ------------------------------------------ */
+/* Off screen but still read by screen readers and search engines. */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Page ------------------------------------------------------ */
+
+.page {
+  padding: var(--page-top) var(--page-margin) var(--page-bottom);
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+  align-items: flex-start;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--intro-gap);
+  max-width: var(--tile-width-landscape);
+}
+
+.grid-and-button {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-btn-gap);
+  align-items: center;
+}
+
+/* --- Grid ------------------------------------------------------ */
+
+.grid {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: flex-start;
+  column-gap: var(--grid-col-gap);
+  row-gap: var(--grid-row-gap);
+}
+
+.tile {
+  display: flex;
+}
+
+.tile__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  width: 100%;
+}
+
+.tile--portrait {
+  width: var(--tile-width-portrait);
+}
+
+.tile--landscape {
+  width: var(--tile-width-landscape);
+}
+
+.tile--square {
+  width: var(--tile-width-square);
+}
+
+.tile__image {
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;   /* keeps the hover zoom inside the rounded corners in Safari */
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+}
+
+/* Figma: radius/lg on desktop, radius/md on mobile. */
+@media (max-width: 820px) {
+  .tile__image {
+    border-radius: var(--radius-md);
+  }
+}
+
+.tile--portrait .tile__image {
+  aspect-ratio: 3 / 4;
+}
+
+.tile--square .tile__image {
+  aspect-ratio: 1 / 1;
+}
+
+.tile--landscape .tile__image {
+  aspect-ratio: 4 / 3;
+}
+
+.tile__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tile__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-100);
+}
+
+.tile__tags {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-50);
+  row-gap: var(--space-50);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-50) var(--space-200);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--text-secondary);
+}
+
+/* --- Load more ------------------------------------------------- */
+/* The btn/link component (Figma, 11 November 2026): an underlined text link. */
+
+.load-more {
+  position: relative;
+  border: 0;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  color: var(--text-secondary);
+  text-decoration: underline;
+  text-decoration-thickness: 8%;
+}
+
+.load-more[hidden] {
+  display: none;
+}
+
+/* Hover (Foundations btn/link, State=Hover): the text darkens. */
+@media (hover: hover) {
+  .load-more:hover {
+    color: var(--text-primary);
+  }
+}
+
+/* Focus (State=Focus): a border/focus ring at stroke/md, space/50 outside the
+   text, 100% smoothed. Its inner corner is radius/xs plus the gap (radius/sm).
+   assets/squircle.js draws the smoothed ring shape; until it has, the plain
+   outline below stands in. */
+.load-more {
+  --ring-gap: var(--space-50);
+}
+
+.load-more:focus-visible {
+  outline: var(--stroke-md) solid var(--border-focus);
+  outline-offset: var(--ring-gap);
+}
+
+.load-more[data-ring-ready]:focus-visible {
+  outline: none;
+}
+
+.load-more[data-ring-ready]:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * (var(--ring-gap) + var(--stroke-md)));
+  background: var(--border-focus);
+  clip-path: var(--smooth-ring);
+  pointer-events: none;
+}
+
+/* --- Mobile grid ----------------------------------------------- */
+
+@media (max-width: 820px) {
+  .grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tile--portrait,
+  .tile--landscape,
+  .tile--square {
+    width: 100%;
+  }
+}
+
+/* --- Desktop canvas -------------------------------------------- */
+/* The page stops scrolling; the photos sit on a plane you drag around.
+   The intro floats above it, in the same spot it holds on the grid page. */
+
+.canvas[hidden] {
+  display: none;
+}
+
+.is-canvas,
+.is-canvas body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.is-canvas .grid-and-button {
+  display: none;
+}
+
+.is-canvas .intro {
+  position: fixed;
+  top: var(--page-top);
+  left: var(--page-margin);
+  z-index: 2;
+}
+
+.canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--surface-page);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.canvas.is-dragging {
+  cursor: grabbing;
+}
+
+.canvas.is-dragging .tile__link {
+  cursor: grabbing;
+}
+
+.canvas__plane {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.canvas .tile {
+  position: absolute;
+}
+
+/* While dragging, photos don't react to the pointer passing over them. */
+.canvas.is-dragging .tile__link:hover .tile__image img {
+  transform: none;
+}
+
+/* --- Say hello ------------------------------------------------ */
+/* Same button as craighooper.xyz, top right. Corners are smoothed into a
+   squircle by assets/squircle.js, also copied from the main site. */
+
+.btn-action {
+  position: fixed;
+  top: var(--space-200);
+  right: var(--space-200);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-100);
+  padding: var(--space-200) var(--space-400);
+  background: var(--surface-link);
+  border-radius: var(--radius-md);
+  color: var(--text-on-dark);
+  font-family: var(--font-family-body), system-ui, sans-serif;
+  font-weight: var(--font-style-body);
+  font-feature-settings: "salt" 1, "ss08" 1;
+  font-size: var(--font-size-14);
+  line-height: var(--line-height-20);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.btn-action[hidden] {
+  display: none;
+}
+
+.btn-action:hover {
+  background: var(--surface-link-hover);
+}
+
+.btn-action:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-action { transition: none; }
+}
+
+@media (max-width: 820px) {
+  /* Scrolls away with the page on mobile, like the avatar. */
+  .btn-action {
+    position: absolute;
+    padding: var(--space-100) var(--space-300);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-12);
+    line-height: var(--line-height-18);
+  }
+}
+
+/* --- Avatar ---------------------------------------------------- */
+/* Foundations avatar/static, the same as craighooper.xyz: Size=Large on desktop
+   (avatar/lg drawing, 56 circle), Size=Small at 820px and below (avatar/sm
+   drawing, 40 circle). The circle is the drawing plus space/50 padding.
+   Wrapper holds the position, the button holds the spin, so the two never
+   fight over one element. A full circle, so no corner smoothing. */
+
+.avatar-wrap {
+  --avatar-drawing: var(--avatar-lg);
+  --avatar-circle: calc(var(--avatar-drawing) + 2 * var(--space-50));
+  position: absolute;
+  top: var(--space-100);
+  left: var(--space-100);
+  width: var(--avatar-circle);
+  height: var(--avatar-circle);
+  z-index: 3;
+}
+
+.avatar-btn {
+  display: grid;
+  place-items: center;
+  width: var(--avatar-circle);
+  height: var(--avatar-circle);
+  padding: var(--space-50);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--surface-avatar);
+  cursor: pointer;
+}
+
+.avatar-btn img {
+  display: block;
+  width: var(--avatar-drawing);
+  height: var(--avatar-drawing);
+  object-fit: cover;
+}
+
+@media (max-width: 820px) {
+  .avatar-wrap {
+    --avatar-drawing: var(--avatar-sm);
+  }
+}
+
+/* Focus (State=Focus): a border/focus ring at stroke/md on the circle's own
+   edge, the same size as the circle, no gap. */
+.avatar-btn:focus-visible {
+  outline: var(--stroke-md) solid var(--border-focus);
+  outline-offset: calc(-1 * var(--stroke-md));
+}
+
+@media (hover: hover) and (min-width: 821px) {
+  .avatar-btn:hover {
+    animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1);
+  }
+}
+
+@keyframes avatar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* --- Photo hover ----------------------------------------------- */
+
+.tile__image img {
+  transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .tile__link:hover .tile__image img,
+  .tile__link:focus-visible .tile__image img {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar-btn:hover { animation: none; }
+  .tile__image img { transition: none; }
+  .tile__link:hover .tile__image img { transform: none; }
+}
+
+/* --- Focus ----------------------------------------------------- */
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 3px;
+}
