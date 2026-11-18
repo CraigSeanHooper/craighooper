@@ -39,6 +39,7 @@
       --text-muted: #808080;             /* text/muted */
       --icon-disabled: #b3b3b3;          /* icon/disabled */
       --icon-primary: #333333;           /* icon/primary: neutral 80 (11 November) */
+      --icon-hover: #1a1a1a;             /* icon/hover: neutral 90 */
       --surface-avatar: #ffffff;         /* surface/avatar */
       --surface-accent: #fffbc6;         /* surface/accent: the only colour, "you are here" */
       --text-on-accent: #1a1a1a;         /* text/on-accent */
@@ -55,7 +56,7 @@
       --text-on-action: #ffffff;         /* text/on-action */
       --drop-outline: oklch(0.55 0.2 264);   /* thin blue outline while a photo is dragged in */
 
-      --space-50: 4px; --space-100: 8px; --space-150: 12px; --space-200: 16px; --space-300: 24px; --space-400: 32px; --space-500: 40px;
+      --space-50: 4px; --space-100: 8px; --space-150: 12px; --space-200: 16px; --space-250: 20px; --space-300: 24px; --space-400: 32px; --space-500: 40px;
       --radius-xs: 4px;                  /* radius/xs */
       --radius: 8px;                     /* radius/sm */
       --radius-lg: 16px;                 /* radius/lg */
@@ -190,6 +191,26 @@
     .avatar img { display: block; width: var(--avatar-sm); height: var(--avatar-sm); }
     /* Focus: border/focus at stroke/md, on the edge of the circle, no gap */
     .avatar:focus-visible { outline: var(--focus-ring) solid var(--border-focus); outline-offset: calc(var(--focus-ring) * -1); }
+
+    /* ---------- social icons: top right, as on the homepage (Figma "social": icon/lg, space/400 gap, 24 in) ---------- */
+    .social {
+      position: fixed; top: var(--space-300); right: var(--space-300); z-index: 1;
+      display: flex; align-items: center; gap: var(--space-250);
+    }
+    .social a { position: relative; display: block; width: var(--icon-md); height: var(--icon-md); color: var(--icon-primary); }
+    .social svg { display: block; width: 100%; height: 100%; }
+    /* touch: an invisible 44px tap area round each icon (half the gap each side), the look unchanged */
+    @media (pointer: coarse) { .social a::before { content: ""; position: absolute; inset: calc(var(--space-250) / -2); } }
+    /* desktop Export: the scrim covers them in Figma */
+    @media (min-width: 1024px) { .app:has(.dialog-wrap[open]) .social { visibility: hidden; } }
+    @media (hover: hover) { .social a:hover { color: var(--icon-hover); } }
+    /* Focus: border/focus at stroke/md, space/50 outside, radius/xs smoothed 100% (shape from effects.js) */
+    .social a:focus-visible { outline: var(--focus-ring) solid var(--border-focus); outline-offset: var(--space-50); }
+    .social a[data-ring]:focus-visible { outline: none; }
+    .social a[data-ring]:focus-visible::after {
+      content: ""; position: absolute; inset: calc((var(--space-50) + var(--focus-ring)) * -1); pointer-events: none;
+      background: var(--border-focus); clip-path: var(--sq-social-ring);
+    }
     /* Hover on desktop: the avatar spins (with the homepage's sparkle sound), as on the homepage */
     @media (hover: hover) and (min-width: 1024px) {
       .rail .avatar:hover { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
@@ -618,9 +639,22 @@
         </div>
       </dialog>
     </main>
+
+    <!-- top right on every size: the homepage's Twitter, Instagram and email icons -->
+    <nav class="social" aria-label="Contact and social">
+      <a href="https://x.com/craigseanhooper" target="_blank" rel="noopener" aria-label="Twitter">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M23 3.01006C23 3.01006 20.9821 4.20217 19.86 4.54006C19.2577 3.84757 18.4573 3.35675 17.567 3.13398C16.6767 2.91122 15.7395 2.96725 14.8821 3.29451C14.0247 3.62177 13.2884 4.20446 12.773 4.96377C12.2575 5.72309 11.9877 6.62239 12 7.54006V8.54006C10.2426 8.58562 8.50127 8.19587 6.93101 7.4055C5.36074 6.61513 4.01032 5.44869 3 4.01006C3 4.01006 -1 13.0101 8 17.0101C5.94053 18.408 3.48716 19.109 1 19.0101C10 24.0101 21 19.0101 21 7.51006C20.9991 7.23151 20.9723 6.95365 20.92 6.68006C21.9406 5.67355 23 3.01006 23 3.01006Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="https://www.instagram.com/craighooper" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z" stroke="currentColor" stroke-width="1.5"/><path d="M17.5 6.51001L17.51 6.4989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="mailto:craigseanhooper@gmail.com" aria-label="Email">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 9L13.5 12L18 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13.5H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10.5H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 7.5V7C5 5.89543 5.89543 5 7 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H7C5.89543 19 5 18.1046 5 17V16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+    </nav>
   </div>
   <input type="file" id="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/*" hidden />
-  <script src="effects.js?v=66"></script>
+  <script src="effects.js?v=67"></script>
   <!-- the homepage's interaction sounds (cuelume 0.1.2, in assets/vendor): the avatar's hover sparkle -->
   <script type="module">
     import { bind } from "/assets/vendor/cuelume-0.1.2/index.js";

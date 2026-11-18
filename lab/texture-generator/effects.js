@@ -847,6 +847,17 @@
     el.style.setProperty("--sq-band", "path(evenodd, '" + squirclePath(w + RING * 2, h + RING * 2, r + RING) + " " + squirclePath(w, h, r, -RING) + "')");
   }
 
+  // Social icons' focus ring (as on the homepage): 2px wide, 4px outside the
+  // 24px icon, radius/xs plus the gap, smoothed. Drawn in ::after's coordinates.
+  function initSocialRings() {
+    var GAP = 4, R = 4, S = 24 + GAP * 2;
+    var band = "path(evenodd, '" + squirclePath(S + RING * 2, S + RING * 2, R + GAP + RING) + " " + squirclePath(S, S, R + GAP, -RING) + "')";
+    document.querySelectorAll(".social a").forEach(function (a) {
+      a.style.setProperty("--sq-social-ring", band);
+      a.setAttribute("data-ring", "");
+    });
+  }
+
   function initSquircles() {
     var els = document.querySelectorAll(".sq, .sq-sheet, input[type=color]");
     var ro = "ResizeObserver" in window ? new ResizeObserver(function (entries) { entries.forEach(function (e) { shape(e.target); }); }) : null;
@@ -912,6 +923,7 @@
     resetSheetsOnResize();
     syncControls();
     initSquircles();
+    initSocialRings();
     // start empty: no photo until one is chosen, dropped or pasted (the + in the middle asks for one)
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncControls);   // re-measure hex fields once the font is in
   });
