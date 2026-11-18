@@ -848,14 +848,21 @@
   }
 
   // Social icons' focus ring (as on the homepage): 2px wide, 4px outside the
-  // 24px icon, radius/xs plus the gap, smoothed. Drawn in ::after's coordinates.
+  // icon (24 on desktop, 20 on phones), radius/xs plus the gap, smoothed.
+  // Drawn in ::after's coordinates; redrawn when the icon size changes.
   function initSocialRings() {
-    var GAP = 4, R = 4, S = 24 + GAP * 2;
-    var band = "path(evenodd, '" + squirclePath(S + RING * 2, S + RING * 2, R + GAP + RING) + " " + squirclePath(S, S, R + GAP, -RING) + "')";
-    document.querySelectorAll(".social a").forEach(function (a) {
-      a.style.setProperty("--sq-social-ring", band);
-      a.setAttribute("data-ring", "");
-    });
+    var GAP = 4, R = 4;
+    var links = document.querySelectorAll(".social a");
+    function draw() {
+      links.forEach(function (a) {
+        var S = Math.ceil(parseFloat(getComputedStyle(a).width) - 0.01) + GAP * 2;
+        if (!S) return;
+        a.style.setProperty("--sq-social-ring", "path(evenodd, '" + squirclePath(S + RING * 2, S + RING * 2, R + GAP + RING) + " " + squirclePath(S, S, R + GAP, -RING) + "')");
+        a.setAttribute("data-ring", "");
+      });
+    }
+    draw();
+    MOBILE.addEventListener("change", draw);
   }
 
   function initSquircles() {
