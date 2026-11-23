@@ -725,7 +725,8 @@
   // open); clicking it again, Esc, the phone's back gesture, or a click anywhere
   // outside closes it. The dialog's own Download button saves the file and closes it.
   // While it's open the rest of the page can't be reached (the browser's modal dialog),
-  // so a click on a rail or bar button behind it is passed on to that button.
+  // so on phones a tap on a bar button behind it is passed on to that button. On desktop
+  // the whole window is dimmed, so a click on a rail button only closes it.
   function initExport(rail) {
     var wrap = $("export-dialog"), railBtn = $("download");
     function isOpen() { return isShown(wrap); }
@@ -751,7 +752,7 @@
     wrap.addEventListener("close", function () {
       if (!wrap.dataset.closing) { settle(wrap); railBtn.setAttribute("aria-expanded", "false"); }
     });
-    // a press and release outside the dialog close it; on a rail or bar button, that button then acts
+    // a press and release outside the dialog close it; on a phone's bar button, that button then acts
     function outside(e) {
       var r = wrap.getBoundingClientRect();
       return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
@@ -769,6 +770,7 @@
     wrap.addEventListener("click", function (e) {
       if (!pressedOutside || e.target !== wrap || !outside(e)) return;
       pressedOutside = false;
+      if (!MOBILE.matches) { close(); return; }   // desktop: outside only closes it
       var btn = buttonAt(e.clientX, e.clientY);
       if (btn === railBtn) { close(); return; }   // the Download button toggles it closed
       close(false, !!btn);   // tapping another bar icon swaps sheets without a slide out
