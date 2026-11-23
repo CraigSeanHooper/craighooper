@@ -206,8 +206,6 @@
     }
     /* touch: an invisible 44px tap area round each icon (half the gap each side), the look unchanged */
     @media (pointer: coarse) { .social a::before { content: ""; position: absolute; inset: calc(var(--space-250) / -2); } }
-    /* desktop Export: the scrim covers them in Figma */
-    @media (min-width: 1024px) { .app:has(.dialog-wrap[open]) .social { visibility: hidden; } }
     @media (hover: hover) { .social a:hover { color: var(--icon-hover); } }
     /* Focus: border/focus at stroke/md, space/50 outside, radius/xs smoothed 100% (shape from effects.js) */
     .social a:focus-visible { outline: var(--focus-ring) solid var(--border-focus); outline-offset: var(--space-50); }
@@ -390,22 +388,19 @@
     }
     #preview:not([hidden]) ~ .start { display: none; }
     .stage.drop { box-shadow: inset 0 0 0 2px var(--drop-outline); }   /* photos can still be dropped or pasted here */
-    /* Export dialog: centred over the photo area. The wrapper carries the
-       shadow, since the squircle clip would cut a shadow off the dialog itself. */
-    /* It's the browser's own <dialog>, so it sits above everything; it's placed
-       in the middle of the photo area (beside the rail, or beside the panel when open). */
-    .app { --stage-left: var(--rail-width); }
-    .app.open { --stage-left: calc(var(--rail-width) + var(--panel-width)); }
+    /* Export dialog: the browser's own <dialog>, centred in the window above everything.
+       The wrapper carries the shadow, since the squircle clip would cut a shadow off the dialog itself. */
     .dialog-wrap {
       position: fixed; inset: auto; margin: 0; padding: 0; border: 0; background: none; color: inherit; overflow: visible;
-      left: calc(var(--stage-left) + (100% - var(--stage-left)) / 2); top: 50%; transform: translate(-50%, -50%);
-      width: var(--dialog-width); max-width: calc(100% - var(--stage-left) - var(--space-300) * 2); max-height: none;
+      left: 50%; top: 50%; transform: translate(-50%, -50%);
+      width: var(--dialog-width); max-width: calc(100% - var(--space-300) * 2); max-height: none;
       filter: var(--shadow-lg);
     }
     .dialog-wrap:not([open]) { display: none; }
-    .dialog-wrap::backdrop { background: transparent; }   /* the browser's own dimming is off: the photo area's overlay below is the design */
-    /* overlay: dims the photo area (not the rail or the panel) while Export is open */
-    .stage:has(.dialog-wrap[open])::before { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--surface-scrim); }
+    /* desktop: the scrim dims the whole window (rail, panel, photo, icons), as in Figma.
+       Dimming only the photo area clashed with the rail and the panel's rounded corners. */
+    .dialog-wrap::backdrop { background: var(--surface-scrim); overflow: hidden; overscroll-behavior: contain; }
+    .dialog-wrap:modal { overscroll-behavior: contain; }   /* scrolling over it never moves the page behind */
     .dialog { --r: var(--radius-lg); display: flex; flex-direction: column; padding: calc(var(--space-300) + var(--stroke-sm)); }   /* 24 inside the 1px outline, as in Figma */
     .dialog .btn { width: 100%; margin-top: var(--space-300); }
 
@@ -476,7 +471,7 @@
         border-radius: calc(var(--grabber-height) / 2); background: var(--control-fill-open);
       }
       .panel[data-closing], .dialog-wrap[data-closing] { pointer-events: none; }   /* sliding away: taps go through (effects.js slides the sheets) */
-      .stage:has(.dialog-wrap[open])::before { content: none; }   /* no overlay behind the phone sheet */
+      .dialog-wrap::backdrop { background: transparent; }   /* no overlay behind the phone sheet */
 
       /* spacing steps down: 16 padding, 24 between sections, 16 heading to controls, 12 between controls */
       .panel-body { padding: var(--space-200); }
