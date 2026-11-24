@@ -12,11 +12,6 @@
   src: url("/assets/fonts/KMRMelangeGrotesk-Regular.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;   /* Regular */
 }
-@font-face {
-  font-family: "Parabole";
-  src: url("/assets/fonts/Parabole-Regular.woff2") format("woff2");
-  font-weight: 400; font-style: normal; font-display: swap;   /* Regular */
-}
 
 /* ---------------- PRIMITIVES ---------------- */
 :root {
@@ -28,7 +23,6 @@
   --colour-neutral-90: #1a1a1a;
 
   --font-family-melange: "KMR Melange Grotesk", system-ui, sans-serif;
-  --font-family-parabole: "Parabole", system-ui, sans-serif;
   --font-weight-regular: 400;
   --font-weight-semibold: 600;
 
@@ -58,10 +52,10 @@
   --surface-avatar: var(--colour-neutral-0);
   --border-focus:   var(--colour-neutral-90);
 
-  /* Typography, Melange mode (body is Parabole) */
+  /* Typography, Melange mode */
   --font-family-heading: var(--font-family-melange);
   --font-style-heading:  var(--font-weight-semibold);
-  --font-family-body:    var(--font-family-parabole);
+  --font-family-body:    var(--font-family-melange);
   --font-style-body:     var(--font-weight-regular);
   --letter-spacing-heading: var(--letter-spacing-minus-1);
   --letter-spacing-body:    var(--letter-spacing-0);
@@ -102,11 +96,11 @@ body {
 h1, p { margin: 0; font-weight: inherit; }
 
 /* ---------------- TEXT STYLES ---------------- */
-/* display-1/lg 32/34 → /sm 24/26; body/sm/lg 14/20 → /sm 12/18 (steps down at 820px) */
+/* display-1/lg 32/34 → /sm 24/26; body/md/lg 16/22 → /sm 14/20 (steps down at 820px) */
 .display-1 { font-size: var(--font-size-32); line-height: var(--line-height-34); color: var(--text-primary); text-wrap: balance; }
-.body-sm {
+.body-md {
   font-family: var(--font-family-body); font-weight: var(--font-style-body); letter-spacing: var(--letter-spacing-body);
-  font-size: var(--font-size-14); line-height: var(--line-height-20); color: var(--text-secondary);
+  font-size: var(--font-size-16); line-height: var(--line-height-22); color: var(--text-secondary);
   text-wrap: pretty;   /* no single word left on the last line */
 }
 
@@ -193,7 +187,7 @@ h1, p { margin: 0; font-weight: inherit; }
   .social a { width: var(--icon-md); height: var(--icon-md); }   /* icon/md on mobile */
   .page { --clear: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)); }
   .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
+  .body-md { font-size: var(--font-size-14); line-height: var(--line-height-20); }
   /* blobs: space/100 below the bio, as wide as the text (Figma 354 × 250) */
   .copy .blobs { width: 354px; max-width: 100%; aspect-ratio: 354 / 250; margin-top: 0; }   /* the copy's own space/100 gap */
 }
