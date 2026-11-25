@@ -44,7 +44,7 @@ for page_path in (root / "index.html",):
 
     bio = [p for p in data.get("bio") or [] if p]
     if bio:
-        paras = "".join(f'\n      <p class="body-md">{text(p)}</p>' for p in bio)
+        paras = "".join(f'\n      <p class="body-sm">{text(p)}</p>' for p in bio)
         swap(r'(<div class="bio">).*?(</div>)',
              lambda m: m.group(1) + paras + "\n    " + m.group(2))
 
