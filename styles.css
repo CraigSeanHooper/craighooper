@@ -181,6 +181,7 @@ h1, p { margin: 0; font-weight: inherit; }
   .display-1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
   .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
   .copy { gap: var(--space-50); }   /* headline to bio */
+  .display-1, .body-sm { text-wrap: wrap; }   /* lines fill the width on phones (Craig, 25 Nov 2026) */
   /* blobs: space/100 below the bio, as wide as the text (Figma 354 × 250) */
   .copy .blobs { width: 354px; max-width: 100%; aspect-ratio: 354 / 250; margin-top: calc(var(--space-100) - var(--space-50)); }
 }
