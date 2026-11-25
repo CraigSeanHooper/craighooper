@@ -21,6 +21,10 @@
   --colour-neutral-70: #4d4d4d;
   --colour-neutral-80: #333333;
   --colour-neutral-90: #1a1a1a;
+  --colour-blue-dark:        #0000ee;
+  --colour-blue-dark-hover:  #0000aa;
+  --colour-blue-light:       #8ab4f8;
+  --colour-blue-light-hover: #a8c7fa;
 
   --font-family-melange: "KMR Melange Grotesk", system-ui, sans-serif;
   --font-weight-regular: 400;
@@ -48,6 +52,8 @@
   --text-secondary: var(--colour-neutral-70);
   --icon-primary:   var(--colour-neutral-80);
   --icon-hover:     var(--colour-neutral-90);
+  --icon-link:       var(--colour-blue-dark);
+  --icon-link-hover: var(--colour-blue-dark-hover);
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --border-focus:   var(--colour-neutral-90);
@@ -69,6 +75,8 @@
     --text-secondary: var(--colour-neutral-20);
     --icon-primary:   var(--colour-neutral-20);
     --icon-hover:     var(--colour-neutral-10);
+    --icon-link:       var(--colour-blue-light);
+    --icon-link-hover: var(--colour-blue-light-hover);
     --surface-page:   var(--colour-neutral-90);
     --surface-avatar: var(--colour-neutral-90);
     --border-focus:   var(--colour-neutral-10);

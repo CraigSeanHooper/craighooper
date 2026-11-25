@@ -66,10 +66,10 @@
   --colour-neutral-90: #1a1a1a;
   --colour-neutral-95: #0d0d0d;
   --colour-accent-yellow: #fffbc6;
-  --colour-link-blue: #0000ee;
-  --colour-link-blue-hover: #0000aa;
-  --colour-link-blue-mid: #3a6fd8;
-  --colour-link-blue-mid-hover: #2b57ae;
+  --colour-blue-dark: #0000ee;
+  --colour-blue-dark-hover: #0000aa;
+  --colour-blue-mid: #3a6fd8;
+  --colour-blue-mid-hover: #2b57ae;
 
   --font-family-parabole: "Parabole";
   --font-family-melange: "KMR Melange Grotesk";
@@ -115,8 +115,8 @@
   --border-focus: var(--colour-neutral-90);
   --text-on-accent: var(--colour-neutral-90);
   --text-on-dark: var(--colour-neutral-0);
-  --surface-link: var(--colour-link-blue);
-  --surface-link-hover: var(--colour-link-blue-hover);
+  --surface-link: var(--colour-blue-dark);
+  --surface-link-hover: var(--colour-blue-dark-hover);
 
   --radius-xs: var(--scale-base-4);
   --radius-sm: var(--scale-base-8);
@@ -174,8 +174,8 @@
     --text-primary: var(--colour-neutral-10);
     --text-secondary: var(--colour-neutral-20);
     --border-focus: var(--colour-neutral-10);
-    --surface-link: var(--colour-link-blue-mid);
-    --surface-link-hover: var(--colour-link-blue-mid-hover);
+    --surface-link: var(--colour-blue-mid);
+    --surface-link-hover: var(--colour-blue-mid-hover);
   }
 
   /* the avatar is black line art on a transparent background; flip it to white */
