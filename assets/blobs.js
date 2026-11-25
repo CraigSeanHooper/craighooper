@@ -4,8 +4,7 @@
 
    TUNED SETTINGS (agreed with Craig — do not change without asking):
      palette   : "Signal"  — black mass + #E8452F, #1F6FEB, #F2C230
-                 the mass is filled by CSS (--blob-mass) so it flips to
-                 white in dark mode; the accents never change
+                 the mass is filled by CSS (--blob-mass); the accents never change
      roundness : "Round"   — see ROUND below
      morph     : LERP 0.09 (deliberately slowed; 0.16 felt too fast)
      shapes    : 4 only. Cursor must NOT spawn new shapes.

@@ -1,5 +1,5 @@
 /* Homepage and 404 (Figma: desktop-10.3 3404:69, mobile-10.3 3362:68,
-   404-desktop 2836:364, 404-mobile 2836:375). Typography mode: Melange. */
+   404-desktop 2836:364, 404-mobile 2836:375). Typography mode: Melange + Parabole. Light only (no dark mode). */
 
 /* ---------------- FONTS ---------------- */
 @font-face {
@@ -8,8 +8,8 @@
   font-weight: 600; font-style: normal; font-display: swap;   /* SemiBold */
 }
 @font-face {
-  font-family: "KMR Melange Grotesk";
-  src: url("/assets/fonts/KMRMelangeGrotesk-Regular.woff2") format("woff2");
+  font-family: "Parabole";
+  src: url("/assets/fonts/Parabole-Regular.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;   /* Regular */
 }
 
@@ -27,6 +27,7 @@
   --colour-blue-light-hover: #a8c7fa;
 
   --font-family-melange: "KMR Melange Grotesk", system-ui, sans-serif;
+  --font-family-parabole: "Parabole", system-ui, sans-serif;
   --font-weight-regular: 400;
   --font-weight-semibold: 600;
 
@@ -58,10 +59,10 @@
   --surface-avatar: var(--colour-neutral-0);
   --border-focus:   var(--colour-neutral-90);
 
-  /* Typography, Melange mode */
+  /* Typography, Melange + Parabole mode */
   --font-family-heading: var(--font-family-melange);
   --font-style-heading:  var(--font-weight-semibold);
-  --font-family-body:    var(--font-family-melange);
+  --font-family-body:    var(--font-family-parabole);
   --font-style-body:     var(--font-weight-regular);
   --letter-spacing-heading: var(--letter-spacing-minus-1);
   --letter-spacing-body:    var(--letter-spacing-0);
@@ -69,26 +70,9 @@
   /* blob artwork: the large mass (the accents never change) */
   --blob-mass: #000000;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text-primary:   var(--colour-neutral-10);
-    --text-secondary: var(--colour-neutral-20);
-    --icon-primary:   var(--colour-neutral-20);
-    --icon-hover:     var(--colour-neutral-10);
-    --icon-link:       var(--colour-blue-light);
-    --icon-link-hover: var(--colour-blue-light-hover);
-    --surface-page:   var(--colour-neutral-90);
-    --surface-avatar: var(--colour-neutral-90);
-    --border-focus:   var(--colour-neutral-10);
-    --blob-mass:      var(--colour-neutral-0);
-  }
-  /* the avatar is black line art on a transparent background; flip it to white */
-  .avatar-btn img { filter: invert(1); }
-}
-
 /* ---------------- BASE ---------------- */
 * { box-sizing: border-box; }
-html { color-scheme: light dark; background: var(--surface-page); }
+html { color-scheme: light; background: var(--surface-page); }
 body {
   margin: 0;
   min-height: 100vh;
