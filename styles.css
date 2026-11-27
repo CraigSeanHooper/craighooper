@@ -89,7 +89,7 @@ h1, p { margin: 0; font-weight: inherit; }
 
 /* ---------------- TEXT STYLES ---------------- */
 /* h1/lg 32/34 → /sm 24/26; body/sm/lg 14/20 → /sm 12/18 (steps down at 820px) */
-.h1 { font-size: var(--font-size-32); line-height: var(--line-height-34); color: var(--text-primary); text-wrap: balance; }
+.h1 { font-size: var(--font-size-32); line-height: var(--line-height-34); color: var(--text-primary); text-wrap: balance; font-feature-settings: "ss08", "ss10"; }   /* Melange Alt R + Round Punctuation (Craig, 27 Nov 2026) */
 .body-sm {
   font-family: var(--font-family-body); font-weight: var(--font-style-body); letter-spacing: var(--letter-spacing-body);
   font-size: var(--font-size-14); line-height: var(--line-height-20); color: var(--text-secondary);
