@@ -39,7 +39,7 @@ for page_path in (root / "index.html",):
     headline = data.get("headline", "")
     if headline.strip():
         inner = "<br>".join(text(line) for line in re.split(r"\r?\n", headline))
-        swap(r'(<h1 class="display-1 headline">).*?(</h1>)',
+        swap(r'(<h1 class="h1 headline">).*?(</h1>)',
              lambda m: m.group(1) + inner + m.group(2))
 
     bio = [p for p in data.get("bio") or [] if p]
