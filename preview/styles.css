@@ -29,7 +29,7 @@
   --line-height-20: 20px; --line-height-24: 24px; --line-height-28: 28px;
   --letter-spacing-0: 0px;
 
-  --icon-md: 20px; --icon-lg: 24px;
+  --icon-md: 20px; --icon-lg: 24px; --icon-xl: 32px;
   --avatar-sm: 32px; --avatar-lg: 48px;
   --photo-size: 144px;   /* the photo (Figma 144 × 144) */
 }
@@ -139,7 +139,7 @@ h1 { margin: 0; }
 a.body-semibold-lg { text-decoration: underline; text-underline-offset: auto; border-radius: var(--radius-xs); }
 @media (hover: hover) {
   a.body-semibold-lg:hover { color: var(--text-primary); }
-  .icon-link:hover { color: var(--icon-hover); }
+  .icon-link:hover, .clock:hover { color: var(--icon-hover); }
 }
 a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--space-50); }
 
@@ -172,10 +172,10 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
 }
 @keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* clock — top right. Figma's desktop clock is 32, which has no token yet, so it's icon/lg. */
+/* clock — top right: icon/xl on desktop, icon/lg on mobile */
 .clock {
   position: absolute; top: var(--space-100); right: var(--space-100); z-index: 3;
-  display: block; width: var(--icon-lg); height: var(--icon-lg);
+  display: block; width: var(--icon-xl); height: var(--icon-xl);
   color: var(--icon-primary);
 }
 .clock * { vector-effect: non-scaling-stroke; }
@@ -207,6 +207,7 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
   .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
   .social { gap: var(--space-200); }
   .icon-link { width: var(--icon-md); height: var(--icon-md); }
+  .clock { width: var(--icon-lg); height: var(--icon-lg); }
 }
 
 .visually-hidden {
