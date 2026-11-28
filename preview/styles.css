@@ -99,6 +99,7 @@ h1 { margin: 0; }
   padding: var(--space-500);
 }
 .bottom { display: contents; }
+.stacked-break { display: none; } /* the headline breaks after "in" only when stacked, as in mobile-11 */
 .headline { grid-area: head; justify-self: center; align-self: start; text-align: center; }
 .photo    { grid-area: photo; justify-self: center; }
 .links    { grid-area: links; align-self: end; }
@@ -182,7 +183,7 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
 
 /* ---------------- NARROWER: the mobile arrangement ---------------- */
 /* Below 960 the bottom row no longer fits side by side, so everything stacks under the
-   photo as on mobile: headline, links (space/300), then social and email (space/500). */
+   photo as on mobile: headline, links (space/100), then social and email (space/500). */
 @media (max-width: 960px) {
   .page {
     grid-template-columns: 1fr;
@@ -191,11 +192,12 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
   .bottom {
     grid-area: bottom;
     display: flex; flex-direction: column; justify-content: flex-end;
-    gap: var(--space-300);
   }
   .headline { justify-self: auto; text-align: left; }
+  .stacked-break { display: inline; }
   .links, .social { align-self: flex-start; }
-  .social { margin-top: calc(var(--space-500) - var(--space-300)); }
+  .links { margin-top: var(--space-100); }
+  .social { margin-top: var(--space-500); }
 }
 
 /* ---------------- MOBILE (≤820px) ---------------- */
