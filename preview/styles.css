@@ -161,7 +161,7 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
 .avatar-wrap { position: absolute; top: var(--space-100); left: var(--space-100); z-index: 3; }
 .avatar-btn {
   display: grid; place-items: center;
-  padding: var(--space-50); border: 0;
+  border: 0; padding: 0;   /* the circle is the drawing itself, no padding (Foundations, 28 Nov 2026) */
   border-radius: var(--radius-full);
   background: var(--surface-avatar);
   cursor: pointer;
@@ -207,7 +207,6 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
   .page { padding: var(--space-300); }
   .body-semibold-xl { font-size: var(--font-size-20); line-height: var(--line-height-24); }
   .body-semibold-lg { font-size: var(--font-size-16); line-height: var(--line-height-20); }
-  .avatar-wrap { top: var(--space-50); left: var(--space-50); }
   .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
   .social { gap: var(--space-200); }
   .icon-link { width: var(--icon-md); height: var(--icon-md); }

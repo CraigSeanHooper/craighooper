@@ -561,14 +561,14 @@ a {
 
 /* --- Avatar ---------------------------------------------------- */
 /* Foundations avatar/static, the same as craighooper.xyz: Size=Large on desktop
-   (avatar/lg drawing, 56 circle), Size=Small at 820px and below (avatar/sm
-   drawing, 40 circle). The circle is the drawing plus space/50 padding.
+   (avatar/lg, 48 circle), Size=Small at 820px and below (avatar/sm,
+   32 circle). The circle is the drawing itself, no padding.
    Wrapper holds the position, the button holds the spin, so the two never
    fight over one element. A full circle, so no corner smoothing. */
 
 .avatar-wrap {
   --avatar-drawing: var(--avatar-lg);
-  --avatar-circle: calc(var(--avatar-drawing) + 2 * var(--space-50));
+  --avatar-circle: var(--avatar-drawing);
   position: absolute;
   top: var(--space-100);
   left: var(--space-100);
@@ -582,7 +582,7 @@ a {
   place-items: center;
   width: var(--avatar-circle);
   height: var(--avatar-circle);
-  padding: var(--space-50);
+  padding: 0;
   border: 0;
   border-radius: var(--radius-full);
   background: var(--surface-avatar);

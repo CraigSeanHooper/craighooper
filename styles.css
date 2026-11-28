@@ -101,7 +101,7 @@ h1, p { margin: 0; font-weight: inherit; }
    Figma. When the window is shorter, the space below gives way first, so the copy stays put;
    only when that's gone does the space above shrink, down to just clear of the avatar. */
 .page {
-  --clear: calc(var(--space-100) + var(--avatar-lg) + 2 * var(--space-50) + var(--space-500));   /* clear of the avatar */
+  --clear: calc(var(--space-100) + var(--avatar-lg) + var(--space-500));   /* clear of the avatar */
   height: 100vh;
   height: 100dvh;   /* the window's height, so the spaces can give way; on a very short window
                        the blobs run past the bottom and the page scrolls */
@@ -129,7 +129,7 @@ h1, p { margin: 0; font-weight: inherit; }
 .avatar-wrap { position: absolute; top: var(--space-100); left: var(--space-100); z-index: 3; }
 .avatar-btn {
   display: grid; place-items: center;
-  padding: var(--space-50); border: 0;
+  border: 0; padding: 0;   /* the circle is the drawing itself, no padding (Foundations, 28 Nov 2026) */
   border-radius: var(--radius-full);
   background: var(--surface-avatar);
   cursor: pointer;
@@ -177,7 +177,7 @@ h1, p { margin: 0; font-weight: inherit; }
   .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
   .social { top: var(--space-300); right: var(--space-300); }
   .social a { width: var(--icon-md); height: var(--icon-md); }   /* icon/md on mobile */
-  .page { --clear: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)); }
+  .page { --clear: calc(var(--space-100) + var(--avatar-sm) + var(--space-500)); }
   .h1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
   .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-16); }
   .copy { gap: var(--space-50); }   /* headline to bio */

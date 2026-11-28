@@ -73,11 +73,11 @@
       --font-weight-semibold: 600;       /* font-style/heading, /body-semibold */
       --letter-spacing-heading: -0.5px;
 
-      --rail-width: calc(var(--avatar-lg) + var(--space-50) * 2 + var(--space-100) * 2);   /* 72: the 56 avatar with 8 each side */
+      --rail-width: calc(var(--avatar-lg) + var(--space-100) * 2);   /* 64: the 48 avatar with 8 each side */
       --panel-width: 380px;
       --rail-button: 40px;
-      --avatar-sm: 32px;                 /* avatar/sm: the drawing inside the 40 circle (phones) */
-      --avatar-lg: 48px;                 /* avatar/lg: the drawing inside the 56 circle (desktop) */
+      --avatar-sm: 32px;                 /* avatar/sm: the 32 circle (phones) */
+      --avatar-lg: 48px;                 /* avatar/lg: the 48 circle (desktop) */
       --icon-md: 24px;
       --icon-sm: 20px;
       --control-height: 32px;            /* tabs, hex boxes */
@@ -91,7 +91,7 @@
 
       /* mobile (below 1024): bottom bar and sheets, designed at 390 */
       --control-fill-open: #cccccc;      /* control/fill/open: the sheet grabber */
-      --header-height: calc(var(--space-100) + var(--rail-button) + var(--space-200));       /* avatar 8 in, then 16 clear: 64 */
+      --header-height: calc(var(--space-100) + var(--avatar-sm) + var(--space-200));         /* avatar 8 in, then 16 clear: 56 */
       --bar-height: calc(var(--space-150) * 2 + var(--rail-button) + var(--stroke-sm));      /* 65, plus the phone's safe area */
       --sheet-height: 236px;             /* every phone menu (Craig, 9 November: 314 until the colour fields were hidden) */
       --grabber-width: 36px;
@@ -182,9 +182,9 @@
     .rail-btn:disabled, .rail-btn:disabled:hover { --sq-line: transparent; --sq-fill: transparent; color: var(--icon-disabled); cursor: default; }
 
     /* ---------- avatar: top of the rail ---------- */
-    /* avatar/static Size=Small: the 32 drawing in a 40 circle, space/50 all round. A full circle: no smoothing */
+    /* avatar/static Size=Small: a 32 circle, the drawing itself, no padding. A full circle: no smoothing */
     .avatar {
-      display: grid; place-items: center; width: var(--rail-button); height: var(--rail-button);
+      display: grid; place-items: center; width: var(--avatar-sm); height: var(--avatar-sm);
       border-radius: var(--radius-full); background: var(--surface-avatar);
     }
     .avatar-mobile { display: none; }
@@ -220,8 +220,8 @@
     }
     @media (prefers-reduced-motion: reduce) { .rail .avatar:hover { animation: none; } }
     @keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    /* desktop rail: avatar/static Size=Large, the 48 drawing in a 56 circle */
-    .rail .avatar { width: calc(var(--avatar-lg) + var(--space-50) * 2); height: calc(var(--avatar-lg) + var(--space-50) * 2); }
+    /* desktop rail: avatar/static Size=Large, a 48 circle */
+    .rail .avatar { width: var(--avatar-lg); height: var(--avatar-lg); }
     .rail .avatar img { width: var(--avatar-lg); height: var(--avatar-lg); }
 
     /* ---------- panel: all four sections, scrolling on its own ---------- */
@@ -508,12 +508,12 @@
 
   <div class="app">
     <!-- small screens: avatar top-left, over the photo area -->
-    <a class="avatar avatar-mobile" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png" alt="" width="32" height="32" /></a>
+    <a class="avatar avatar-mobile" href="/" aria-label="Craig Hooper, home"><img src="/assets/avatar.png?v=2" alt="" width="32" height="32" /></a>
 
     <!-- the rail: these buttons never appear, hide or move -->
     <nav class="rail" aria-label="Tools">
       <div class="rail-top">
-        <a class="avatar" href="/" aria-label="Craig Hooper, home" data-cuelume-hover="sparkle"><img src="/assets/avatar.png" alt="" width="48" height="48" /></a>
+        <a class="avatar" href="/" aria-label="Craig Hooper, home" data-cuelume-hover="sparkle"><img src="/assets/avatar.png?v=2" alt="" width="48" height="48" /></a>
         <div class="rail-sections">
           <button type="button" class="rail-btn outline sq" id="choose" aria-label="Choose photo"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
           <button type="button" class="rail-btn sq" data-section="colour" aria-controls="panel" aria-label="Colour"><svg class="icon" aria-hidden="true"><use href="#i-colour"/></svg></button>
