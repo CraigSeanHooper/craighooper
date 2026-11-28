@@ -139,7 +139,7 @@ h1 { margin: 0; }
 a.body-semibold-lg { text-decoration: underline; text-underline-offset: auto; border-radius: var(--radius-xs); }
 @media (hover: hover) {
   a.body-semibold-lg:hover { color: var(--text-primary); }
-  .icon-link:hover, .clock:hover { color: var(--icon-hover); }
+  .icon-link:hover { color: var(--icon-hover); }
 }
 a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--space-50); }
 
