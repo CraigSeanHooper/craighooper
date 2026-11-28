@@ -1,6 +1,6 @@
 /* The centred photo of Craig. Each click (or tap) shows the next photo, instantly;
    after the last one it goes back to the first. To add a photo, put it in
-   /assets/craig-photos/ (square, 432 × 432, no corners: the frame rounds them) and add a line to this list. */
+   /assets/craig-photos/ (square, 432 × 432, no corners) and add a line to this list. */
 const PHOTOS = [
   { src: "/assets/craig-photos/craig-1.jpg", alt: "Craig taking a mirror selfie." },
   { src: "/assets/craig-photos/craig-2.jpg", alt: "Craig taking a mirror selfie." },

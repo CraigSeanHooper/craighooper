@@ -22,7 +22,7 @@
 
   --space-25: 2px; --space-50: 4px; --space-100: 8px; --space-200: 12px; --space-300: 16px;
   --space-400: 20px; --space-500: 24px;
-  --radius-xs: 4px; --radius-md: 12px; --radius-full: 64px;
+  --radius-none: 0px; --radius-xs: 4px; --radius-md: 12px; --radius-full: 64px;
   --stroke-md: 2px;
 
   --font-size-16: 16px; --font-size-20: 20px; --font-size-24: 24px;
@@ -31,7 +31,7 @@
 
   --icon-md: 20px; --icon-lg: 24px; --icon-xl: 32px;
   --avatar-sm: 32px; --avatar-lg: 48px;
-  --photo-size: 144px;   /* the photo (Figma 144 × 144) */
+  --photo-size: 192px;   /* the photo (Figma 192 × 192 on desktop, 144 × 144 on mobile) */
 }
 
 /* ---------------- SEMANTIC ---------------- */
@@ -105,19 +105,19 @@ h1 { margin: 0; }
 .links    { grid-area: links; align-self: end; }
 .social   { grid-area: social; align-self: end; }
 
-/* the photo: the frame holds the corners (radius/md, 100% smoothed by squircle.js) */
+/* the photo: square corners (radius/none) */
 .photo {
   position: relative;
   display: block;
   padding: 0; border: 0; background: none;
-  border-radius: var(--radius-md); --ring-gap: var(--space-50);
+  border-radius: var(--radius-none); --ring-gap: var(--space-50);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.photo-frame {
+.photo-box {
   display: block;
   width: var(--photo-size); height: var(--photo-size);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-none);
   overflow: hidden;
 }
 .photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -147,8 +147,8 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
 /* Focus on the icons and the photo: border/focus ring at stroke/md, space/50 outside,
    100% smoothed (assets/squircle.js) */
 .icon-link:focus-visible, .photo:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--ring-gap); }
-.icon-link[data-ring-ready]:focus-visible, .photo[data-ring-ready]:focus-visible { outline: none; }
-.icon-link[data-ring-ready]:focus-visible::after, .photo[data-ring-ready]:focus-visible::after {
+.icon-link[data-ring-ready]:focus-visible { outline: none; }
+.icon-link[data-ring-ready]:focus-visible::after {
   content: "";
   position: absolute;
   inset: calc(-1 * (var(--ring-gap) + var(--stroke-md)));
@@ -184,16 +184,18 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
 /* ---------------- NARROWER: the mobile arrangement ---------------- */
 /* Below 960 the bottom row no longer fits side by side, so everything stacks under the
    photo as on mobile: headline, links (space/100), then social and email (space/500). */
+/* A column instead of the grid: the empty space above the photo and the bottom block share
+   the height equally, but on short screens (e.g. a HomeView) the space above gives way first,
+   so the page fits without scrolling and the avatar and clock stay on screen. */
 @media (max-width: 960px) {
-  .page {
-    grid-template-columns: 1fr;
-    grid-template-areas: "." "photo" "bottom";
-  }
+  .page { display: flex; flex-direction: column; }
+  .page::before { content: ""; flex: 1 1 0; }
+  .photo { align-self: center; }
   .bottom {
-    grid-area: bottom;
+    flex: 1 1 0;
     display: flex; flex-direction: column; justify-content: flex-end;
   }
-  .headline { justify-self: auto; text-align: left; }
+  .headline { justify-self: auto; text-align: left; margin-top: var(--space-500); } /* keeps space/500 under the photo on short screens */
   .stacked-break { display: inline; }
   .links, .social { align-self: flex-start; }
   .links { margin-top: var(--space-100); }
@@ -210,6 +212,7 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
   .social { gap: var(--space-200); }
   .icon-link { width: var(--icon-md); height: var(--icon-md); }
   .clock { width: var(--icon-lg); height: var(--icon-lg); }
+  :root { --photo-size: 144px; } /* the photo, Figma 144 × 144 on mobile */
 }
 
 .visually-hidden {
