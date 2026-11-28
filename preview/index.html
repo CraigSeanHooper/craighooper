@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+  <title>Craig Hooper. Designer based in Ottawa, Canada.</title>
+  <meta name="description" content="Designer based in Ottawa, Canada.">
+
+  <link rel="icon" href="/assets/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+  <link rel="preload" href="/assets/fonts/KMRMelangeGrotesk-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/preview/styles.css?v=2">
+  <script src="/assets/squircle.js?v=2" defer></script>
+  <script src="/preview/photos.js?v=1" defer></script>
+  <script src="/preview/clock.js?v=1" defer></script>
+</head>
+<body>
+
+  <!-- Figma: desktop-11 (3579:157), mobile-11 (3597:165) -->
+  <header>
+  <div class="avatar-wrap">
+    <button class="avatar-btn" type="button" aria-label="Craig Hooper" data-cuelume-hover="sparkle">
+      <img src="/assets/avatar.png" alt="Craig Hooper" width="48" height="48">
+    </button>
+  </div>
+
+  <!-- analog clock showing the visitor's own time (clock.js sets the hands) -->
+  <svg class="clock" id="clock" viewBox="0 0 32 32" fill="none" role="img" aria-label="Clock">
+    <circle cx="16" cy="16" r="9.667" stroke="currentColor" stroke-width="1.5"/>
+    <line class="clock-hour" x1="16" y1="16" x2="16" y2="12.229" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    <line class="clock-minute" x1="16" y1="16" x2="16" y2="10.667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+  </header>
+
+  <main class="page">
+    <!-- the photo: each click shows the next one, then back to the first (photos.js) -->
+    <button class="photo" type="button" id="photo" data-smooth-ring>
+      <span class="photo-frame">
+        <img src="/assets/craig-photos/craig-1.jpg" alt="Craig taking a mirror selfie." width="144" height="144" fetchpriority="high">
+      </span>
+      <span class="visually-hidden">Next photo</span>
+    </button>
+
+    <div class="bottom">
+      <h1 class="body-semibold-xl headline">Designer based in Ottawa, Canada</h1>
+
+      <nav class="links" aria-label="Projects">
+        <a class="body-semibold-lg" href="#">a macOS menu bar app</a>
+        <a class="body-semibold-lg" href="#">a texture generator</a>
+        <a class="body-semibold-lg" href="#">an infinite photo gallery</a>
+      </nav>
+
+      <div class="social">
+        <a class="icon-link" href="https://x.com/craigseanhooper" target="_blank" rel="noopener" aria-label="Twitter" data-smooth-ring>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M23 3.01006C23 3.01006 20.9821 4.20217 19.86 4.54006C19.2577 3.84757 18.4573 3.35675 17.567 3.13398C16.6767 2.91122 15.7395 2.96725 14.8821 3.29451C14.0247 3.62177 13.2884 4.20446 12.773 4.96377C12.2575 5.72309 11.9877 6.62239 12 7.54006V8.54006C10.2426 8.58562 8.50127 8.19587 6.93101 7.4055C5.36074 6.61513 4.01032 5.44869 3 4.01006C3 4.01006 -1 13.0101 8 17.0101C5.94053 18.408 3.48716 19.109 1 19.0101C10 24.0101 21 19.0101 21 7.51006C20.9991 7.23151 20.9723 6.95365 20.92 6.68006C21.9406 5.67355 23 3.01006 23 3.01006Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="icon-link" href="https://www.instagram.com/craighooper" target="_blank" rel="noopener" aria-label="Instagram" data-smooth-ring>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 16V8C3 5.23858 5.23858 3 8 3H16C18.7614 3 21 5.23858 21 8V16C21 18.7614 18.7614 21 16 21H8C5.23858 21 3 18.7614 3 16Z" stroke="currentColor" stroke-width="1.5"/><path d="M17.5 6.51001L17.51 6.4989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a class="body-semibold-lg" href="mailto:hello@craighooper.xyz">hello@craighooper.xyz</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Interaction sounds: cuelume 0.1.2 (MIT), in assets/vendor so nothing loads from another site. -->
+  <script type="module">
+    import { bind } from "/assets/vendor/cuelume-0.1.2/index.js";
+    bind();
+  </script>
+</body>
+</html>

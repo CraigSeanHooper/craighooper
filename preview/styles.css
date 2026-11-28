@@ -1,0 +1,216 @@
+/* Design 11 preview (Figma: desktop-11 3579:157, mobile-11 3597:165).
+   Typography mode: Melange + Parabole. Light and dark (Foundations Colour). */
+
+/* ---------------- FONTS ---------------- */
+@font-face {
+  font-family: "KMR Melange Grotesk";
+  src: url("/assets/fonts/KMRMelangeGrotesk-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-style: normal; font-display: swap;   /* SemiBold */
+}
+
+/* ---------------- PRIMITIVES ---------------- */
+:root {
+  --colour-neutral-0:  #ffffff;
+  --colour-neutral-10: #e6e6e6;
+  --colour-neutral-20: #cccccc;
+  --colour-neutral-70: #4d4d4d;
+  --colour-neutral-80: #333333;
+  --colour-neutral-90: #1a1a1a;
+
+  --font-family-melange: "KMR Melange Grotesk", system-ui, sans-serif;
+  --font-weight-semibold: 600;
+
+  --space-25: 2px; --space-50: 4px; --space-100: 8px; --space-200: 12px; --space-300: 16px;
+  --space-400: 20px; --space-500: 24px;
+  --radius-xs: 4px; --radius-md: 12px; --radius-full: 64px;
+  --stroke-md: 2px;
+
+  --font-size-16: 16px; --font-size-20: 20px; --font-size-24: 24px;
+  --line-height-20: 20px; --line-height-24: 24px; --line-height-28: 28px;
+  --letter-spacing-0: 0px;
+
+  --icon-md: 20px; --icon-lg: 24px;
+  --avatar-sm: 32px; --avatar-lg: 48px;
+  --photo-size: 144px;   /* the photo (Figma 144 × 144) */
+}
+
+/* ---------------- SEMANTIC ---------------- */
+:root {
+  --text-primary:   var(--colour-neutral-90);
+  --text-secondary: var(--colour-neutral-70);
+  --icon-primary:   var(--colour-neutral-80);
+  --icon-hover:     var(--colour-neutral-90);
+  --surface-page:   var(--colour-neutral-0);
+  --surface-avatar: var(--colour-neutral-0);
+  --border-focus:   var(--colour-neutral-90);
+
+  --font-family-body-strong: var(--font-family-melange);
+  --font-style-body-semibold: var(--font-weight-semibold);
+  --letter-spacing-body: var(--letter-spacing-0);
+}
+
+/* Dark: follows the device's setting (Foundations Colour, Dark mode) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary:   var(--colour-neutral-10);
+    --text-secondary: var(--colour-neutral-20);
+    --icon-primary:   var(--colour-neutral-20);
+    --icon-hover:     var(--colour-neutral-10);
+    --surface-page:   var(--colour-neutral-90);
+    --surface-avatar: var(--colour-neutral-90);
+    --border-focus:   var(--colour-neutral-10);
+  }
+  /* the avatar is black line art on a transparent background; flip it to white */
+  .avatar-btn img { filter: invert(1); }
+}
+
+/* ---------------- BASE ---------------- */
+* { box-sizing: border-box; }
+html { color-scheme: light dark; background: var(--surface-page); }
+body {
+  margin: 0;
+  background: var(--surface-page);
+  font-family: var(--font-family-body-strong);
+  font-weight: var(--font-style-body-semibold);
+  letter-spacing: var(--letter-spacing-body);
+  font-size-adjust: from-font;   /* the fallback font matches Melange's size while it loads */
+  -webkit-font-smoothing: antialiased;
+}
+h1 { margin: 0; }
+
+/* ---------------- TEXT STYLES ---------------- */
+/* body-semibold/xl 24/28 → /sm 20/24; body-semibold/lg 20/24 → /sm 16/20 (step down at 820px) */
+.body-semibold-xl { font-size: var(--font-size-24); line-height: var(--line-height-28); color: var(--text-primary); }
+.body-semibold-lg { font-size: var(--font-size-20); line-height: var(--line-height-24); color: var(--text-secondary); }
+
+/* ---------------- LAYOUT ---------------- */
+/* Like the Figma auto layout: equal space above and below the photo, so it sits dead
+   centre. Desktop: headline at the top, links bottom left, social and email bottom centre. */
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 1fr auto 1fr;
+  grid-template-areas:
+    "head  head   head"
+    "photo photo  photo"
+    "links social .";
+  padding: var(--space-500);
+}
+.bottom { display: contents; }
+.headline { grid-area: head; justify-self: center; align-self: start; text-align: center; }
+.photo    { grid-area: photo; justify-self: center; }
+.links    { grid-area: links; align-self: end; }
+.social   { grid-area: social; align-self: end; }
+
+/* the photo: the frame holds the corners (radius/md, 100% smoothed by squircle.js) */
+.photo {
+  position: relative;
+  display: block;
+  padding: 0; border: 0; background: none;
+  border-radius: var(--radius-md); --ring-gap: var(--space-50);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.photo-frame {
+  display: block;
+  width: var(--photo-size); height: var(--photo-size);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* project links, three lines, space/25 apart */
+.links { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-25); }
+
+/* social icons and email, in one row */
+.social { display: flex; align-items: center; gap: var(--space-400); }
+.icon-link {
+  position: relative; display: block;
+  width: var(--icon-lg); height: var(--icon-lg);
+  color: var(--icon-primary);
+  border-radius: var(--radius-xs); --ring-gap: var(--space-50);
+}
+.icon-link svg { display: block; width: 100%; height: 100%; }
+.icon-link svg * { vector-effect: non-scaling-stroke; }   /* stroke stays 1.5 at any icon size */
+
+/* text links: underlined, text/secondary; text/primary on hover */
+a.body-semibold-lg { text-decoration: underline; text-underline-offset: auto; border-radius: var(--radius-xs); }
+@media (hover: hover) {
+  a.body-semibold-lg:hover { color: var(--text-primary); }
+  .icon-link:hover { color: var(--icon-hover); }
+}
+a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--space-50); }
+
+/* Focus on the icons and the photo: border/focus ring at stroke/md, space/50 outside,
+   100% smoothed (assets/squircle.js) */
+.icon-link:focus-visible, .photo:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--ring-gap); }
+.icon-link[data-ring-ready]:focus-visible, .photo[data-ring-ready]:focus-visible { outline: none; }
+.icon-link[data-ring-ready]:focus-visible::after, .photo[data-ring-ready]:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * (var(--ring-gap) + var(--stroke-md)));
+  background: var(--border-focus);
+  clip-path: var(--smooth-ring);
+  pointer-events: none;
+}
+
+/* avatar — top left */
+.avatar-wrap { position: absolute; top: var(--space-100); left: var(--space-100); z-index: 3; }
+.avatar-btn {
+  display: grid; place-items: center;
+  padding: var(--space-50); border: 0;
+  border-radius: var(--radius-full);
+  background: var(--surface-avatar);
+  cursor: pointer;
+}
+.avatar-btn img { display: block; width: var(--avatar-lg); height: var(--avatar-lg); object-fit: cover; }
+.avatar-btn:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: calc(-1 * var(--stroke-md)); }
+@media (hover: hover) and (min-width: 821px) and (prefers-reduced-motion: no-preference) {
+  .avatar-btn:hover { animation: avatar-spin 0.55s cubic-bezier(0.7, 0, 0.3, 1); }
+}
+@keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* clock — top right. Figma's desktop clock is 32, which has no token yet, so it's icon/lg. */
+.clock {
+  position: absolute; top: var(--space-100); right: var(--space-100); z-index: 3;
+  display: block; width: var(--icon-lg); height: var(--icon-lg);
+  color: var(--icon-primary);
+}
+.clock * { vector-effect: non-scaling-stroke; }
+
+/* ---------------- NARROWER: the mobile arrangement ---------------- */
+/* Below 960 the bottom row no longer fits side by side, so everything stacks under the
+   photo as on mobile: headline, links (space/300), then social and email (space/500). */
+@media (max-width: 960px) {
+  .page {
+    grid-template-columns: 1fr;
+    grid-template-areas: "." "photo" "bottom";
+  }
+  .bottom {
+    grid-area: bottom;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    gap: var(--space-300);
+  }
+  .headline { justify-self: auto; text-align: left; }
+  .links, .social { align-self: flex-start; }
+  .social { margin-top: calc(var(--space-500) - var(--space-300)); }
+}
+
+/* ---------------- MOBILE (≤820px) ---------------- */
+@media (max-width: 820px) {
+  .page { padding: var(--space-300); }
+  .body-semibold-xl { font-size: var(--font-size-20); line-height: var(--line-height-24); }
+  .body-semibold-lg { font-size: var(--font-size-16); line-height: var(--line-height-20); }
+  .avatar-wrap { top: var(--space-50); left: var(--space-50); }
+  .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
+  .social { gap: var(--space-200); }
+  .icon-link { width: var(--icon-md); height: var(--icon-md); }
+}
+
+.visually-hidden {
+  position: absolute !important; clip-path: inset(50%) !important; overflow: hidden !important;
+  width: 1px !important; height: 1px !important; margin: -1px !important;
+  padding: 0 !important; border: 0 !important; white-space: nowrap !important;
+}

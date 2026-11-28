@@ -7,5 +7,3 @@
 /netlify.toml                    /404.html  404!
 /scripts/*                       /404.html  404!
 
-# The new homepage was previewed here before it went live
-/preview/*     /  301
