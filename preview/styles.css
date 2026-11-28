@@ -31,6 +31,7 @@
 
   --icon-md: 20px; --icon-lg: 24px; --icon-xl: 32px;
   --avatar-sm: 32px; --avatar-lg: 48px;
+  --dot-size: var(--icon-lg);   /* the dot: icon/lg on desktop, icon/md on mobile */
   --photo-size: 192px;   /* the photo (Figma 192 × 192 on desktop, 144 × 144 on mobile) */
 }
 
@@ -40,6 +41,7 @@
   --text-secondary: var(--colour-neutral-70);
   --icon-primary:   var(--colour-neutral-80);
   --icon-hover:     var(--colour-neutral-90);
+  --icon-on-action: var(--colour-neutral-0);   /* white in light and dark */
   --surface-page:   var(--colour-neutral-0);
   --surface-avatar: var(--colour-neutral-0);
   --border-focus:   var(--colour-neutral-90);
@@ -173,20 +175,60 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
 }
 @keyframes avatar-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* clock — top right: icon/xl on desktop, icon/lg on mobile */
-.clock {
+/* dot — top right: a link to the hidden page. icon/lg on desktop, icon/md on mobile */
+.dot {
   position: absolute; top: var(--space-100); right: var(--space-100); z-index: 3;
-  display: block; width: var(--icon-xl); height: var(--icon-xl);
-  color: var(--icon-primary);
+  display: block; width: var(--dot-size); height: var(--dot-size);
+  border-radius: var(--radius-full);
+  background: var(--icon-primary);
+  -webkit-tap-highlight-color: transparent;
 }
-.clock * { vector-effect: non-scaling-stroke; }
+.dot::before { content: ""; position: absolute; inset: calc(-1 * var(--space-100)); } /* easier to hit */
+.dot:focus-visible { outline: var(--stroke-md) solid var(--border-focus); outline-offset: var(--space-50); }
+
+/* ---------------- HIDDEN PAGE (the 404 design, under the dot) ---------------- */
+/* A layer the size of the screen, cut down to the dot's circle. Opening it grows the circle
+   until the whole photo shows; the dot turns white as it goes. Closing runs it back.
+   Closed, it stays painted behind its own dot (the circle a hair smaller than the dot, so no
+   photo shows at the edge): hiding it made the photo arrive late, as a plain dark circle. */
+.easter-egg {
+  --dot-centre: calc(var(--space-100) + var(--dot-size) / 2);
+  --clip-closed: circle(calc(var(--dot-size) / 2 - var(--stroke-md)) at calc(100% - var(--dot-centre)) var(--dot-centre));
+  --clip-open: circle(150% at calc(100% - var(--dot-centre)) var(--dot-centre));
+  position: fixed; inset: 0; z-index: 10;
+  overflow: hidden;
+  background: var(--colour-neutral-90);
+  clip-path: var(--clip-closed);
+  pointer-events: none;
+}
+.easter-egg:target { clip-path: var(--clip-open); pointer-events: auto; }
+html:has(.easter-egg:target) { overflow: hidden; }
+.easter-egg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+.easter-egg:target .dot-back { background: var(--icon-on-action); }
+.dot-back:focus-visible { outline-color: var(--icon-on-action); }
+
+/* blobs: 570 × 320 at 128, 192 in the 1600 × 940 frame, kept as shares of the screen so they
+   stay over the face (as on the 404) */
+.blobs {
+  --blob-mass: #000000;
+  position: absolute; aspect-ratio: 570 / 320;
+  top: calc(192 / 940 * 100%); left: calc(128 / 1600 * 100%); width: calc(570 / 1600 * 100%);
+}
+.blobs svg { display: block; width: 100%; height: 100%; }
+.blob-mass { fill: var(--blob-mass); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .easter-egg { transition: clip-path 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .easter-egg:target { transition: clip-path 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  .dot-back { transition: background-color 0.25s ease-out; }
+}
 
 /* ---------------- NARROWER: the mobile arrangement ---------------- */
 /* Below 960 the bottom row no longer fits side by side, so everything stacks under the
    photo as on mobile: headline, links (space/100), then social and email (space/500). */
 /* A column instead of the grid: the empty space above the photo and the bottom block share
    the height equally, but on short screens (e.g. a HomeView) the space above gives way first,
-   so the page fits without scrolling and the avatar and clock stay on screen. */
+   so the page fits without scrolling and the avatar and dot stay on screen. */
 @media (max-width: 960px) {
   .page { display: flex; flex-direction: column; }
   .page::before { content: ""; flex: 1 1 0; }
@@ -210,8 +252,9 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
   .avatar-btn img { width: var(--avatar-sm); height: var(--avatar-sm); }
   .social { gap: var(--space-200); }
   .icon-link { width: var(--icon-md); height: var(--icon-md); }
-  .clock { width: var(--icon-lg); height: var(--icon-lg); }
-  :root { --photo-size: 144px; } /* the photo, Figma 144 × 144 on mobile */
+  /* 350 × 196 at -40, 192 in the 390 × 844 frame */
+  .blobs { top: calc(192 / 844 * 100%); left: calc(-40 / 390 * 100%); width: calc(350 / 390 * 100%); aspect-ratio: 350 / 196; }
+  :root { --dot-size: var(--icon-md); --photo-size: 144px; } /* the photo, Figma 144 × 144 on mobile */
 }
 
 .visually-hidden {
@@ -221,15 +264,15 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
 }
 
 /* ---------------- Load-in animation (same feel as the homepage) ---------------- */
-/* Everything fades in and rises space/100, one after another. The avatar and clock
+/* Everything fades in and rises space/100, one after another. The avatar and dot
    only fade, so the corners always land exactly in place. */
 @media (prefers-reduced-motion: no-preference) {
-  .avatar-wrap, .clock, .photo, .headline, .links, .social {
+  .avatar-wrap, header > .dot, .easter-egg, .photo, .headline, .links, .social {
     opacity: 0;
     translate: 0 var(--space-100);
     animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
   }
-  .avatar-wrap, .clock { translate: none; animation-name: fade; animation-delay: 0.04s; }
+  .avatar-wrap, header > .dot, .easter-egg { translate: none; animation-name: fade; animation-delay: 0.04s; }
   .photo    { animation-delay: 0.10s; }
   .headline { animation-delay: 0.18s; }
   .links    { animation-delay: 0.26s; }
