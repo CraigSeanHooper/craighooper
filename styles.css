@@ -38,7 +38,7 @@
   --stroke-md: 2px;
 
   --font-size-12: 12px; --font-size-14: 14px; --font-size-16: 16px; --font-size-18: 18px; --font-size-24: 24px; --font-size-32: 32px;
-  --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-34: 34px;
+  --line-height-16: 16px; --line-height-18: 18px; --line-height-20: 20px; --line-height-22: 22px; --line-height-24: 24px; --line-height-26: 26px; --line-height-28: 28px; --line-height-34: 34px;
   --letter-spacing-minus-1: -0.5px;
   --letter-spacing-0: 0px;
 
@@ -92,7 +92,7 @@ h1, p { margin: 0; font-weight: inherit; }
 .h1 { font-size: var(--font-size-32); line-height: var(--line-height-34); color: var(--text-primary); text-wrap: balance; font-feature-settings: "ss08", "ss10"; }   /* Melange Alt R + Round Punctuation (Craig, 27 Nov 2026) */
 .body-sm {
   font-family: var(--font-family-body); font-weight: var(--font-style-body); letter-spacing: var(--letter-spacing-body);
-  font-size: var(--font-size-14); line-height: var(--line-height-20); color: var(--text-secondary);
+  font-size: var(--font-size-14); line-height: var(--line-height-18); color: var(--text-secondary);
   text-wrap: pretty;   /* no single word left on the last line */
 }
 
@@ -179,7 +179,7 @@ h1, p { margin: 0; font-weight: inherit; }
   .social a { width: var(--icon-md); height: var(--icon-md); }   /* icon/md on mobile */
   .page { --clear: calc(var(--space-100) + var(--avatar-sm) + 2 * var(--space-50) + var(--space-500)); }
   .h1 { font-size: var(--font-size-24); line-height: var(--line-height-26); }
-  .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-18); }
+  .body-sm { font-size: var(--font-size-12); line-height: var(--line-height-16); }
   .copy { gap: var(--space-50); }   /* headline to bio */
   .h1, .body-sm { text-wrap: wrap; }   /* lines fill the width on phones (Craig, 25 Nov 2026) */
   /* blobs: space/100 below the bio, as wide as the text (Figma 354 × 250) */

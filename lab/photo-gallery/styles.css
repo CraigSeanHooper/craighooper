@@ -49,6 +49,7 @@
   --scale-font-size-24: 24px;
   --scale-font-size-32: 32px;
 
+  --scale-line-height-16: 16px;
   --scale-line-height-18: 18px;
   --scale-line-height-20: 20px;
   --scale-line-height-22: 22px;
@@ -139,6 +140,7 @@
   --font-size-24: var(--scale-font-size-24);
   --font-size-32: var(--scale-font-size-32);
 
+  --line-height-16: var(--scale-line-height-16);
   --line-height-18: var(--scale-line-height-18);
   --line-height-20: var(--scale-line-height-20);
   --line-height-22: var(--scale-line-height-22);
@@ -262,7 +264,7 @@ a {
   font-family: var(--font-family-body), system-ui, sans-serif;
   font-weight: var(--font-style-body);
   font-size: var(--font-size-16);
-  line-height: var(--line-height-22);
+  line-height: var(--line-height-20);
   letter-spacing: var(--letter-spacing-body);
 }
 
@@ -270,7 +272,7 @@ a {
   font-family: var(--font-family-body), system-ui, sans-serif;
   font-weight: var(--font-style-body);
   font-size: var(--font-size-14);
-  line-height: var(--line-height-20);
+  line-height: var(--line-height-18);
   letter-spacing: var(--letter-spacing-body);
 }
 
@@ -278,7 +280,7 @@ a {
   font-family: var(--font-family-body), system-ui, sans-serif;
   font-weight: var(--font-style-body);
   font-size: var(--font-size-12);
-  line-height: var(--line-height-18);
+  line-height: var(--line-height-16);
   letter-spacing: var(--letter-spacing-body);
 }
 
@@ -294,12 +296,12 @@ a {
 
   .body-md {
     font-size: var(--font-size-14);
-    line-height: var(--line-height-20);
+    line-height: var(--line-height-18);
   }
 
   .body-sm {
     font-size: var(--font-size-12);
-    line-height: var(--line-height-18);
+    line-height: var(--line-height-16);
   }
 }
 
