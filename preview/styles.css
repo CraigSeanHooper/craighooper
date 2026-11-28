@@ -217,3 +217,21 @@ a.body-semibold-lg:focus-visible { outline: var(--stroke-md) solid var(--border-
   width: 1px !important; height: 1px !important; margin: -1px !important;
   padding: 0 !important; border: 0 !important; white-space: nowrap !important;
 }
+
+/* ---------------- Load-in animation (same feel as the homepage) ---------------- */
+/* Everything fades in and rises space/100, one after another. The avatar and clock
+   only fade, so the corners always land exactly in place. */
+@media (prefers-reduced-motion: no-preference) {
+  .avatar-wrap, .clock, .photo, .headline, .links, .social {
+    opacity: 0;
+    translate: 0 var(--space-100);
+    animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .avatar-wrap, .clock { translate: none; animation-name: fade; animation-delay: 0.04s; }
+  .photo    { animation-delay: 0.10s; }
+  .headline { animation-delay: 0.18s; }
+  .links    { animation-delay: 0.26s; }
+  .social   { animation-delay: 0.34s; }
+  @keyframes rise { to { opacity: 1; translate: 0 0; } }
+  @keyframes fade { to { opacity: 1; } }
+}
