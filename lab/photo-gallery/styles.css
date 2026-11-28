@@ -119,6 +119,7 @@
   --surface-link: var(--colour-blue-dark);
   --surface-link-hover: var(--colour-blue-dark-hover);
 
+  --radius-none: 0px;
   --radius-xs: var(--scale-base-4);
   --radius-sm: var(--scale-base-8);
   --radius-md: var(--scale-base-12);
@@ -383,16 +384,8 @@ a {
 .tile__image {
   width: 100%;
   overflow: hidden;
-  isolation: isolate;   /* keeps the hover zoom inside the rounded corners in Safari */
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-none);   /* Figma: radius/none on desktop and mobile */
   background: var(--surface-raised);
-}
-
-/* Figma: radius/lg on desktop, radius/md on mobile. */
-@media (max-width: 820px) {
-  .tile__image {
-    border-radius: var(--radius-md);
-  }
 }
 
 .tile--portrait .tile__image {
